@@ -3,15 +3,42 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd"
          version="3.1">
+    <display-name>dstr</display-name>
+
     <welcome-file-list>
-        <welcome-file>index.jsp</welcome-file>
+        <welcome-file>users.jsp</welcome-file>
     </welcome-file-list>
-    <servlet>
-        <servlet-name>home</servlet-name>
-        <jsp-file>/index.jsp</jsp-file>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>home</servlet-name>
-        <url-pattern>/home</url-pattern>
-    </servlet-mapping>
+
+    <context-param>
+        <param-name>MONGO_HOSTS</param-name>
+        <param-value>3</param-value>
+    </context-param>
+    <context-param>
+        <param-name>MONGO_HOST_1</param-name>
+        <param-value>mongoshard1</param-value>
+    </context-param>
+    <context-param>
+        <param-name>MONGO_HOST_2</param-name>
+        <param-value>mongoshard2</param-value>
+    </context-param>
+    <context-param>
+        <param-name>MONGO_HOST_3</param-name>
+        <param-value>mongoshard3</param-value>
+    </context-param>
+    <context-param>
+        <param-name>MONGO_PORT</param-name>
+        <param-value>27017</param-value>
+    </context-param>
+    <context-param>
+        <param-name>MONGO_DB</param-name>
+        <param-value>dstr</param-value>
+    </context-param>
+    <context-param>
+        <param-name>MONGO_USER</param-name>
+        <param-value>dstrDbAdmin</param-value>
+    </context-param>
+    <context-param>
+        <param-name>MONGO_PASSWORD</param-name>
+        <param-value>1234</param-value>
+    </context-param>
 </web-app>
