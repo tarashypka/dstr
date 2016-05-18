@@ -52,7 +52,7 @@ public class EditUserServlet extends HttpServlet {
                     ((userDAO.updateUser(user) > 0) ? "" : "не ") + "редаговано");
         }
         List<User> users = userDAO.findAllUsers();
-        request.setAttribute("users", users);
+        request.getSession().setAttribute("users", users);
         request.getRequestDispatcher("/users.jsp").forward(request, response);
     }
 
@@ -72,7 +72,7 @@ public class EditUserServlet extends HttpServlet {
         user = userDAO.findUser(user);
         request.setAttribute("user", user);
         List<User> users = userDAO.findAllUsers();
-        request.setAttribute("users", users);
+        request.getSession().setAttribute("users", users);
         request.getRequestDispatcher("/users.jsp").forward(request, response);
     }
 }

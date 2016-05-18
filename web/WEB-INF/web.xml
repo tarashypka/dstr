@@ -6,8 +6,17 @@
     <display-name>dstr</display-name>
 
     <welcome-file-list>
-        <welcome-file>users.jsp</welcome-file>
+        <welcome-file>ShowUsers</welcome-file>
     </welcome-file-list>
+
+    <servlet>
+        <servlet-name>ShowUsers</servlet-name>
+        <servlet-class>controller.ShowUsersServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>ShowUsers</servlet-name>
+        <url-pattern>/</url-pattern>
+    </servlet-mapping>
 
     <context-param>
         <param-name>MONGO_HOSTS</param-name>

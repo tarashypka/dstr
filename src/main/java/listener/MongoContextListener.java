@@ -5,6 +5,8 @@ package listener; /**
 import com.mongodb.MongoClient;
 import com.mongodb.MongoCredential;
 import com.mongodb.ServerAddress;
+import dao.MongoUserDAO;
+import model.User;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;

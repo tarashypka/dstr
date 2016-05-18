@@ -13,26 +13,16 @@ import java.io.IOException;
 import java.util.List;
 
 /**
- * Created by deoxys on 17.05.16.
+ * Created by deoxys on 18.05.16.
  */
-@WebServlet("/deleteUser")
-public class DeleteUserServlet extends HttpServlet {
+@WebServlet("/showUsers")
+public class ShowUsersServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        String id = request.getParameter("id");
-        if (id == null || id.equals("")) {
-            throw new ServletException("Невірний id користувача");
-        }
         MongoClient mongo = (MongoClient) request.getServletContext()
                 .getAttribute("MONGO_CLIENT");
         MongoUserDAO userDAO = new MongoUserDAO(mongo);
-        User user = new User();
-        user.setId(id);
-        System.out.println("Видалення користувача з id=" + id);
-        request.setAttribute("success", "Користувача " +
-                ((userDAO.deleteUser(user) > 0) ? "" : "не ") + "видалено");
-
         List<User> users = userDAO.findAllUsers();
         request.getSession().setAttribute("users", users);
         request.getRequestDispatcher("/users.jsp").forward(request, response);

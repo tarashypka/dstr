@@ -41,8 +41,20 @@ public class AddUserServlet extends HttpServlet {
             System.out.println("Додано нового користувача з id=" + user.getId());
             request.setAttribute("success", "Додано нового користувача");
             List<User> users = userDAO.findAllUsers();
-            request.setAttribute("users", users);
+            request.getSession().setAttribute("users", users);
         }
+        request.getRequestDispatcher("/users.jsp").forward(request, response);
+    }
+
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
+        MongoClient mongo = (MongoClient) request.getServletContext()
+                .getAttribute("MONGO_CLIENT");
+        MongoUserDAO userDAO = new MongoUserDAO(mongo);
+        List<User> users = userDAO.findAllUsers();
+        request.getSession().setAttribute("users", users);
+        request.setAttribute("user", null);
         request.getRequestDispatcher("/users.jsp").forward(request, response);
     }
 }
