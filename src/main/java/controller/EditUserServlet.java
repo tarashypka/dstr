@@ -21,7 +21,7 @@ public class EditUserServlet extends HttpServlet {
             throws ServletException, IOException {
 
         String id = request.getParameter("id");
-        String error = null;
+        String errtype = null;
         if (id == null || id.equals("")) {
             throw new ServletException("Невірний id користувача");
         }
@@ -29,11 +29,11 @@ public class EditUserServlet extends HttpServlet {
         String email = request.getParameter("email");
         String psswd = request.getParameter("password");
         if (name == null || name.equals(""))
-            error = "Ім'я введено невірно";
+            errtype = "name";
         else if (email == null || !email.matches("\\w+@\\w+\\.\\w+"))
-            error = "Електронну пошту введено невірно";
+            errtype = "email";
         else if (psswd == null || psswd.length() < 8)
-            error = "Занадто короткий пароль";
+            errtype = "psswd";
 
         MongoClient mongo = (MongoClient) request.getServletContext()
                 .getAttribute("MONGO_CLIENT");
@@ -43,11 +43,10 @@ public class EditUserServlet extends HttpServlet {
         user.setName(name);
         user.setEmail(email);
         user.setPassword(psswd);
-        if (error != null) {
+        if (errtype != null) {
             request.setAttribute("user", user);
-            request.setAttribute("error", error);
+            request.setAttribute("errtype", errtype);
         } else {
-            System.out.println("Редагування користувача з id=" + user.getId());
             request.setAttribute("success", "Користувача " +
                     ((userDAO.updateUser(user) > 0) ? "" : "не ") + "редаговано");
         }
@@ -63,7 +62,6 @@ public class EditUserServlet extends HttpServlet {
         if (id == null || id.equals("")) {
             throw new ServletException("Невірний id користувача");
         }
-        System.out.println("Редагування даних користувача з id=" + id);
         MongoClient mongo = (MongoClient) request.getServletContext()
                 .getAttribute("MONGO_CLIENT");
         MongoUserDAO userDAO = new MongoUserDAO(mongo);

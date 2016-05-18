@@ -23,23 +23,27 @@ public class AddUserServlet extends HttpServlet {
         String name = request.getParameter("name");
         String email = request.getParameter("email");
         String psswd = request.getParameter("password");
+        String errtype = null;
+        User user = new User();
+        user.setName(name);
+        user.setEmail(email);
+        user.setPassword(psswd);
         if (name == null || name.equals(""))
-            request.setAttribute("error", "Ім'я введено невірно");
-        else if (email == null || !email.matches("\\w+@\\w+\\.\\w+"))
-            request.setAttribute("error", "Електронну пошту введено невірно");
+            errtype = "name";
+        else if (email == null || !email.matches("\\S+@\\w+\\.\\w+"))
+            errtype = "email";
         else if (psswd == null || psswd.length() < 8)
-            request.setAttribute("error", "Занадто короткий пароль");
+            errtype = "psswd";
+        if (errtype != null) {
+            request.setAttribute("errtype", errtype);
+            request.setAttribute("addusr", user);
+        }
         else {
-            User user = new User();
-            user.setName(name);
-            user.setEmail(email);
-            user.setPassword(psswd);
             MongoClient mongo = (MongoClient) request.getServletContext()
                     .getAttribute("MONGO_CLIENT");
             MongoUserDAO userDAO = new MongoUserDAO(mongo);
             userDAO.createUser(user);
-            System.out.println("Додано нового користувача з id=" + user.getId());
-            request.setAttribute("success", "Додано нового користувача");
+            request.setAttribute("success", "Нового користувача додано");
             List<User> users = userDAO.findAllUsers();
             request.getSession().setAttribute("users", users);
         }

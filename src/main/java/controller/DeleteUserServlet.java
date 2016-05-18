@@ -29,7 +29,6 @@ public class DeleteUserServlet extends HttpServlet {
         MongoUserDAO userDAO = new MongoUserDAO(mongo);
         User user = new User();
         user.setId(id);
-        System.out.println("Видалення користувача з id=" + id);
         request.setAttribute("success", "Користувача " +
                 ((userDAO.deleteUser(user) > 0) ? "" : "не ") + "видалено");
 

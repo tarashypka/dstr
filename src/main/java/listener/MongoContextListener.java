@@ -37,12 +37,12 @@ public class MongoContextListener implements ServletContextListener,
       */
         ServletContext ctx = sce.getServletContext();
         int hosts = Integer.parseInt(ctx.getInitParameter("MONGO_HOSTS"));
-        int port = Integer.parseInt(ctx.getInitParameter("MONGO_PORT"));
 
         List<ServerAddress> seeds = new ArrayList<>();
         for (int i = 1; i <= hosts; i++) {
             String host = ctx.getInitParameter("MONGO_HOST_" + i);
-            seeds.add(new ServerAddress(host, port));
+            String port = ctx.getInitParameter("MONGO_PORT_" + i);
+            seeds.add(new ServerAddress(host, Integer.parseInt(port)));
         }
 
         List<MongoCredential> auths = new ArrayList<>();

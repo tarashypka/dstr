@@ -35,7 +35,15 @@
         <param-value>mongoshard3</param-value>
     </context-param>
     <context-param>
-        <param-name>MONGO_PORT</param-name>
+        <param-name>MONGO_PORT_1</param-name>
+        <param-value>27017</param-value>
+    </context-param>
+    <context-param>
+        <param-name>MONGO_PORT_2</param-name>
+        <param-value>27017</param-value>
+    </context-param>
+    <context-param>
+        <param-name>MONGO_PORT_3</param-name>
         <param-value>27017</param-value>
     </context-param>
     <context-param>
