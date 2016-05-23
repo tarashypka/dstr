@@ -1,7 +1,7 @@
 # dstr
-#### *Study project*
+###### *Study project*
 
-#### Requirements
+### Requirements
 
 ```
 MongoDB v3.2.6  
@@ -11,9 +11,9 @@ JK v1.2.41
 Maven v3.3.9
 ```
 
-#### MongoDB configuration
+### MongoDB configuration
 
-##### Configure mongodb connection settings in web.xml
+#### Configure mongodb connection settings in web.xml
 
 `/etc/hosts` could be used to configure DNS:
 ```
@@ -22,7 +22,7 @@ Maven v3.3.9
 192.168.56.113  mongosvr3
 ```
 
-####### *replica set on mongosvr[1,2,3]:27017*
+##### *replica set on mongosvr[1,2,3]:27017*
 ```
 <context-param>
 	<param-name>MONGO_HOST_1</param-name>
@@ -42,7 +42,7 @@ Maven v3.3.9
 </context-param>
 ```
 
-##### Create required users
+#### Create required users
 
 ```
 $ mongo admin  
@@ -55,27 +55,27 @@ $ mongo dstr -u dstrDbAdmin -p 1234
 > db.users.insert( { "name" : "Taras", "email" : "tarashypka@gmail.com", "password" : "1234" } );  
 ```
 
-##### Start replica set
+#### Start replica set
 
 ```
 $ mongod --keyFile /path/to/mongodb-keyfile --replSet "rs0"  
 ```
 
-##### Connect to the remotely running mongod instance
+#### Connect to the remotely running mongod instance
 
 ```
 $ mongo dstr --host <HOST> --port <PORT> -u dstrDbAdmin -p 1234  
 ```
 
-#### Configure Load Balancer for replication in Tomcat
+### Configure Load Balancer for replication in Tomcat
 
-##### Install and configure httpd & mod_jk
+#### Install and configure httpd & mod_jk
 
-`mod_jk` plugin is connector used for httpd-to-workers communication via AJP (The Apache Tomcat Connectors) protocol,  
-so 3 workers (tomcat1, tomcat2, tomcat3) were configured in `conf/workers.properties`
+`mod_jk` plugin is connector used for httpd-to-workers communication via AJP (The Apache Tomcat Connectors) protocol.  
+So 3 workers (tomcat1, tomcat2, tomcat3) were configured in `conf/workers.properties`.  
 Copy configurations files `conf/{workers.properties,httpd.conf}` to `/path/to/httpd/conf/`.  
 
-##### Enable affinity/sticky sessions
+#### Enable affinity/sticky sessions
 
 Set `jvmRoute` for all Tomcat instances in `/path/to/tomcat/conf/server.xml`:  
 ```
@@ -87,15 +87,15 @@ All sessionIDs will be appended with worker names, so load balancer will know to
 2F61B573F11635E01B17349776F825C4 --> 2F61B573F11635E01B17349776F825C4.tomcat1
 ```
 
-##### Start Apache Http Server with configured Load Balancer
+#### Start Apache Http Server with configured Load Balancer
 
 ```
 $ sudo /path/to/apache/bin/apachectl start
 ```
 
-#### Distributed cache with Hazelcast
+### Distributed cache with Hazelcast
 
-##### Configure Hz connection settings in web.xml
+#### Configure Hz connection settings in web.xml
 
 `/etc/hosts` could be used to configure DNS:
 ```
@@ -106,7 +106,7 @@ $ sudo /path/to/apache/bin/apachectl start
 
 Similarly to as for mongodb:  
 
-####### *Hz configs on tomcatsvr[1,2,3]:5701*
+##### *Hz configs on tomcatsvr[1,2,3]:5701*
 ```
 <context-param>
 	<param-name>HZ_HOST_1</param-name>
@@ -127,7 +127,7 @@ Similarly to as for mongodb:
 <context-param>
 ```
 
-##### Allow Hz communication between application servers
+#### Allow Hz communication between application servers
 
 All applications are configured with Hz, that uses TCP-IP network.  
 In Ubuntu, UFW (Uncomplicated Firewall) could be used to open the required port:
@@ -137,4 +137,4 @@ sudo ufw allow 5701
 sudo ufw allow 8009
 ```
 
-#### References
+### References
