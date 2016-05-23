@@ -1,5 +1,7 @@
 package controller;
 
+import com.hazelcast.core.Hazelcast;
+import com.hazelcast.core.HazelcastInstance;
 import com.mongodb.MongoClient;
 import dao.MongoUserDAO;
 import model.User;
@@ -24,7 +26,17 @@ public class ShowUsersServlet extends HttpServlet {
                 .getAttribute("MONGO_CLIENT");
         MongoUserDAO userDAO = new MongoUserDAO(mongo);
         List<User> users = userDAO.findAllUsers();
-        request.getSession().setAttribute("users", users);
+        List<User> hzUsers =
+                Hazelcast.getHazelcastInstanceByName("USERS").getList("USERS");
+
+        // Update Hz cache
+        for (User user : users)
+            if ( ! hzUsers.contains(user))
+                hzUsers.add(user);
+        for (User hzUser : hzUsers)
+            if ( ! users.contains(hzUser))
+                hzUsers.remove(hzUser);
+
         request.getRequestDispatcher("/users.jsp").forward(request, response);
     }
 }

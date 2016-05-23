@@ -1,3 +1,8 @@
+<%@ page import="com.hazelcast.core.Hazelcast" %>
+<%@ page import="model.User" %>
+<%@ page import="java.util.List" %>
+<%@ page import="javax.jws.soap.SOAPBinding" %>
+<%@ page import="java.util.ArrayList" %>
 <%--
   Created by IntelliJ IDEA.
   User: deoxys
@@ -7,30 +12,43 @@
 --%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ page contentType="text/html; charset=UTF-8"
-         language="java" pageEncoding="UTF-8" %>
+         language="java" pageEncoding="UTF-8" session="true" %>
 <html>
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
   <title>dstr: Користувачі</title>
   <style>
+    #worker, #ip, #session {
+      position: fixed;
+      left: 5px;
+    }
+    #worker {
+      bottom: 45px;
+    }
+    #ip {
+      bottom: 25px;
+    }
+    #session {
+      bottom: 5px;
+    }
     .err div {
       color: red;
       position: fixed;
       left: 230px;
     }
     #err1 {
-      top: 90px;
+      top: 65px;
     }
     #err2 {
-      top: 120px;
+      top: 95px;
     }
     #err3 {
-      top: 150px;
+      top: 125px;
     }
     .success {
       color: green;
       position: fixed;
-      top: 210px;
+      top: 185px;
       left: 25px;
     }
     form {
@@ -41,18 +59,18 @@
       width: 200px;
       height: 25px;
     }
-    form[name=button1] {
+    form[name=butt1] {
       top: 25px;
     }
-    form[name=button2] {
+    form[name=butt2] {
+      top: 25px;
+      left: 230px;
+    }
+    form[name=inp1] {
       top: 50px;
       margin-top: 5px;
     }
-    form[name=input] {
-      top: 75px;
-      margin-top: 5px;
-    }
-    form[name=input] input {
+    form[name=inp1] input {
       margin-top: 5px;
     }
     table {
@@ -67,14 +85,16 @@
   </style>
 </head>
 <body>
+  <div id="worker">worker: no workers</div>
+  <div id="ip">ip: localhost</div>
+  <div id="session">session: <%= request.getSession().getId() %></div>
+
   <c:url value="/addUser" var="addURL"></c:url>
   <c:url value="/editUser" var="editURL"></c:url>
+  <c:url value="/showUsers" var="showUsersURL"></c:url>
 
-  <form action='<c:out value="${addURL}"></c:out>' method="get" name="button1">
+  <form action='<c:out value="${addURL}"></c:out>' method="get" name="butt1">
     <input type="submit" value="Створити нового користувача">
-  </form>
-  <form action="/users.jsp" name="button2">
-    <input type="submit" value="Оновити сесію">
   </form>
 
   <%-- User Add/Edit logic --%>
@@ -101,7 +121,7 @@
 
   <%-- Edit Request --%>
   <c:if test="${requestScope.user ne null}">
-    <form action='<c:out value="${editURL}"></c:out>' method="post" name="input">
+    <form action='<c:out value="${editURL}"></c:out>' method="post" name="inp1">
       <input type="text" value="${requestScope.user.id}"
              readonly="readonly" name="id"><br>
       <input type="text" value="${requestScope.user.name}"
@@ -116,7 +136,7 @@
 
   <%-- Add Request --%>
   <c:if test="${requestScope.user eq null}">
-    <form action='<c:out value="${addURL}"></c:out>' method="post" name="input">
+    <form action='<c:out value="${addURL}"></c:out>' method="post" name="inp1">
       <input type="text" value="${requestScope.addusr.name}"
              placeholder="Ім'я" name="name"><br>
       <input type="text" value="${requestScope.addusr.email}"
@@ -127,8 +147,17 @@
     </form>
   </c:if>
 
+  <form action='<c:out value="${showUsersURL}"></c:out>' method="get" name="butt2">
+    <input type="submit" value="Вивести всіх користувачів">
+  </form>
+
+  <%
+    List<User> users = Hazelcast.getHazelcastInstanceByName("USERS").getList("USERS");
+    request.setAttribute("users", users);
+  %>
+
   <%-- Users List Logic --%>
-  <c:if test="${not empty sessionScope.users}">
+  <c:if test="${not empty requestScope.users}">
     <table>
       <tbody>
         <tr>
@@ -139,7 +168,7 @@
           <th>Редагувати</th>
           <th>Видалити</th>
         </tr>
-        <c:forEach items="${sessionScope.users}" var="user">
+        <c:forEach items="${requestScope.users}" var="user">
           <c:url value="/editUser" var="editURL">
             <c:param name="id" value="${user.id}"></c:param>
           </c:url>

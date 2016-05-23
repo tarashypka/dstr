@@ -1,5 +1,6 @@
 package controller;
 
+import com.hazelcast.core.Hazelcast;
 import com.mongodb.MongoClient;
 import dao.MongoUserDAO;
 import model.User;
@@ -29,11 +30,16 @@ public class DeleteUserServlet extends HttpServlet {
         MongoUserDAO userDAO = new MongoUserDAO(mongo);
         User user = new User();
         user.setId(id);
-        request.setAttribute("success", "Користувача " +
-                ((userDAO.deleteUser(user) > 0) ? "" : "не ") + "видалено");
+        user = userDAO.findUser(user);
 
-        List<User> users = userDAO.findAllUsers();
-        request.getSession().setAttribute("users", users);
+        boolean deleted = userDAO.deleteUser(user) > 0;
+        request.setAttribute("success", "Користувача " +
+                (deleted ? "" : "не ") + "видалено");
+
+        // Update Hz cache
+        if (deleted)
+            Hazelcast.getHazelcastInstanceByName("USERS").getList("USERS").remove(user);
+
         request.getRequestDispatcher("/users.jsp").forward(request, response);
     }
 }

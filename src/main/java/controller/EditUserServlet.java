@@ -1,5 +1,6 @@
 package controller;
 
+import com.hazelcast.core.Hazelcast;
 import com.mongodb.MongoClient;
 import dao.MongoUserDAO;
 import model.User;
@@ -49,9 +50,16 @@ public class EditUserServlet extends HttpServlet {
         } else {
             request.setAttribute("success", "Користувача " +
                     ((userDAO.updateUser(user) > 0) ? "" : "не ") + "редаговано");
+
+            // Update Hz cache
+            List<User> hzUsers =
+                    Hazelcast.getHazelcastInstanceByName("USERS").getList("USERS");
+            for (User hzUser : hzUsers)
+                if (hzUser.getId().equals(user.getId())) {
+                    hzUsers.remove(hzUser);
+                    hzUsers.add(user);
+                }
         }
-        List<User> users = userDAO.findAllUsers();
-        request.getSession().setAttribute("users", users);
         request.getRequestDispatcher("/users.jsp").forward(request, response);
     }
 
@@ -69,8 +77,6 @@ public class EditUserServlet extends HttpServlet {
         user.setId(id);
         user = userDAO.findUser(user);
         request.setAttribute("user", user);
-        List<User> users = userDAO.findAllUsers();
-        request.getSession().setAttribute("users", users);
         request.getRequestDispatcher("/users.jsp").forward(request, response);
     }
 }

@@ -5,23 +5,16 @@ package listener; /**
 import com.mongodb.MongoClient;
 import com.mongodb.MongoCredential;
 import com.mongodb.ServerAddress;
-import dao.MongoUserDAO;
-import model.User;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import javax.servlet.annotation.WebListener;
-import javax.servlet.http.HttpSessionAttributeListener;
-import javax.servlet.http.HttpSessionEvent;
-import javax.servlet.http.HttpSessionListener;
-import javax.servlet.http.HttpSessionBindingEvent;
 import java.util.ArrayList;
 import java.util.List;
 
 @WebListener()
-public class MongoContextListener implements ServletContextListener,
-        HttpSessionListener, HttpSessionAttributeListener {
+public class MongoContextListener implements ServletContextListener {
 
     // Public constructor is required by servlet spec
     public MongoContextListener() {
@@ -37,13 +30,11 @@ public class MongoContextListener implements ServletContextListener,
       */
         ServletContext ctx = sce.getServletContext();
         int hosts = Integer.parseInt(ctx.getInitParameter("MONGO_HOSTS"));
+        int port = Integer.parseInt(ctx.getInitParameter("MONGO_PORT"));
 
         List<ServerAddress> seeds = new ArrayList<>();
-        for (int i = 1; i <= hosts; i++) {
-            String host = ctx.getInitParameter("MONGO_HOST_" + i);
-            String port = ctx.getInitParameter("MONGO_PORT_" + i);
-            seeds.add(new ServerAddress(host, Integer.parseInt(port)));
-        }
+        for (int i = 1; i <= hosts; i++)
+            seeds.add(new ServerAddress(ctx.getInitParameter("MONGO_HOST_" + i), port));
 
         List<MongoCredential> auths = new ArrayList<>();
         String db = ctx.getInitParameter("MONGO_DB");
@@ -52,8 +43,8 @@ public class MongoContextListener implements ServletContextListener,
         auths.add(MongoCredential.createCredential(user, db, pswd.toCharArray()));
 
         MongoClient mongoClient = new MongoClient(seeds, auths);
-        System.out.println("MongoClient initialized successfully");
         sce.getServletContext().setAttribute("MONGO_CLIENT", mongoClient);
+        System.out.println("MongoClient: initialized successfully");
     }
 
     public void contextDestroyed(ServletContextEvent sce) {
@@ -64,39 +55,6 @@ public class MongoContextListener implements ServletContextListener,
         MongoClient mongoClient = (MongoClient) sce.getServletContext().
                 getAttribute("MONGO_CLIENT");
         mongoClient.close();
-        System.out.println("MongoClient closed successfully");
-    }
-
-    // -------------------------------------------------------
-    // HttpSessionListener implementation
-    // -------------------------------------------------------
-    public void sessionCreated(HttpSessionEvent se) {
-      /* Session is created. */
-    }
-
-    public void sessionDestroyed(HttpSessionEvent se) {
-      /* Session is destroyed. */
-    }
-
-    // -------------------------------------------------------
-    // HttpSessionAttributeListener implementation
-    // -------------------------------------------------------
-
-    public void attributeAdded(HttpSessionBindingEvent sbe) {
-      /* This method is called when an attribute 
-         is added to a session.
-      */
-    }
-
-    public void attributeRemoved(HttpSessionBindingEvent sbe) {
-      /* This method is called when an attribute
-         is removed from a session.
-      */
-    }
-
-    public void attributeReplaced(HttpSessionBindingEvent sbe) {
-      /* This method is invoked when an attibute
-         is replaced in a session.
-      */
+        System.out.println("MongoClient: closed successfully");
     }
 }

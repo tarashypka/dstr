@@ -5,18 +5,32 @@
          version="3.1">
     <display-name>dstr</display-name>
 
+    <distributable/>
+
     <welcome-file-list>
-        <welcome-file>ShowUsers</welcome-file>
+        <welcome-file>users.jsp</welcome-file>
     </welcome-file-list>
 
-    <servlet>
-        <servlet-name>ShowUsers</servlet-name>
-        <servlet-class>controller.ShowUsersServlet</servlet-class>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>ShowUsers</servlet-name>
-        <url-pattern>/</url-pattern>
-    </servlet-mapping>
+    <context-param>
+        <param-name>HZ_HOSTS</param-name>
+        <param-value>3</param-value>
+    </context-param>
+    <context-param>
+        <param-name>HZ_HOST_1</param-name>
+        <param-value>tomcatsvr1</param-value>
+    </context-param>
+    <context-param>
+        <param-name>HZ_HOST_2</param-name>
+        <param-value>tomcatsvr2</param-value>
+    </context-param>
+    <context-param>
+        <param-name>HZ_HOST_3</param-name>
+        <param-value>tomcatsvr3</param-value>
+    </context-param>
+    <context-param>
+        <param-name>HZ_PORT</param-name>
+        <param-value>5701</param-value>
+    </context-param>
 
     <context-param>
         <param-name>MONGO_HOSTS</param-name>
@@ -24,26 +38,18 @@
     </context-param>
     <context-param>
         <param-name>MONGO_HOST_1</param-name>
-        <param-value>mongoshard1</param-value>
+        <param-value>mongosvr1</param-value>
     </context-param>
     <context-param>
         <param-name>MONGO_HOST_2</param-name>
-        <param-value>mongoshard2</param-value>
+        <param-value>mongosvr2</param-value>
     </context-param>
     <context-param>
         <param-name>MONGO_HOST_3</param-name>
-        <param-value>mongoshard3</param-value>
+        <param-value>mongosvr3</param-value>
     </context-param>
     <context-param>
-        <param-name>MONGO_PORT_1</param-name>
-        <param-value>27017</param-value>
-    </context-param>
-    <context-param>
-        <param-name>MONGO_PORT_2</param-name>
-        <param-value>27017</param-value>
-    </context-param>
-    <context-param>
-        <param-name>MONGO_PORT_3</param-name>
+        <param-name>MONGO_PORT</param-name>
         <param-value>27017</param-value>
     </context-param>
     <context-param>
@@ -58,4 +64,12 @@
         <param-name>MONGO_PASSWORD</param-name>
         <param-value>1234</param-value>
     </context-param>
+
+    <!-- Run listeners in order, as Hz uses Mongo connection -->
+    <listener>
+        <listener-class>listener.MongoContextListener</listener-class>
+    </listener>
+    <listener>
+        <listener-class>listener.HzContextListener</listener-class>
+    </listener>
 </web-app>

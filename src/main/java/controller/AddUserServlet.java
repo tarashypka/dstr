@@ -1,5 +1,6 @@
 package controller;
 
+import com.hazelcast.core.Hazelcast;
 import com.mongodb.MongoClient;
 import dao.MongoUserDAO;
 import model.User;
@@ -42,10 +43,11 @@ public class AddUserServlet extends HttpServlet {
             MongoClient mongo = (MongoClient) request.getServletContext()
                     .getAttribute("MONGO_CLIENT");
             MongoUserDAO userDAO = new MongoUserDAO(mongo);
-            userDAO.createUser(user);
+            user = userDAO.createUser(user);
             request.setAttribute("success", "Нового користувача додано");
-            List<User> users = userDAO.findAllUsers();
-            request.getSession().setAttribute("users", users);
+
+            // Update Hz cache
+            Hazelcast.getHazelcastInstanceByName("USERS").getList("USERS").add(user);
         }
         request.getRequestDispatcher("/users.jsp").forward(request, response);
     }
@@ -53,11 +55,6 @@ public class AddUserServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        MongoClient mongo = (MongoClient) request.getServletContext()
-                .getAttribute("MONGO_CLIENT");
-        MongoUserDAO userDAO = new MongoUserDAO(mongo);
-        List<User> users = userDAO.findAllUsers();
-        request.getSession().setAttribute("users", users);
         request.setAttribute("user", null);
         request.getRequestDispatcher("/users.jsp").forward(request, response);
     }

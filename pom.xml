@@ -58,7 +58,7 @@
             <scope>provided</scope>
         </dependency>
 
-        <!-- Hazelcast for distributed session -->
+        <!-- To replicate the Map of users within the Tomcat's cluster -->
         <dependency>
             <groupId>com.hazelcast</groupId>
             <artifactId>hazelcast</artifactId>
