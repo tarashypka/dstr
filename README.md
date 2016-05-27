@@ -49,6 +49,7 @@ $ mongo admin
 > db.createUser( { user: "siteUserAdmin", pwd: "1234", roles: [ { role: "userAdminAnyDatabase", db: "admin" } ] } );  
 > exit;  
 $ mongo admin -u siteUserAdmin -p 1234  
+> use orders;
 > db.createUser( { user: "dstrDbAdmin", pwd: "1234", roles: [ { role: "dbOwner", db: "dstr" } ] } );  
 > exit;  
 $ mongo dstr -u dstrDbAdmin -p 1234  

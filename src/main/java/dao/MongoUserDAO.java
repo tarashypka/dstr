@@ -21,9 +21,10 @@ import static com.mongodb.client.model.Filters.*;
 public class MongoUserDAO {
     private MongoCollection<Document> mongoColl;
     public final static String MONGO_DB = "dstr";
+    public final static String MONGO_COLL = "users";
 
     public MongoUserDAO(MongoClient mongoClient) {
-        this.mongoColl = mongoClient.getDatabase(MONGO_DB).getCollection("users");
+        this.mongoColl = mongoClient.getDatabase(MONGO_DB).getCollection(MONGO_COLL);
     }
 
     public User createUser(User user) {
