@@ -38,6 +38,20 @@
             <version>3.2.2</version>
         </dependency>
 
+        <!-- Postgres JDBC Driver -->
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <version>9.4.1208.jre7</version>
+        </dependency>
+
+        <!-- Expand Postgres connection pool / MongoClient beyond Servlets -->
+        <dependency>
+            <groupId>javax.naming</groupId>
+            <artifactId>jndi</artifactId>
+            <version>1.2.1</version>
+        </dependency>
+
         <!-- JSTL libraries for JSP pages -->
         <dependency>
             <groupId>javax.servlet.jsp.jstl</groupId>

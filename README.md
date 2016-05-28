@@ -4,8 +4,9 @@
 ### Requirements
 
 ```
+psql (PostgreSQL) v9.5.3
 MongoDB v3.2.6  
-Tomcat v8.0.33  
+Tomcat v8.0.33
 httpd v2.4.20
 JK v1.2.41
 Maven v3.3.9
@@ -49,7 +50,7 @@ $ mongo admin
 > db.createUser( { user: "siteUserAdmin", pwd: "1234", roles: [ { role: "userAdminAnyDatabase", db: "admin" } ] } );  
 > exit;  
 $ mongo admin -u siteUserAdmin -p 1234  
-> use orders;
+> use dstr;
 > db.createUser( { user: "dstrDbAdmin", pwd: "1234", roles: [ { role: "dbOwner", db: "dstr" } ] } );  
 > exit;  
 $ mongo dstr -u dstrDbAdmin -p 1234  

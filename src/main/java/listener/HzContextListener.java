@@ -4,16 +4,11 @@ package listener; /**
 
 import com.hazelcast.config.*;
 import com.hazelcast.core.Hazelcast;
-import com.hazelcast.core.HazelcastInstance;
-import com.mongodb.MongoClient;
-import dao.MongoUserDAO;
-import model.User;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import javax.servlet.annotation.WebListener;
-import java.util.List;
 
 @WebListener()
 public class HzContextListener implements ServletContextListener {
@@ -30,15 +25,18 @@ public class HzContextListener implements ServletContextListener {
          initialized(when the Web application is deployed). 
          You can initialize servlet context related data here.
       */
-        ListConfig listConfig = new ListConfig();
-        listConfig.setName("USERS");
+        // Initialize Hazelcast with USERS instance
+        ListConfig customersLC = new ListConfig();
+        ListConfig itemsLC = new ListConfig();
+        customersLC.setName("CUSTOMERS");
+        itemsLC.setName("ITEMS");
 
         ServletContext ctx = sce.getServletContext();
         int port = Integer.parseInt(ctx.getInitParameter("HZ_PORT"));
         int hosts = Integer.parseInt(ctx.getInitParameter("HZ_HOSTS"));
 
         Config cfg = new Config();
-        cfg.addListConfig(listConfig);
+        cfg.addListConfig(customersLC).addListConfig(itemsLC);
         cfg.getNetworkConfig().setPort(port);
         cfg.getNetworkConfig().setPortAutoIncrement(false);
 
@@ -49,11 +47,7 @@ public class HzContextListener implements ServletContextListener {
             join.getTcpIpConfig().addMember(ctx.getInitParameter("HZ_HOST_" + i));
         join.getTcpIpConfig().setEnabled(true);
 
-        MongoClient mongo = (MongoClient) sce.getServletContext().getAttribute("MONGO_CLIENT");
-        MongoUserDAO userDAO = new MongoUserDAO(mongo);
-        List<User> users = userDAO.findAllUsers();
-
-        cfg.setInstanceName("USERS");
+        cfg.setInstanceName("HZ_CONFIG");
         Hazelcast.newHazelcastInstance(cfg);
         System.out.println("Hazelcast: initialized successfully");
     }

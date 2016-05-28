@@ -31,7 +31,6 @@ if [[ $1 == "start" ]]; then
         done
     else
         for arg in ${@:2}; do
-            echo $arg
             if [[ $arg =~ "mongosvr[1-3]" || $arg =~ "tomcatsvr[1-3]" ]]; then
                 vboxmanage startvm $arg --type headless
             else
@@ -60,10 +59,10 @@ elif [[ $1 == "stop" ]]; then
         done
     else
         for arg in ${@:2}; do
-			if [[ $arg =~ "mongosvr[1-3]" || $arg =~ "tomcatsvr[1-3]" ]]; then
-				if ! ping -c 1 -W 1 $arg > /dev/null; then
-					echo "$arg is already stopped"
-				elif [[ $arg =~ "mongosvr[1-3]" ]]; then
+            if [[ $arg =~ "mongosvr[1-3]" || $arg =~ "tomcatsvr[1-3]" ]]; then
+                if ! ping -c 1 -W 1 $arg > /dev/null; then
+                    echo "$arg is already stopped"
+                elif [[ $arg =~ "mongosvr[1-3]" ]]; then
                     if ssh $arg pkill mongod; then
                         echo "Successfully stopped mongod on mongosvr$i"
                     fi
@@ -71,10 +70,10 @@ elif [[ $1 == "stop" ]]; then
                     ssh $arg sudo /sbin/poweroff
                 elif [[ $arg =~ "tomcatsvr[1-3]" ]]; then
                     ssh $arg sudo /sbin/poweroff
-				fi
-			else
-				echo "Unknown arg: $arg"
-			fi
+                fi
+            else
+                echo "Unknown arg: $arg"
+            fi
         done
     fi
 else

@@ -8,8 +8,26 @@
     <distributable/>
 
     <welcome-file-list>
-        <welcome-file>users.jsp</welcome-file>
+        <welcome-file>customers.jsp</welcome-file>
     </welcome-file-list>
+
+    <servlet>
+        <servlet-name>Customers</servlet-name>
+        <jsp-file>/customers.jsp</jsp-file>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>Customers</servlet-name>
+        <url-pattern>/admin/customers</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>Items</servlet-name>
+        <jsp-file>/items.jsp</jsp-file>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>Items</servlet-name>
+        <url-pattern>/admin/items</url-pattern>
+    </servlet-mapping>
 
     <context-param>
         <param-name>HZ_HOSTS</param-name>
@@ -65,7 +83,31 @@
         <param-value>1234</param-value>
     </context-param>
 
-    <!-- Run listeners in order, as Hz uses Mongo connection -->
+    <context-param>
+        <param-name>POSTGRES_HOST</param-name>
+        <param-value>localhost</param-value>
+    </context-param>
+    <context-param>
+        <param-name>POSTGRES_PORT</param-name>
+        <param-value>5432</param-value>
+    </context-param>
+    <context-param>
+        <param-name>POSTGRES_DB</param-name>
+        <param-value>dstr</param-value>
+    </context-param>
+    <context-param>
+        <param-name>POSTGRES_USER</param-name>
+        <param-value>dstrdbadmin</param-value>
+    </context-param>
+    <context-param>
+        <param-name>POSTGRES_PASSWORD</param-name>
+        <param-value>1234</param-value>
+    </context-param>
+
+    <!-- Run Context Listeners in order -->
+    <listener>
+        <listener-class>listener.PostgresContextListener</listener-class>
+    </listener>
     <listener>
         <listener-class>listener.MongoContextListener</listener-class>
     </listener>

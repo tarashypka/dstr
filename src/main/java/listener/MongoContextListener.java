@@ -6,6 +6,8 @@ import com.mongodb.MongoClient;
 import com.mongodb.MongoCredential;
 import com.mongodb.ServerAddress;
 
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
@@ -43,7 +45,14 @@ public class MongoContextListener implements ServletContextListener {
         auths.add(MongoCredential.createCredential(user, db, pswd.toCharArray()));
 
         MongoClient mongoClient = new MongoClient(seeds, auths);
-        sce.getServletContext().setAttribute("MONGO_CLIENT", mongoClient);
+        ctx.setAttribute("MONGO_CLIENT", mongoClient);
+
+        // Expand MongoClient beyond Servlets via JNDI
+        try {
+            new InitialContext().rebind("MONGO_CLIENT", mongoClient);
+        } catch (NamingException ex) {
+            ex.printStackTrace();
+        }
         System.out.println("MongoClient: initialized successfully");
     }
 
