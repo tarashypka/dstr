@@ -64,19 +64,22 @@
       width: 200px;
       height: 25px;
     }
+    form[name=butt0] {
+      top: 50px;
+    }
     form[name=butt1] {
-      top: 25px;
+      top: 20px;
     }
     form[name=butt2] {
-      top: 25px;
+      top: 20px;
       left: 230px;
     }
     form[name=butt3] {
-      top: 25px;
+      top: 20px;
       left: 435px;
     }
     form[name=inp1] {
-      top: 50px;
+      top: 75px;
       margin-top: 5px;
     }
     form[name=inp1] input {
@@ -101,12 +104,15 @@
   <c:url value="/admin/addItem" var="addItemURL"></c:url>
   <c:url value="/admin/editItem" var="editItemURL"></c:url>
   <c:url value="/admin/showItems" var="showItemsURL"></c:url>
+  <c:url value="/admin/showCustomers" var="showCustomersURL"></c:url>
+  <c:url value="/admin/showOrders" var="showOrdersURL"></c:url>
 
-  <form action='<c:out value="${addItemURL}"></c:out>' method="get" name="butt1">
+
+  <form action='<c:out value="${addItemURL}"></c:out>' method="get" name="butt0">
     <input type="submit" value="Додати новий товар">
   </form>
 
-  <%-- User Add/Edit logic --%>
+  <%-- Item Add/Edit logic --%>
   <c:if test="${requestScope.errtype ne null}">
     <strong class="err">
       <c:choose>
@@ -162,12 +168,16 @@
     </strong>
   </c:if>
 
-  <form action='<c:out value="${showItemsURL}"></c:out>' method="get" name="butt2">
-    <input type="submit" value="Вивести всі товари">
+  <form action='<c:out value="${showItemsURL}"></c:out>' method="get" name="butt1">
+    <input type="submit" value="Товари">
   </form>
 
-  <form action="/admin/customers" method="get" name="butt3">
-    <input type="submit" value="Показати користувачів">
+  <form action='<c:out value="${showCustomersURL}"></c:out>' method="get" name="butt2">
+    <input type="submit" value="Користувачі">
+  </form>
+
+  <form action='<c:out value="${showOrdersURL}"></c:out>' method="get" name="butt3">
+    <input type="submit" value="Замовлення">
   </form>
 
   <%
@@ -176,10 +186,9 @@
     request.setAttribute("items", items);
   %>
 
-  <%-- Users List Logic --%>
+  <%-- Items List Logic --%>
   <c:if test="${not empty requestScope.items}">
     <table>
-      <tbody>
         <tr>
           <th>ID</th>
           <th>Категорія</th>
@@ -210,7 +219,6 @@
             </td>
           </tr>
         </c:forEach>
-      </tbody>
     </table>
   </c:if>
 </body>

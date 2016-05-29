@@ -41,9 +41,9 @@ public class MongoItemDAO {
         return (int) updRes.getModifiedCount();
     }
 
-    public Item findItem(Item item) {
+    public Item findItem(ObjectId _id) {
         Document doc = this.mongoColl.find(
-                eq("_id", new ObjectId(item.getId()))).first();
+                eq("_id", _id)).first();
         return ItemConverter.toItem(doc);
     }
 
@@ -61,9 +61,18 @@ public class MongoItemDAO {
         return items;
     }
 
-    public int deleteItem(Item item) {
+    public int deleteItem(ObjectId _id) {
         DeleteResult delRes = this.mongoColl.deleteOne(
-                eq("_id", new ObjectId(item.getId())));
+                eq("_id", _id));
         return (int) delRes.getDeletedCount();
+    }
+
+    public List<Item> findItemsByIds(List<String> itemsIds) {
+        List<Item> items = new ArrayList<>();
+
+        for (String id : itemsIds) {
+            items.add(findItem(new ObjectId(id)));
+        }
+        return items;
     }
 }

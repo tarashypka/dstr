@@ -4,6 +4,7 @@ import com.hazelcast.core.Hazelcast;
 import com.mongodb.MongoClient;
 import dao.MongoItemDAO;
 import model.item.Item;
+import org.bson.types.ObjectId;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -69,12 +70,13 @@ public class EditItemServlet extends HttpServlet {
                 request.setAttribute("error", "Товар не редаговано");
             }
         }
-        request.getRequestDispatcher("/items.jsp").forward(request, response);
+        request.getRequestDispatcher("/admin/items").forward(request, response);
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
+        request.setCharacterEncoding("UTF-8");
         String id = request.getParameter("id");
         if (id == null || id.equals("")) {
             throw new ServletException("Невірний id товару");
@@ -84,8 +86,8 @@ public class EditItemServlet extends HttpServlet {
         MongoItemDAO itemDAO = new MongoItemDAO(mongo);
         Item item = new Item();
         item.setId(id);
-        item = itemDAO.findItem(item);
+        item = itemDAO.findItem(new ObjectId(id));
         request.setAttribute("item", item);
-        request.getRequestDispatcher("/items.jsp").forward(request, response);
+        request.getRequestDispatcher("/admin/items").forward(request, response);
     }
 }

@@ -128,22 +128,21 @@ public class ItemConverter {
         return item;
     }
 
-    public static List<DBRef> toDBRefs(List<Item> items) {
+    public static List<DBRef> toDBRefs(List<String> itemsIds) {
         List<DBRef> dbRefs = new ArrayList<>();
 
-        for (Item item : items) {
-            dbRefs.add(new DBRef(COLL, item.getId()));
+        for (String id : itemsIds) {
+            dbRefs.add(new DBRef(COLL, new ObjectId(id)));
         }
         return dbRefs;
     }
 
-    public static List<ObjectId> toItemsIds(List<DBRef> dbRefs) {
+    public static List<String> toItemsIds(List<DBRef> dbRefs) {
 
-        List<ObjectId> itemsIds = new ArrayList<>();
+        List<String> itemsIds = new ArrayList<>();
 
         for (DBRef dbRef : dbRefs) {
-            ObjectId id = (ObjectId) dbRef.getId();
-            itemsIds.add(id);
+            itemsIds.add((String) dbRef.getId());
         }
         return itemsIds;
     }

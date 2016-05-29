@@ -51,13 +51,13 @@ public class AddItemServlet extends HttpServlet {
             // Update Hz cache
             Hazelcast.getHazelcastInstanceByName("HZ_CONFIG").getList("ITEMS").add(item);
         }
-        request.getRequestDispatcher("/items.jsp").forward(request, response);
+        request.getRequestDispatcher("/admin/items").forward(request, response);
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
         request.setAttribute("item", null);
-        request.getRequestDispatcher("/items.jsp").forward(request, response);
+        request.getRequestDispatcher("/admin/items").forward(request, response);
     }
 }

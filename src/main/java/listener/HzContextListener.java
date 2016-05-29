@@ -28,15 +28,19 @@ public class HzContextListener implements ServletContextListener {
         // Initialize Hazelcast with USERS instance
         ListConfig customersLC = new ListConfig();
         ListConfig itemsLC = new ListConfig();
+        ListConfig ordersLC = new ListConfig();
         customersLC.setName("CUSTOMERS");
         itemsLC.setName("ITEMS");
+        ordersLC.setName("ORDERS");
 
         ServletContext ctx = sce.getServletContext();
         int port = Integer.parseInt(ctx.getInitParameter("HZ_PORT"));
         int hosts = Integer.parseInt(ctx.getInitParameter("HZ_HOSTS"));
 
         Config cfg = new Config();
-        cfg.addListConfig(customersLC).addListConfig(itemsLC);
+        cfg.addListConfig(customersLC)
+                .addListConfig(itemsLC)
+                .addListConfig(ordersLC);
         cfg.getNetworkConfig().setPort(port);
         cfg.getNetworkConfig().setPortAutoIncrement(false);
 

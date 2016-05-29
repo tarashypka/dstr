@@ -1,6 +1,6 @@
 <%@ page import="com.hazelcast.core.Hazelcast" %>
 <%@ page import="java.util.List" %>
-<%@ page import="model.Customer" %>
+<%@ page import="model.customer.Customer" %>
 
 <%--
   Created by IntelliJ IDEA.
@@ -16,21 +16,8 @@
 <html>
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-  <title>dstr: Користувачі</title>
+  <title>dstr: Замовники</title>
   <style>
-    #worker, #ip, #session {
-      position: fixed;
-      left: 5px;
-    }
-    #worker {
-      bottom: 45px;
-    }
-    #ip {
-      bottom: 25px;
-    }
-    #session {
-      bottom: 5px;
-    }
     .err div {
       color: red;
       position: fixed;
@@ -67,19 +54,22 @@
       width: 200px;
       height: 25px;
     }
+    form[name=butt0] {
+      top: 50px;
+    }
     form[name=butt1] {
-      top: 25px;
+      top: 20px;
     }
     form[name=butt2] {
-      top: 25px;
+      top: 20px;
       left: 230px;
     }
     form[name=butt3] {
-      top: 25px;
+      top: 20px;
       left: 435px;
     }
     form[name=inp1] {
-      top: 50px;
+      top: 75px;
       margin-top: 5px;
     }
     form[name=inp1] input {
@@ -97,19 +87,18 @@
   </style>
 </head>
 <body>
-  <div id="worker">worker: no workers</div>
-  <div id="ip">ip: localhost</div>
-  <div id="session">session: <%= request.getSession().getId() %></div>
 
   <c:url value="/admin/addCustomer" var="addCustomerURL"></c:url>
   <c:url value="/admin/editCustomer" var="editCustomerURL"></c:url>
+  <c:url value="/admin/showItems" var="showItemsURL"></c:url>
   <c:url value="/admin/showCustomers" var="showCustomersURL"></c:url>
+  <c:url value="/admin/showOrders" var="showOrdersURL"></c:url>
 
-  <form action='<c:out value="${addCustomerURL}"></c:out>' method="get" name="butt1">
+  <form action='<c:out value="${addCustomerURL}"></c:out>' method="get" name="butt0">
     <input type="submit" value="Створити нового користувача">
   </form>
 
-  <%-- User Add/Edit logic --%>
+  <%-- Customer Add/Edit logic --%>
   <c:if test="${requestScope.errtype ne null}">
     <strong class="err">
       <c:choose>
@@ -170,12 +159,16 @@
     </strong>
   </c:if>
 
-  <form action='<c:out value="${showCustomersURL}"></c:out>' method="get" name="butt2">
-    <input type="submit" value="Вивести всіх користувачів">
+  <form action='<c:out value="${showItemsURL}"></c:out>' method="get" name="butt1">
+    <input type="submit" value="Товари">
   </form>
 
-  <form action='/admin/items' method="get" name="butt3">
-    <input type="submit" value="Показати товари">
+  <form action='<c:out value="${showCustomersURL}"></c:out>' method="get" name="butt2">
+    <input type="submit" value="Користувачі">
+  </form>
+
+  <form action='<c:out value="${showOrdersURL}"></c:out>' method="get" name="butt3">
+    <input type="submit" value="Замовлення">
   </form>
 
   <%
@@ -184,17 +177,14 @@
     request.setAttribute("customers", customers);
   %>
 
-  <%-- Users List Logic --%>
+  <%-- Customers List Logic --%>
   <c:if test="${not empty requestScope.customers}">
     <table>
-      <tbody>
         <tr>
           <th>Ім'я</th>
           <th>Прізвище</th>
           <th>Електронна пошта</th>
           <th>Пароль</th>
-          <th>Редагувати</th>
-          <th>Видалити</th>
         </tr>
         <c:forEach items="${requestScope.customers}" var="customer">
           <c:url value="/admin/editCustomer" var="editCustomerURL">
@@ -220,7 +210,6 @@
             </td>
           </tr>
         </c:forEach>
-      </tbody>
     </table>
   </c:if>
 </body>

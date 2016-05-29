@@ -8,25 +8,88 @@
     <distributable/>
 
     <welcome-file-list>
-        <welcome-file>customers.jsp</welcome-file>
+        <welcome-file>admin/home.jsp</welcome-file>
     </welcome-file-list>
 
     <servlet>
-        <servlet-name>Customers</servlet-name>
-        <jsp-file>/customers.jsp</jsp-file>
+        <servlet-name>item</servlet-name>
+        <jsp-file>/item.jsp</jsp-file>
     </servlet>
     <servlet-mapping>
-        <servlet-name>Customers</servlet-name>
+        <servlet-name>item</servlet-name>
+        <url-pattern>/item</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>adminHome</servlet-name>
+        <jsp-file>/admin/home.jsp</jsp-file>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>adminHome</servlet-name>
+        <url-pattern>/admin/</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>adminCustomers</servlet-name>
+        <jsp-file>/admin/customers.jsp</jsp-file>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>adminCustomers</servlet-name>
         <url-pattern>/admin/customers</url-pattern>
     </servlet-mapping>
 
     <servlet>
-        <servlet-name>Items</servlet-name>
-        <jsp-file>/items.jsp</jsp-file>
+        <servlet-name>adminOrders</servlet-name>
+        <jsp-file>/admin/orders.jsp</jsp-file>
     </servlet>
     <servlet-mapping>
-        <servlet-name>Items</servlet-name>
+        <servlet-name>adminOrders</servlet-name>
+        <url-pattern>/admin/orders</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>adminItems</servlet-name>
+        <jsp-file>/admin/items.jsp</jsp-file>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>adminItems</servlet-name>
         <url-pattern>/admin/items</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>customerHome</servlet-name>
+        <jsp-file>/customer/home.jsp</jsp-file>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>customerHome</servlet-name>
+        <url-pattern>/customer/</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>customerMakeOrder</servlet-name>
+        <jsp-file>/customer/makeorder.jsp</jsp-file>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>customerMakeOrder</servlet-name>
+        <url-pattern>/customer/makeOrder</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>customerOrders</servlet-name>
+        <jsp-file>/customer/orders.jsp</jsp-file>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>customerOrders</servlet-name>
+        <url-pattern>/customer/showOrders</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>customerItems</servlet-name>
+        <jsp-file>/customer/items.jsp</jsp-file>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>customerItems</servlet-name>
+        <url-pattern>/customer/showItems</url-pattern>
     </servlet-mapping>
 
     <context-param>

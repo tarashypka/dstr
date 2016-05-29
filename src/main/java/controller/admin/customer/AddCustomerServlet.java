@@ -2,7 +2,7 @@ package controller.admin.customer;
 
 import com.hazelcast.core.Hazelcast;
 import dao.PostgresCustomerDAO;
-import model.Customer;
+import model.customer.Customer;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -66,13 +66,13 @@ public class AddCustomerServlet extends HttpServlet {
             Hazelcast.getHazelcastInstanceByName("HZ_CONFIG")
                     .getList("CUSTOMERS").add(customer);
         }
-        request.getRequestDispatcher("/customers.jsp").forward(request, response);
+        request.getRequestDispatcher("/admin/customers").forward(request, response);
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
         request.setAttribute("customer", null);
-        request.getRequestDispatcher("/customers.jsp").forward(request, response);
+        request.getRequestDispatcher("/admin/customers").forward(request, response);
     }
 }

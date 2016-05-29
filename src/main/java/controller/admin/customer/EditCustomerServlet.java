@@ -2,7 +2,7 @@ package controller.admin.customer;
 
 import com.hazelcast.core.Hazelcast;
 import dao.PostgresCustomerDAO;
-import model.Customer;
+import model.customer.Customer;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -83,12 +83,13 @@ public class EditCustomerServlet extends HttpServlet {
                 e.printStackTrace();
             }
         }
-        request.getRequestDispatcher("/customers.jsp").forward(request, response);
+        request.getRequestDispatcher("/admin/customers").forward(request, response);
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
+        request.setCharacterEncoding("UTF-8");
         String email = request.getParameter("email");
         if (email == null || email.equals("")) {
             throw new ServletException("Невірний email користувача");
@@ -107,6 +108,6 @@ public class EditCustomerServlet extends HttpServlet {
         }
 
         request.setAttribute("customer", customer);
-        request.getRequestDispatcher("/customers.jsp").forward(request, response);
+        request.getRequestDispatcher("/admin/customers").forward(request, response);
     }
 }

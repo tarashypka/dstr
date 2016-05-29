@@ -1,6 +1,6 @@
 package dao;
 
-import model.Customer;
+import model.customer.Customer;
 
 import javax.sql.DataSource;
 import java.sql.Connection;

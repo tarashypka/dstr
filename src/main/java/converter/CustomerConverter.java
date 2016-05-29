@@ -1,6 +1,6 @@
 package converter;
 
-import model.Customer;
+import model.customer.Customer;
 import org.bson.Document;
 
 /**
@@ -12,6 +12,7 @@ public class CustomerConverter {
 
         doc.append("name", customer.getName());
         doc.append("surname", customer.getSurname());
+        doc.append("email", customer.getEmail());
 
         return doc;
     }
@@ -21,6 +22,7 @@ public class CustomerConverter {
 
         customer.setName(doc.getString("name"));
         customer.setSurname(doc.getString("surname"));
+        customer.setEmail(doc.getString("email"));
 
         return customer;
     }

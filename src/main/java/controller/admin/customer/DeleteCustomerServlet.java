@@ -2,7 +2,7 @@ package controller.admin.customer;
 
 import com.hazelcast.core.Hazelcast;
 import dao.PostgresCustomerDAO;
-import model.Customer;
+import model.customer.Customer;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -47,6 +47,6 @@ public class DeleteCustomerServlet extends HttpServlet {
         Hazelcast.getHazelcastInstanceByName("HZ_CONFIG")
                 .getList("CUSTOMERS").remove(customer);
 
-        request.getRequestDispatcher("/customers.jsp").forward(request, response);
+        request.getRequestDispatcher("/admin/customers").forward(request, response);
     }
 }
