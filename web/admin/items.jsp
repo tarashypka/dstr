@@ -1,6 +1,6 @@
 <%@ page import="com.hazelcast.core.Hazelcast" %>
 <%@ page import="java.util.List" %>
-<%@ page import="model.item.Item" %>
+<%@ page import="com.dstr.model.item.Item" %>
 
 <%--
   Created by IntelliJ IDEA.
@@ -11,26 +11,13 @@
 --%>
 
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-<%@ page contentType="text/html; charset=UTF-8"
-         language="java" pageEncoding="UTF-8" session="true" %>
+<%@ page contentType="text/html; charset=UTF-8" language="java" %>
+
 <html>
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
   <title>dstr: Товари</title>
   <style>
-    #worker, #ip, #session {
-      position: fixed;
-      left: 5px;
-    }
-    #worker {
-      bottom: 45px;
-    }
-    #ip {
-      bottom: 25px;
-    }
-    #session {
-      bottom: 5px;
-    }
     .err div {
       color: red;
       position: fixed;
@@ -97,9 +84,6 @@
   </style>
 </head>
 <body>
-  <div id="worker">worker: no workers</div>
-  <div id="ip">ip: localhost</div>
-  <div id="session">session: <%= request.getSession().getId() %></div>
 
   <c:url value="/admin/addItem" var="addItemURL"></c:url>
   <c:url value="/admin/editItem" var="editItemURL"></c:url>

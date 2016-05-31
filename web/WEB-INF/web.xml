@@ -7,91 +7,12 @@
 
     <distributable/>
 
+    <!-- Files to load on home -->
     <welcome-file-list>
-        <welcome-file>admin/home.jsp</welcome-file>
+        <welcome-file>home.jsp</welcome-file>
     </welcome-file-list>
 
-    <servlet>
-        <servlet-name>item</servlet-name>
-        <jsp-file>/item.jsp</jsp-file>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>item</servlet-name>
-        <url-pattern>/item</url-pattern>
-    </servlet-mapping>
-
-    <servlet>
-        <servlet-name>adminHome</servlet-name>
-        <jsp-file>/admin/home.jsp</jsp-file>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>adminHome</servlet-name>
-        <url-pattern>/admin/</url-pattern>
-    </servlet-mapping>
-
-    <servlet>
-        <servlet-name>adminCustomers</servlet-name>
-        <jsp-file>/admin/customers.jsp</jsp-file>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>adminCustomers</servlet-name>
-        <url-pattern>/admin/customers</url-pattern>
-    </servlet-mapping>
-
-    <servlet>
-        <servlet-name>adminOrders</servlet-name>
-        <jsp-file>/admin/orders.jsp</jsp-file>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>adminOrders</servlet-name>
-        <url-pattern>/admin/orders</url-pattern>
-    </servlet-mapping>
-
-    <servlet>
-        <servlet-name>adminItems</servlet-name>
-        <jsp-file>/admin/items.jsp</jsp-file>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>adminItems</servlet-name>
-        <url-pattern>/admin/items</url-pattern>
-    </servlet-mapping>
-
-    <servlet>
-        <servlet-name>customerHome</servlet-name>
-        <jsp-file>/customer/home.jsp</jsp-file>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>customerHome</servlet-name>
-        <url-pattern>/customer/</url-pattern>
-    </servlet-mapping>
-
-    <servlet>
-        <servlet-name>customerMakeOrder</servlet-name>
-        <jsp-file>/customer/makeorder.jsp</jsp-file>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>customerMakeOrder</servlet-name>
-        <url-pattern>/customer/makeOrder</url-pattern>
-    </servlet-mapping>
-
-    <servlet>
-        <servlet-name>customerOrders</servlet-name>
-        <jsp-file>/customer/orders.jsp</jsp-file>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>customerOrders</servlet-name>
-        <url-pattern>/customer/showOrders</url-pattern>
-    </servlet-mapping>
-
-    <servlet>
-        <servlet-name>customerItems</servlet-name>
-        <jsp-file>/customer/items.jsp</jsp-file>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>customerItems</servlet-name>
-        <url-pattern>/customer/showItems</url-pattern>
-    </servlet-mapping>
-
+    <!-- Hazelcast context params -->
     <context-param>
         <param-name>HZ_HOSTS</param-name>
         <param-value>3</param-value>
@@ -113,6 +34,7 @@
         <param-value>5701</param-value>
     </context-param>
 
+    <!-- MongoDB context params -->
     <context-param>
         <param-name>MONGO_HOSTS</param-name>
         <param-value>3</param-value>
@@ -146,9 +68,10 @@
         <param-value>1234</param-value>
     </context-param>
 
+    <!-- PostgreSQL context params -->
     <context-param>
         <param-name>POSTGRES_HOST</param-name>
-        <param-value>localhost</param-value>
+        <param-value>thinkpad</param-value>
     </context-param>
     <context-param>
         <param-name>POSTGRES_PORT</param-name>
@@ -167,14 +90,50 @@
         <param-value>1234</param-value>
     </context-param>
 
-    <!-- Run Context Listeners in order -->
+    <!-- Distributed session with Hazelcast -->
+    <filter>
+        <filter-name>hazelcast-filter</filter-name>
+        <filter-class>com.hazelcast.web.WebFilter</filter-class>
+
+        <!-- Name of the distributed map storing for web session objects -->
+        <init-param>
+            <param-name>map-name</param-name>
+            <param-value>my-sessions</param-value>
+        </init-param>
+        <!-- Name of session id cookie -->
+        <init-param>
+            <param-name>cookie-name</param-name>
+            <param-value>hazelcast.sessionId</param-value>
+        </init-param>
+    </filter>
+    <filter-mapping>
+        <filter-name>hazelcast-filter</filter-name>
+        <url-pattern>/*</url-pattern>
+        <dispatcher>FORWARD</dispatcher>
+        <dispatcher>INCLUDE</dispatcher>
+        <dispatcher>REQUEST</dispatcher>
+    </filter-mapping>
     <listener>
-        <listener-class>listener.PostgresContextListener</listener-class>
+        <listener-class>com.hazelcast.web.SessionListener</listener-class>
     </listener>
-    <listener>
-        <listener-class>listener.MongoContextListener</listener-class>
-    </listener>
-    <listener>
-        <listener-class>listener.HzContextListener</listener-class>
-    </listener>
+
+    <!-- Handle 404 errors and exceptions with predefined Servlet -->
+    <error-page>
+        <error-code>404</error-code>
+        <location>/errorHandler</location>
+    </error-page>
+    <error-page>
+        <exception-type>java.lang.Throwable</exception-type>
+        <location>/errorHandler</location>
+    </error-page>
+
+    <!-- Filter all incoming requests to validate the session -->
+    <filter>
+        <filter-name>AuthenticationFilter</filter-name>
+        <filter-class>com.dstr.filter.AuthenticationFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>AuthenticationFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
 </web-app>

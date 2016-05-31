@@ -1,6 +1,6 @@
 <%@ page import="com.hazelcast.core.Hazelcast" %>
 <%@ page import="java.util.List" %>
-<%@ page import="model.customer.Customer" %>
+<%@ page import="com.dstr.model.customer.Customer" %>
 
 <%--
   Created by IntelliJ IDEA.
@@ -11,8 +11,8 @@
 --%>
 
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-<%@ page contentType="text/html; charset=UTF-8"
-         language="java" pageEncoding="UTF-8" session="true" %>
+<%@ page contentType="text/html; charset=UTF-8" language="java" %>
+
 <html>
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">

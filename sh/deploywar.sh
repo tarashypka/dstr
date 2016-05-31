@@ -7,15 +7,19 @@
 PRJ_NAME="dstr"
 PRJ_HOME=/home/deoxys/Workspace/IdeaProjects/Java/$PRJ_NAME
 WAR_FILE=$PRJ_HOME/target/$PRJ_NAME.war
+TAG_FILE=$PRJ_HOME/web/WEB-INF/tags/genericpage.tag
 
-# Generate war file
 cd $PRJ_HOME
-mvn package
+for i (1 2 3); do
+    find $TAG_FILE -type f -exec sed -i "s/localhost/tomcat$i (192.168.56.12$i)/g" {} \;
 
-# To write to tomcatsvr[1,2,3]:/opt/tomcat/webapps
-# write permissions should be changed first:
-# sudo chmod a+w /opt/tomcat/webapps
+    # Generate war file
+    mvn package
 
-scp $WAR_FILE tomcatsvr1:/opt/tomcat/webapps/
-scp $WAR_FILE tomcatsvr2:/opt/tomcat/webapps/
-scp $WAR_FILE tomcatsvr3:/opt/tomcat/webapps/
+    # To write to tomcatsvr[1,2,3]:/opt/tomcat/webapps
+    # write permissions should be changed first:
+    # sudo chmod a+w /opt/tomcat/webapps
+
+    scp $WAR_FILE tomcatsvr$i:/opt/tomcat/webapps/
+    find $TAG_FILE -type f -exec sed -i "s/tomcat$i (192.168.56.12$i)/localhost/g" {} \;
+done

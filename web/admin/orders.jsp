@@ -1,6 +1,6 @@
 <%@ page import="com.hazelcast.core.Hazelcast" %>
 <%@ page import="java.util.List" %>
-<%@ page import="model.order.Order" %>
+<%@ page import="com.dstr.model.order.Order" %>
 
 <%--
   Created by IntelliJ IDEA.
@@ -11,8 +11,8 @@
 --%>
 
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-<%@ page contentType="text/html; charset=UTF-8"
-         language="java" pageEncoding="UTF-8" session="true" %>
+<%@ page contentType="text/html; charset=UTF-8" language="java" %>
+
 <html>
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
@@ -62,20 +62,20 @@
 </head>
 <body>
 
-<c:url value="/admin/showItems" var="showItemsURL"></c:url>
-<c:url value="/admin/showCustomers" var="showCustomersURL"></c:url>
-<c:url value="/admin/showOrders" var="showOrdersURL"></c:url>
+<c:url value="/customer/addOrder" var="addOrderURL"></c:url>
+<c:url value="/customer/showOrders" var="showOrdersURL"></c:url>
+<c:url value="/customer/showItems" var="showItemsURL"></c:url>
 
-<form action='<c:out value="${showItemsURL}"></c:out>' method="get" name="butt1">
-  <input type="submit" value="Товари">
+<form action='<c:out value="${addOrderURL}"></c:out>' method="get" name="butt1">
+  <input type="submit" value="Зробити замовлення">
 </form>
 
-<form action='<c:out value="${showCustomersURL}"></c:out>' method="get" name="butt2">
-  <input type="submit" value="Користувачі">
+<form action='<c:out value="${showOrdersURL}"></c:out>' method="get" name="butt2">
+  <input type="submit" value="Мої замовлення">
 </form>
 
-<form action='<c:out value="${showOrdersURL}"></c:out>' method="get" name="butt3">
-  <input type="submit" value="Замовлення">
+<form action='<c:out value="${showItemsURL}"></c:out>' method="get" name="butt3">
+  <input type="submit" value="Замовлені товари">
 </form>
 
 <%
@@ -91,7 +91,6 @@
       <th>ID</th>
       <th>№ замовлення</th>
       <th>Дата</th>
-      <th>Замовник</th>
       <th>Товар</th>
       <th>Кількість</th>
       <th>Вартість</th>
@@ -102,10 +101,6 @@
         <td><c:out value="${order.id}"></c:out></td>
         <td><c:out value="${order.orderNumber}"></c:out></td>
         <td><c:out value="${order.date}"></c:out></td>
-        <td>
-            <c:out value="${order.customer.name}"></c:out>
-            <c:out value="${order.customer.surname}"></c:out>
-        </td>
         <td>
           <c:forEach items="${order.items}" var="item">
             <c:url value="/showItem" var="showItemURL">

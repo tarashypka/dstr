@@ -33,6 +33,9 @@
   </style>
 </head>
 <body>
+  <div id="worker">worker: no workers</div>
+  <div id="ip">ip: localhost</div>
+  <div id="session">session: <%= request.getSession().getId() %></div>
 
   <c:url value="/admin/showItems" var="showItemsURL"></c:url>
   <c:url value="/admin/showCustomers" var="showCustomersURL"></c:url>

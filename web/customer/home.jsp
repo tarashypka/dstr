@@ -34,7 +34,7 @@
 </head>
 <body>
 
-  <c:url value="/customer/makeOrder" var="makeOrderURL"></c:url>
+  <c:url value="/customer/addOrder" var="makeOrderURL"></c:url>
   <c:url value="/customer/showItems" var="showItemsURL"></c:url>
   <c:url value="/customer/showOrders" var="showOrdersURL"></c:url>
 
