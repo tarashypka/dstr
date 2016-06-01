@@ -1,6 +1,6 @@
 package com.dstr.servlet.controller;
 
-import com.dstr.model.customer.Customer;
+import com.dstr.model.Customer;
 import org.apache.log4j.Logger;
 
 import javax.servlet.ServletException;

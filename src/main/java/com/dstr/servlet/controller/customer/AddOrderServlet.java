@@ -1,10 +1,10 @@
-package com.dstr.servlet.controller.customer.order;
+package com.dstr.servlet.controller.customer;
 
 import com.hazelcast.core.Hazelcast;
 import com.mongodb.MongoClient;
 import com.dstr.dao.MongoOrderDAO;
-import com.dstr.model.customer.Customer;
-import com.dstr.model.order.Order;
+import com.dstr.model.Customer;
+import com.dstr.model.Order;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -18,7 +18,7 @@ import java.util.*;
  * Created by deoxys on 29.05.16.
  */
 
-@WebServlet(name = "AddOrder", urlPatterns = "/customer/orders/add")
+@WebServlet(name = "AddOrder", urlPatterns = "/orders/add")
 public class AddOrderServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {

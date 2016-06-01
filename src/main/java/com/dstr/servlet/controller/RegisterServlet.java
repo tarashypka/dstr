@@ -1,7 +1,7 @@
 package com.dstr.servlet.controller;
 
 import com.dstr.dao.PostgresCustomerDAO;
-import com.dstr.model.customer.Customer;
+import com.dstr.model.Customer;
 import org.apache.log4j.Logger;
 
 import javax.servlet.ServletException;
@@ -72,12 +72,15 @@ public class RegisterServlet extends HttpServlet {
                         + ex.getMessage());
             }
         }
-
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
+        if (request.getSession().getAttribute("customer") != null) {
+            String contextPath = request.getContextPath();
+            response.sendRedirect(contextPath.isEmpty() ? "/" : contextPath);
+        }
         request.getRequestDispatcher("/register.jsp").forward(request, response);
     }
 }

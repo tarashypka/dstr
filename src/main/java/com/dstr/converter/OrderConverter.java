@@ -3,8 +3,8 @@ package com.dstr.converter;
 import com.mongodb.BasicDBList;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBRef;
-import com.dstr.model.customer.Customer;
-import com.dstr.model.order.Order;
+import com.dstr.model.Customer;
+import com.dstr.model.Order;
 import org.bson.Document;
 import org.bson.types.ObjectId;
 
@@ -13,6 +13,7 @@ import java.util.*;
 /**
  * Created by deoxys on 27.05.16.
  */
+
 public class OrderConverter {
     private static final String COLL = "orders";
 
@@ -60,7 +61,7 @@ public class OrderConverter {
         for (Document itemDoc : itemsDocs) {
             DBRef dbRef = (DBRef) itemDoc.get("id");
             String id = dbRef.getId().toString();
-            Integer quantity = itemDoc.getDouble("quantity").intValue();
+            Integer quantity = itemDoc.getInteger("quantity");
             items.put(id, quantity);
         }
         order.setItems(items);

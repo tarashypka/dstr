@@ -1,11 +1,12 @@
 package com.dstr.converter;
 
-import com.dstr.model.customer.Customer;
+import com.dstr.model.Customer;
 import org.bson.Document;
 
 /**
  * Created by deoxys on 27.05.16.
  */
+
 public class CustomerConverter {
     public static Document toDocument(Customer customer) {
         Document doc = new Document();

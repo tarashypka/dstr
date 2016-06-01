@@ -11,6 +11,46 @@ httpd v2.4.20
 JK v1.2.41
 Maven v3.3.9
 ```
+### PostgreSQL configuration
+
+#### Configure postgres connection settings in web.xml
+
+`/etc/hosts` could be used to configure DNS:
+```
+192.168.56.1	thinkpad
+```
+
+##### *default instance on localhost*
+```
+<context-param>
+  	<param-name>POSTGRES_HOST</param-name>
+  	<param-value>thinkpad</param-value>
+</context-param>
+<context-param>
+   	<param-name>POSTGRES_PORT</param-name>
+  	<param-value>5432</param-value>
+</context-param>
+```
+
+#### Add required access in `pg_hba.conf`
+```
+local   all             dstrdbadmin                        md5
+host    all             all             mongosvr1/24       trust
+host    all             all             mongosvr2/24       trust
+host    all             all             mongosvr3/24       trust
+```
+
+#### Create required schema, user and table
+```
+$ sudo -u postgres psql -d template1
+template1=# CREATE DATABASE dstr;
+template1=# CREATE USER dstrDbAdmin WITH PASSWORD '1234';
+template1=# GRANT ALL PRIVILEGES ON DATABASE dstr to dstrdbadmin;
+template1=# \q
+$ psql -d dstr -U dstrdbadmin -W
+template1=# INSERT INTO customers (name, surname, email, password, role)
+			VALUES ('admin', 'admin', 'dstrdbadmin', '1234', 'admin');
+```
 
 ### MongoDB configuration
 

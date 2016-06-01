@@ -1,4 +1,4 @@
-package com.dstr.servlet.controller.customer.order;
+package com.dstr.servlet.controller.customer;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -11,7 +11,7 @@ import java.io.IOException;
  * Created by deoxys on 29.05.16.
  */
 
-@WebServlet(name = "EditOrder", urlPatterns = "/customer/orders/edit")
+@WebServlet(name = "EditOrder", urlPatterns = "/orders/edit")
 public class EditOrderServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {

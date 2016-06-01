@@ -1,8 +1,8 @@
 package com.dstr.servlet.controller.admin.customer;
 
-import com.hazelcast.core.Hazelcast;
 import com.dstr.dao.PostgresCustomerDAO;
-import com.dstr.model.customer.Customer;
+import com.dstr.model.Customer;
+import org.apache.log4j.Logger;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -12,42 +12,52 @@ import javax.servlet.http.HttpServletResponse;
 import javax.sql.DataSource;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by deoxys on 28.05.16.
  */
 
-@WebServlet(name = "DeleteCustomer", urlPatterns = "/admin/customers/delete")
+@WebServlet(name = "DeleteCustomer", urlPatterns = "/customers/delete")
 public class DeleteCustomerServlet extends HttpServlet {
+    final static Logger logger = Logger.getLogger(DeleteCustomerServlet.class);
+
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
+        request.setCharacterEncoding("UTF-8");
+
         String email = request.getParameter("email");
+
         if (email == null || email.equals("")) {
-            throw new ServletException("Невірний email користувача");
+            throw new ServletException("Wrong customer email");
         }
 
         DataSource source = (DataSource) request.getServletContext()
                 .getAttribute("POSTGRES_CONNECTION_POOL");
 
-        Customer customer = null;
         try {
             PostgresCustomerDAO customerDAO = new PostgresCustomerDAO(source);
-            customer = customerDAO.selectCustomer(email);
+
             if (customerDAO.deleteCustomer(email)) {
-                request.setAttribute("success", "Користувача видалено");
+                logger.info("Customer with email=" + email + " was deleted");
+
+                // Update session
+                List<Customer> customers = (ArrayList)
+                        request.getSession().getAttribute("customers");
+
+                customers.remove(new Customer(email));
+                request.getSession().setAttribute("customers", customers);
             } else {
-                request.setAttribute("error", "Користувача не видалено");
+                logger.error("Customer with email=" + email + " was not deleted");
             }
             customerDAO.closeConnection();
-        } catch (SQLException e) {
-            e.printStackTrace();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+            logger.info("Delete error: " + ex.getMessage());
+            throw new ServletException("DB Connection/Delete error: " + ex.getMessage());
         }
-
-        // Update Hz cache
-        Hazelcast.getHazelcastInstanceByName("HZ_CONFIG")
-                .getList("CUSTOMERS").remove(customer);
-
-        request.getRequestDispatcher("/admin/customers").forward(request, response);
+        request.getRequestDispatcher("/customers.jsp").forward(request, response);
     }
 }

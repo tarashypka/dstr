@@ -5,8 +5,8 @@
 <%--
   Created by IntelliJ IDEA.
   User: deoxys
-  Date: 29.05.16
-  Time: 4:26
+  Date: 01.06.16
+  Time: 1:04
   To change this template use File | Settings | File Templates.
 --%>
 
@@ -31,27 +31,42 @@
   </jsp:attribute>
 
   <jsp:body>
-    <c:if test="${requestScope.orders ne null}">
+    <c:if test="${sessionScope.customer ne null && sessionScope.orders ne null}">
       <table>
         <tr>
           <th>№ замовлення</th>
           <th>Дата</th>
+          <c:if test="${sessionScope.customer.role eq 'admin'}">
+            <th>Замовник</th>
+          </c:if>
           <th>Товар</th>
           <th>Кількість</th>
           <th>Вартість</th>
           <th>Валюта</th>
         </tr>
-        <c:forEach items="${requestScope.orders}" var="order">
+        <c:forEach items="${sessionScope.orders}" var="order">
           <tr>
             <td><c:out value="${order.orderNumber}"></c:out></td>
             <td><c:out value="${order.date}"></c:out></td>
+
+            <c:if test="${sessionScope.customer.role eq 'admin'}">
+              <c:url value="/customer" var="customerURL">
+                <c:param name="email" value="${order.customer.email}"></c:param>
+              </c:url>
+              <td>
+                <a href='<c:out value="${customerURL}" escapeXml="false"></c:out>'>
+                  <c:out value="${order.customer.name} ${order.customer.surname}"></c:out>
+                </a>
+              </td>
+            </c:if>
+
             <td>
               <c:forEach items="${order.items}" var="item">
                 <c:url value="/item" var="itemURL">
                   <c:param name="id" value="${item.key}"></c:param>
                 </c:url>
                 <a href='<c:out value="${itemURL}" escapeXml="false"></c:out>'>
-                  <c:out value="${item.key}"></c:out><br>
+                    <c:out value="${item.key}"></c:out><br>
                 </a>
               </c:forEach>
             </td>
@@ -70,6 +85,25 @@
                 <c:out value="${price.value}"></c:out><br>
               </c:forEach>
             </td>
+
+            <c:if test="${sessionScope.customer.role eq 'customer'}">
+              <c:url value="/orders/edit" var="editOrderURL">
+                <c:param name="id" value="${order.id}"></c:param>
+              </c:url>
+              <c:url value="/orders/delete" var="deleteOrderURL">
+                <c:param name="id" value="${order.id}"></c:param>
+              </c:url>
+              <td>
+                <a href='<c:out value="${editOrderURL}" escapeXml="false"></c:out>'>
+                  Редагувати
+                </a>
+              </td>
+              <td>
+                <a href='<c:out value="${deleteOrderURL}" escapeXml="false"></c:out>'>
+                  Видалити
+                </a>
+              </td>
+            </c:if>
           </tr>
         </c:forEach>
       </table>

@@ -2,7 +2,7 @@ package com.dstr.servlet.controller;
 
 import com.mongodb.MongoClient;
 import com.dstr.dao.MongoItemDAO;
-import com.dstr.model.item.Item;
+import com.dstr.model.Item;
 import org.bson.types.ObjectId;
 
 import javax.servlet.ServletException;
@@ -16,15 +16,15 @@ import java.io.IOException;
  * Created by deoxys on 29.05.16.
  */
 
-@WebServlet(name = "ShowItem", urlPatterns = "/item")
-public class ShowItemServlet extends HttpServlet {
+@WebServlet(name = "Item", urlPatterns = "/item")
+public class ItemServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
         request.setCharacterEncoding("UTF-8");
         String id = request.getParameter("id");
         if (id == null || id.equals("")) {
-            throw new ServletException("Невірний id товару");
+            throw new ServletException("Wrong item id");
         }
 
         MongoClient mongo = (MongoClient) request.getServletContext()
@@ -33,6 +33,6 @@ public class ShowItemServlet extends HttpServlet {
         Item item = itemDAO.findItem(new ObjectId(id));
 
         request.setAttribute("item", item);
-        request.getRequestDispatcher("/item").forward(request, response);
+        request.getRequestDispatcher("/item.jsp").forward(request, response);
     }
 }

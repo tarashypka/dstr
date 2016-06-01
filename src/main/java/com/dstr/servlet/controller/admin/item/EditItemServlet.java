@@ -3,7 +3,7 @@ package com.dstr.servlet.controller.admin.item;
 import com.hazelcast.core.Hazelcast;
 import com.mongodb.MongoClient;
 import com.dstr.dao.MongoItemDAO;
-import com.dstr.model.item.Item;
+import com.dstr.model.Item;
 import org.bson.types.ObjectId;
 
 import javax.servlet.ServletException;
@@ -19,7 +19,7 @@ import java.util.List;
  * Created by deoxys on 28.05.16.
  */
 
-@WebServlet(name = "EditItem", urlPatterns = "/admin/items/edit")
+@WebServlet(name = "EditItem", urlPatterns = "/items/edit")
 public class EditItemServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {

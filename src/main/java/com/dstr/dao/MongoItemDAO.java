@@ -6,7 +6,7 @@ import com.mongodb.client.MongoCursor;
 import com.mongodb.client.result.DeleteResult;
 import com.mongodb.client.result.UpdateResult;
 import com.dstr.converter.ItemConverter;
-import com.dstr.model.item.Item;
+import com.dstr.model.Item;
 import org.bson.Document;
 import org.bson.types.ObjectId;
 
@@ -18,6 +18,7 @@ import static com.mongodb.client.model.Filters.eq;
 /**
  * Created by deoxys on 27.05.16.
  */
+
 public class MongoItemDAO {
     private MongoCollection<Document> mongoColl;
     private final static String MONGO_DB = "dstr";

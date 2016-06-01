@@ -1,18 +1,16 @@
 package com.dstr.dao;
 
-import com.dstr.model.customer.Customer;
+import com.dstr.model.Customer;
 
 import javax.sql.DataSource;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by deoxys on 27.05.16.
  */
+
 public class PostgresCustomerDAO {
     private static final String COLL = "customers";
     private Connection postgresConn;
@@ -26,12 +24,13 @@ public class PostgresCustomerDAO {
     }
 
     public Customer selectCustomer(String email) throws SQLException {
-        Statement stmt = postgresConn.createStatement();
-        String sql = "SELECT * FROM " + COLL + " WHERE email = '" + email + "';";
-        ResultSet rs = stmt.executeQuery(sql);
+        String query = "SELECT * FROM " + COLL + " WHERE email = ? ;";
+        PreparedStatement stmt = postgresConn.prepareStatement(query);
+        stmt.setString(1, email);
+        ResultSet rs = stmt.executeQuery();
 
         return rs.next() ? new Customer(rs.getString("name"), rs.getString("surname"),
-                email, rs.getString("password")) : null;
+                email, rs.getString("password"), rs.getString("role")) : null;
     }
 
     public List<Customer> selectAllCustomers() throws SQLException {
@@ -46,39 +45,42 @@ public class PostgresCustomerDAO {
             String surname = rs.getString("surname");
             String email = rs.getString("email");
             String password = rs.getString("password");
-            customers.add(new Customer(name, surname, email, password));
+            String role = rs.getString("role");
+            customers.add(new Customer(name, surname, email, password, role));
         }
         return customers;
     }
 
     public boolean insertCustomer(Customer customer) throws SQLException {
-        Statement stmt = postgresConn.createStatement();
-        String sql = "INSERT INTO " + COLL +
-                "(name, surname, email, password, role) VALUES ('" +
-                customer.getName() + "', '" +
-                customer.getSurname() + "', '" +
-                customer.getEmail() + "', '" +
-                customer.getPassword() + "', 'customer');";
+        String query = "INSERT INTO " + COLL +
+                " (name, surname, email, password, role) VALUES (?, ?, ?, ?, ?) ;";
+        PreparedStatement stmt = postgresConn.prepareStatement(query);
+        stmt.setString(1, customer.getName());
+        stmt.setString(2, customer.getSurname());
+        stmt.setString(3, customer.getEmail());
+        stmt.setString(4, customer.getPassword());
+        stmt.setString(5, "customer");
 
-        return stmt.executeUpdate(sql) == 1;
+        return stmt.executeUpdate() == 1;
     }
 
     public boolean updateCustomer(Customer customer) throws SQLException {
-        Statement stmt = postgresConn.createStatement();
-        String sql = "UPDATE " + COLL + " SET (name, surname, email, password) = ('" +
-                customer.getName() + "', '" +
-                customer.getSurname() + "', '" +
-                customer.getEmail() + "', '" +
-                customer.getPassword() + "') WHERE email = '" +
-                customer.getEmail() + "';";
+        String query = "UPDATE " + COLL +
+                " SET (name, surname, email, password) = (?, ?, ?, ?) ;";
+        PreparedStatement stmt = postgresConn.prepareStatement(query);
+        stmt.setString(1, customer.getName());
+        stmt.setString(2, customer.getSurname());
+        stmt.setString(3, customer.getEmail());
+        stmt.setString(4, customer.getPassword());
 
-        return stmt.executeUpdate(sql) == 1;
+        return stmt.executeUpdate() == 1;
     }
 
     public boolean deleteCustomer(String email) throws SQLException {
-        Statement stmt = postgresConn.createStatement();
-        String sql = "DELETE FROM " + COLL + " WHERE email = '" + email + "';";
+        String query = "DELETE FROM " + COLL + " WHERE email = ? ;";
+        PreparedStatement stmt = postgresConn.prepareStatement(query);
+        stmt.setString(1, email);
 
-        return stmt.executeUpdate(sql) == 1;
+        return stmt.executeUpdate() == 1;
     }
 }

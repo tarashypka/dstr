@@ -4,7 +4,7 @@ import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.IMap;
 import com.mongodb.MongoClient;
 import com.dstr.dao.MongoItemDAO;
-import com.dstr.model.item.Item;
+import com.dstr.model.Item;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -17,7 +17,7 @@ import java.io.IOException;
  * Created by deoxys on 28.05.16.
  */
 
-@WebServlet(name = "AddItem", urlPatterns = "/admin/items/add")
+@WebServlet(name = "AddItem", urlPatterns = "/items/add")
 public class AddItemServlet extends HttpServlet {
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -64,13 +64,11 @@ public class AddItemServlet extends HttpServlet {
 
         IMap<String, Object> sessions = Hazelcast.getHazelcastInstanceByName("HZ_CONFIG").getMap("my-sessions");
 
-        System.out.println("iter");
         for (String str: sessions.keySet()) {
             System.out.println("key=" + str);
             System.out.println("val=" + sessions.get(str));
         }
 
-
-        request.getRequestDispatcher("/admin/items").forward(request, response);
+        request.getRequestDispatcher("/items").forward(request, response);
     }
 }

@@ -1,9 +1,10 @@
 package com.dstr.servlet.controller.admin.item;
 
-import com.hazelcast.core.Hazelcast;
+import com.dstr.model.Customer;
+import com.dstr.model.Item;
 import com.mongodb.MongoClient;
 import com.dstr.dao.MongoItemDAO;
-import com.dstr.model.item.Item;
+import org.apache.log4j.Logger;
 import org.bson.types.ObjectId;
 
 import javax.servlet.ServletException;
@@ -12,37 +13,50 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by deoxys on 28.05.16.
  */
 
-@WebServlet(name = "DeleteItem", urlPatterns = "/admin/items/delete")
+@WebServlet(name = "DeleteItem", urlPatterns = "/items/delete")
 public class DeleteItemServlet extends HttpServlet {
+    final static Logger logger = Logger.getLogger(DeleteItemServlet.class);
+
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        String id = request.getParameter("id");
-        if (id == null || id.equals("")) {
-            throw new ServletException("Невірний id товару");
+        request.setCharacterEncoding("UTF-8");
+
+        Customer customer = (Customer) request.getSession().getAttribute("customer");
+
+        if (customer == null || ! customer.getRole().equals("admin")) {
+            throw new ServletException("Not enough authority");
         }
+
+        String id = request.getParameter("id");
+
+        if (id == null || id.equals("")) {
+            throw new ServletException("Wrong item id");
+        }
+
         MongoClient mongo = (MongoClient) request.getServletContext()
                 .getAttribute("MONGO_CLIENT");
         MongoItemDAO itemDAO = new MongoItemDAO(mongo);
-        Item item = new Item();
-        item.setId(id);
 
-        ObjectId _id = new ObjectId(id);
-        item = itemDAO.findItem(_id);
+        if (itemDAO.deleteItem(new ObjectId(id)) > 0) {
+            logger.info("Item with id=" + id + " was deleted");
 
-        if (itemDAO.deleteItem(_id) > 0) {
-            request.setAttribute("success", "Товар видалено");
+            // Update session
+            Map<Item, Integer> items = (HashMap)
+                    request.getSession().getAttribute("items");
 
-            // Update Hz cache
-            Hazelcast.getHazelcastInstanceByName("HZ_CONFIG").getList("ITEMS").remove(item);
+            items.remove(new Item(id));
+            request.getSession().setAttribute("items", items);
         } else {
-            request.setAttribute("error", "Товар не видалено");
+            logger.error("Item with id=" + id + " was not deleted");
         }
-        request.getRequestDispatcher("/admin/items").forward(request, response);
+        request.getRequestDispatcher("/items.jsp").forward(request, response);
     }
 }

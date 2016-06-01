@@ -1,4 +1,4 @@
-package com.dstr.model.customer;
+package com.dstr.model;
 
 import java.io.Serializable;
 
@@ -15,11 +15,16 @@ public class Customer implements Serializable {
 
     public Customer() { }
 
-    public Customer(String name, String surname, String email, String password) {
+    public Customer(String email) {
+        this.email = email;
+    }
+
+    public Customer(String name, String surname, String email, String password, String role) {
         this.name = name;
         this.surname = surname;
         this.email = email;
         this.password = password;
+        this.role = role;
     }
 
     public String getName() {
@@ -63,6 +68,14 @@ public class Customer implements Serializable {
     }
 
     @Override
+    public String toString() {
+        return  "{ name='" + name + '\'' +
+                ", surname='" + surname + '\'' +
+                ", email='" + email + '\'' +
+                ", role='" + role + '\'' + "} ";
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
@@ -70,26 +83,12 @@ public class Customer implements Serializable {
         Customer customer = (Customer) o;
 
         if (email != null ? !email.equals(customer.email) : customer.email != null) return false;
-        if (name != null ? !name.equals(customer.name) : customer.name != null) return false;
-        if (password != null ? !password.equals(customer.password) : customer.password != null) return false;
-        if (role != null ? !role.equals(customer.role) : customer.role != null) return false;
-        if (surname != null ? !surname.equals(customer.surname) : customer.surname != null) return false;
 
         return true;
     }
 
     @Override
     public int hashCode() {
-        int result = name != null ? name.hashCode() : 0;
-        result = 31 * result + (surname != null ? surname.hashCode() : 0);
-        result = 31 * result + (email != null ? email.hashCode() : 0);
-        result = 31 * result + (password != null ? password.hashCode() : 0);
-        result = 31 * result + (role != null ? role.hashCode() : 0);
-        return result;
-    }
-
-    @Override
-    public String toString() {
-        return "{ email='" + email + " }";
+        return email != null ? email.hashCode() : 0;
     }
 }

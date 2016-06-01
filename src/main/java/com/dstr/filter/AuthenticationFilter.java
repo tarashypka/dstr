@@ -1,6 +1,6 @@
 package com.dstr.filter;
 
-import com.dstr.model.customer.Customer;
+import com.dstr.model.Customer;
 import org.apache.log4j.Logger;
 
 import javax.servlet.*;
@@ -34,11 +34,18 @@ public class AuthenticationFilter implements Filter {
         String uri = req.getRequestURI();
         logger.info("Requested Resource::" + uri);
 
+        String contextPath = req.getContextPath();
+        logger.info("Context Path::" + contextPath);
+
+        if (uri.equals(contextPath + "/")) {
+            chain.doFilter(request, response);
+            return;
+        }
+
         HttpSession session = req.getSession(false);
         Customer customer = (Customer) session.getAttribute("customer");
 
         List<String> allowedUris = new ArrayList<>();
-        allowedUris.add("/");
         allowedUris.add("/home");
         allowedUris.add("/login");
         allowedUris.add("/register");
@@ -47,21 +54,17 @@ public class AuthenticationFilter implements Filter {
         allowedUris.add("/items");
         allowedUris.add("/errorHandler");
         if (customer != null) {
-            String role = customer.getRole();
-            if (role.equals("admin")) {
-                allowedUris.add("/admin/customers");
-                allowedUris.add("/admin/items");
-                allowedUris.add("/admin/orders");
-            } else if (role.equals("customer")) {
-                allowedUris.add("/customer/items");
-                allowedUris.add("/customer/orders");
+            allowedUris.add("/order");
+            allowedUris.add("/orders");
+            if (customer.getRole().equals("admin")) {
+                allowedUris.add("/customer");
+                allowedUris.add("/customers");
             }
         }
-        String contextPath = req.getContextPath();
         allowedUris = urisToContextUris(allowedUris, contextPath);
         if (! uriStartsWith(uri, allowedUris)) {
             logger.error("Unauthorized access request");
-            resp.sendRedirect("/login");
+            resp.sendRedirect(req.getContextPath() + "/login");
         } else {
             // Pass the request along the filter chain
             chain.doFilter(request, response);

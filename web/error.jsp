@@ -14,6 +14,7 @@
   <jsp:attribute name="title">
     <title>Помилка</title>
   </jsp:attribute>
+
   <jsp:attribute name="style">
     <style>
       #body {
@@ -25,18 +26,6 @@
         font-size: 22px;
       }
     </style>
-  </jsp:attribute>
-
-  <jsp:attribute name="buttons">
-    <c:url value="/login" var="loginURL"></c:url>
-    <c:url value="/register" var="registerURL"></c:url>
-
-    <form class="button1" action='<c:out value="${loginURL}"></c:out>' method="get">
-      <input type="submit" value="Увійти в систему">
-    </form>
-    <form class="button2" action='<c:out value="${registerURL}"></c:out>' method="get">
-      <input type="submit" value="Зарегіструватись">
-    </form>
   </jsp:attribute>
 
   <jsp:body>

@@ -1,6 +1,4 @@
-package com.dstr.model.order;
-
-import com.dstr.model.customer.Customer;
+package com.dstr.model;
 
 import java.io.Serializable;
 import java.util.Currency;
@@ -10,6 +8,7 @@ import java.util.Map;
 /**
  * Created by deoxys on 27.05.16.
  */
+
 public class Order implements Serializable {
     private String id;
     private String orderNumber;

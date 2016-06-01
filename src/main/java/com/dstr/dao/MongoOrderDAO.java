@@ -1,6 +1,6 @@
 package com.dstr.dao;
 
-import com.mongodb.BasicDBList;
+import com.dstr.model.Item;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBRef;
 import com.mongodb.MongoClient;
@@ -8,8 +8,8 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.result.UpdateResult;
 import com.dstr.converter.OrderConverter;
-import com.dstr.model.customer.Customer;
-import com.dstr.model.order.Order;
+import com.dstr.model.Customer;
+import com.dstr.model.Order;
 import org.bson.Document;
 import org.bson.types.ObjectId;
 
@@ -23,12 +23,15 @@ import static com.mongodb.client.model.Filters.eq;
 /**
  * Created by deoxys on 27.05.16.
  */
+
 public class MongoOrderDAO {
+    private MongoClient mongoClient;
     private MongoCollection<Document> mongoColl;
     public final static String MONGO_DB = "dstr";
     public final static String MONGO_COLL = "orders";
 
     public MongoOrderDAO(MongoClient mongoClient) {
+        this.mongoClient = mongoClient;
         this.mongoColl = mongoClient.getDatabase(MONGO_DB).getCollection(MONGO_COLL);
     }
 
@@ -66,13 +69,10 @@ public class MongoOrderDAO {
         return orders;
     }
 
-    public List<Order> findAllCustomerOrders(Customer customer) {
+    public List<Order> findCustomerOrders(String email) {
         List<Order> orders = new ArrayList<>();
 
-        BasicDBObject query = new BasicDBObject(
-                "customer.name", customer.getName()).append(
-                "customer.surname", customer.getSurname()).append(
-                "customer.email", customer.getEmail());
+        BasicDBObject query = new BasicDBObject("customer.email", email);
 
         MongoCursor<Document> cursor = this.mongoColl.find(query).iterator();
 
@@ -87,31 +87,40 @@ public class MongoOrderDAO {
         return orders;
     }
 
-    public Map<String, Integer> findCustomerItems(Customer customer) {
-        Map<String, Integer> items = new HashMap<>();
+    public Map<Item, Integer> findCustomerItems(String email) {
+        Map<Item, Integer> items = new HashMap<>();
 
-        BasicDBObject query = new BasicDBObject(
-                "customer.name", customer.getName()).append(
-                "customer.surname", customer.getSurname()).append(
-                "customer.email", customer.getEmail());
+        BasicDBObject query = new BasicDBObject("customer.email", email);
 
         MongoCursor<Document> cursor = this.mongoColl.find(query).iterator();
 
         try {
+            MongoItemDAO itemDAO = new MongoItemDAO(mongoClient);
+
             while (cursor.hasNext()) {
                 Document doc = cursor.next();
-
-                BasicDBList itemsDbl = (BasicDBList) doc.get("items");
+                List itemsDbl = (ArrayList) doc.get("items");
+                System.out.println("items=" + itemsDbl.size());
 
                 for (Object el : itemsDbl) {
-                    BasicDBObject obj = (BasicDBObject) el;
-                    DBRef dbRef = (DBRef) obj.get("id");
-                    items.put(dbRef.getId().toString(), obj.getInt("quantity"));
+                    Document itemRef = (Document) el;
+                    DBRef dbRef = (DBRef) itemRef.get("id");
+                    ObjectId _id = (ObjectId) dbRef.getId();
+                    Item item = itemDAO.findItem(_id);
+                    items.put(item, itemRef.getInteger("quantity"));
                 }
             }
         } finally {
             cursor.close();
         }
         return items;
+    }
+
+    public int ordersAmount(String email) {
+        return findCustomerOrders(email).size();
+    }
+
+    public int itemsAmount(String email) {
+        return findCustomerItems(email).size();
     }
 }

@@ -1,20 +1,17 @@
 package com.dstr.converter;
 
-import com.dstr.model.item.*;
-import com.mongodb.DBRef;
+import com.dstr.model.Item;
 import org.bson.Document;
 import org.bson.types.ObjectId;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
  * Created by deoxys on 27.05.16.
  */
+
 public class ItemConverter {
-    private static final String COLL = "items";
 
     public static Document toDocument(Item item) {
         Document doc = new Document();
@@ -35,53 +32,6 @@ public class ItemConverter {
         return doc;
     }
 
-    public static void toBook(Document doc, Book book) {
-        book.setSubject(doc.getString("subject"));
-        doc.remove("subject");
-        book.setAuthor(doc.getString("author"));
-        doc.remove("author");
-        book.setTitle(doc.getString("title"));
-        doc.remove("title");
-        book.setLanguage(doc.getString("language"));
-        doc.remove("language");
-        book.setISBN(doc.getString("ISBN"));
-        doc.remove("ISBN");
-    }
-
-    public static void toMonitor(Document doc, Monitor mon) {
-        mon.setScreenSize(doc.getInteger("screenSize"));
-        doc.remove("screenSize");
-    }
-
-    public static void toMusic(Document doc, Music music) {
-        music.setFormat(doc.getString("format"));
-        doc.remove("format");
-        music.setArtist(doc.getString("artist"));
-        doc.remove("artist");
-        music.setAlbum(doc.getString("album"));
-        doc.remove("album");
-        music.setUPC(doc.getString("UPC"));
-        doc.remove("UPC");
-    }
-
-    public static void toPhone(Document doc, Phone phone) {
-        phone.setProducer(doc.getString("producer"));
-        doc.remove("producer");
-        phone.setModel(doc.getString("model"));
-        doc.remove("model");
-    }
-
-    public static void toShoes(Document doc, Shoes shoes) {
-        shoes.setBrand(doc.getString("brand"));
-        doc.remove("brand");
-        shoes.setFabric(doc.getString("fabric"));
-        doc.remove("fabric");
-        shoes.setColor(doc.getString("color"));
-        doc.remove("color");
-        shoes.setSize(doc.getInteger("size"));
-        doc.remove("size");
-    }
-
     public static Item toItem(Document doc) {
         Item item = new Item();
 
@@ -98,26 +48,9 @@ public class ItemConverter {
         item.setCurrency(doc.getString("currency"));
         doc.remove("currency");
 
-        /*
-        switch (category) {
-            case "Book":
-                toBook(doc, (Book) item);
-                break;
-            case "Monitor":
-                toMonitor(doc, (Monitor) item);
-                break;
-            case "Music":
-                toMusic(doc, (Music) item);
-                break;
-            case "Phone":
-                toPhone(doc, (Phone) item);
-                break;
-            case "Shoes":
-                toShoes(doc, (Shoes) item);
-                break;
-            default:
-                break;
-        } */
+        item.setLeft(doc.getInteger("left"));
+        doc.remove("left");
+
         Map<String, String> extFields = new HashMap<>();
 
         for (String extKey : doc.keySet()) {
@@ -126,24 +59,5 @@ public class ItemConverter {
         item.setExtendedFields(extFields);
 
         return item;
-    }
-
-    public static List<DBRef> toDBRefs(List<String> itemsIds) {
-        List<DBRef> dbRefs = new ArrayList<>();
-
-        for (String id : itemsIds) {
-            dbRefs.add(new DBRef(COLL, new ObjectId(id)));
-        }
-        return dbRefs;
-    }
-
-    public static List<String> toItemsIds(List<DBRef> dbRefs) {
-
-        List<String> itemsIds = new ArrayList<>();
-
-        for (DBRef dbRef : dbRefs) {
-            itemsIds.add((String) dbRef.getId());
-        }
-        return itemsIds;
     }
 }

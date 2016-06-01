@@ -39,7 +39,6 @@ public class ErrorHandlerServlet extends HttpServlet {
                 .getAttribute("javax.servlet.error.servlet_name");
         String requestUri = (String) request
                 .getAttribute("javax.servlet.error.request_uri");
-        System.out.println("ru=" + requestUri);
 
         request.setAttribute("servletName",
                 servletName == null ? "Unknown" : servletName);
@@ -57,7 +56,7 @@ public class ErrorHandlerServlet extends HttpServlet {
             exMsg = (exMsg == null) ? "Unknown" : exMsg;
             request.setAttribute("exception", exName);
             request.setAttribute("exceptionMsg", exMsg);
-            logger.error(exName + " " + exMsg);
+            logger.error(exName + ": " + exMsg);
         } else {
             logger.error(statusCode);
         }

@@ -14,15 +14,16 @@
   <jsp:attribute name="title">
     <title>Вхід</title>
   </jsp:attribute>
+
   <jsp:attribute name="style">
     <style>
-      div#body form {
+      #body form {
         position: fixed;
         top: 50%;
         left: 50%;
         transform: translate(-50%, -50%);
       }
-      div#body form input {
+      #body form input {
         background-color: whitesmoke;
         width: 300px;
         height: 35px;
@@ -30,46 +31,60 @@
         font-size: large;
         text-align: center;
       }
-      div#body form input.text {
+      #body form input.text {
         background-color: whitesmoke;
         margin-top: 5px;
         border: solid 2px gray;
       }
-      div#body form input.text:hover, div#body form input.text:focus {
+      #body form input.text:hover, div#body form input.text:focus {
         color: darkgreen;
         border: solid 2px darkgreen;
       }
-      div#body form input.submit {
+      #body form input.submit {
         background-color: olivedrab;
         color: white;
         margin-top: 20px;
         border: solid 2px darkgreen;
       }
-      div#body form input.submit:hover {
+      #body form input.submit:hover {
         background-color: darkolivegreen;
         border: solid 2px white;
         cursor: hand;
       }
+      #body .error {
+        position: fixed;
+        top: 35%;
+        left: 50%;
+        transform: translate(-50%, -35%);
+        font-family: cursive;
+        font-size: 20px;
+        color: red;
+      }
     </style>
-  </jsp:attribute>
-
-  <jsp:attribute name="buttons">
-    <c:url value="/register" var="registerURL"></c:url>
-
-    <form class="button1" action='<c:out value="${registerURL}"></c:out>' method="get">
-      <input type="submit" value="Зарегіструватись">
-    </form>
   </jsp:attribute>
 
   <jsp:body>
     <c:url value="/login" var="loginURL"></c:url>
 
     <form action='<c:out value="${loginURL}"></c:out>' method="post">
-      <input class="text" type="text" value="${requestScope.customer.email}"
+      <input class="text" type="text" value="${requestScope.email}"
              placeholder="Електронна пошта" name="email"><br>
       <input class="text" type="password"
              placeholder="Пароль" name="password"><br>
       <input class="submit" type="submit" value="Увійти в систему">
     </form>
+
+    <div class="error">
+      <c:if test="${requestScope.errtype ne null}">
+        <c:choose>
+          <c:when test="${requestScope.errtype eq 'email'}">
+            Електронну пошту введено невірно
+          </c:when>
+          <c:when test="${requestScope.errtype eq 'password'}">
+            Пароль введено невірно
+          </c:when>
+        </c:choose>
+      </c:if>
+    </div>
   </jsp:body>
 </t:genericpage>

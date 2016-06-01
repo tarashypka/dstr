@@ -1,7 +1,7 @@
 package com.dstr.servlet.controller;
 
 import com.dstr.dao.PostgresCustomerDAO;
-import com.dstr.model.customer.Customer;
+import com.dstr.model.Customer;
 import org.apache.log4j.Logger;
 
 import javax.servlet.ServletException;
@@ -9,7 +9,6 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import javax.sql.DataSource;
 import java.io.IOException;
 import java.sql.SQLException;
@@ -42,15 +41,14 @@ public class LoginServlet extends HttpServlet {
             Customer selectedCustomer = customerDAO.selectCustomer(email);
             if (selectedCustomer != null) {
                 if (selectedCustomer.getPassword().equals(password)) {
-                    customer.setRole("customer");
-                    HttpSession session = request.getSession();
-                    session.setAttribute("customer", customer);
+                    customer.setRole(selectedCustomer.getRole());
+                    request.getSession().setAttribute("customer", selectedCustomer);
                     response.sendRedirect(request.getContextPath() + "/home");
                     logger.info("Customer " + selectedCustomer + " logged in");
                 } else {
+                    request.setAttribute("email", email);
                     request.setAttribute("errtype", "password");
-                    request.getRequestDispatcher("/login.jsp")
-                            .forward(request, response);
+                    request.getRequestDispatcher("/login.jsp").forward(request, response);
                     logger.info("Customer " + selectedCustomer + " didn't log in");
                 }
             } else {
@@ -63,14 +61,17 @@ public class LoginServlet extends HttpServlet {
         } catch (SQLException ex) {
             ex.printStackTrace();
             logger.error("Login error: " + ex.getMessage());
-            throw new ServletException("DB Connection/Select error: "
-                    + ex.getMessage());
+            throw new ServletException("DB Connection/Select error: " + ex.getMessage());
         }
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
+        if (request.getSession().getAttribute("customer") != null) {
+            String contextPath = request.getContextPath();
+            response.sendRedirect(contextPath.isEmpty() ? "/" : contextPath);
+        }
         request.getRequestDispatcher("/login.jsp").forward(request, response);
     }
 }
