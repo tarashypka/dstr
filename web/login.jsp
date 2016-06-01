@@ -51,16 +51,25 @@
         border: solid 2px white;
         cursor: hand;
       }
-      #body .error {
-        position: fixed;
+      #body #error {
         top: 35%;
         left: 50%;
         transform: translate(-50%, -35%);
-        font-family: cursive;
-        font-size: 20px;
-        color: red;
       }
     </style>
+  </jsp:attribute>
+
+  <jsp:attribute name="error">
+    <c:if test="${requestScope.errtype ne null}">
+      <c:choose>
+        <c:when test="${requestScope.errtype eq 'email'}">
+          Електронну пошту введено невірно
+        </c:when>
+        <c:when test="${requestScope.errtype eq 'password'}">
+          Пароль введено невірно
+        </c:when>
+      </c:choose>
+    </c:if>
   </jsp:attribute>
 
   <jsp:body>
@@ -73,18 +82,5 @@
              placeholder="Пароль" name="password"><br>
       <input class="submit" type="submit" value="Увійти в систему">
     </form>
-
-    <div class="error">
-      <c:if test="${requestScope.errtype ne null}">
-        <c:choose>
-          <c:when test="${requestScope.errtype eq 'email'}">
-            Електронну пошту введено невірно
-          </c:when>
-          <c:when test="${requestScope.errtype eq 'password'}">
-            Пароль введено невірно
-          </c:when>
-        </c:choose>
-      </c:if>
-    </div>
   </jsp:body>
 </t:genericpage>

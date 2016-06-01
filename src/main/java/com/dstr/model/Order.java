@@ -1,9 +1,7 @@
 package com.dstr.model;
 
 import java.io.Serializable;
-import java.util.Currency;
-import java.util.Date;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by deoxys on 27.05.16.
@@ -16,6 +14,40 @@ public class Order implements Serializable {
     private Customer customer;
     private Map<String, Integer> items;
     private Map<Double, Currency> receipt;
+    private OrderStatus status;
+
+    public Order() { }
+
+    public Order(String id) {
+        this.id = id;
+    }
+
+    public enum OrderStatus {
+        REJECTED(-1), IN_PROCESS(0), PROCESSED(+1);
+
+        private int value;
+
+        private OrderStatus(int value) {
+            this.value = value;
+        }
+
+        public static OrderStatus orderStatusbyValue(int value) {
+            switch (value) {
+                case -1:
+                    return OrderStatus.REJECTED;
+                case 0:
+                    return OrderStatus.IN_PROCESS;
+                case +1:
+                    return OrderStatus.PROCESSED;
+                default:
+                    return null;
+            }
+        }
+
+        public int getValue() {
+            return value;
+        }
+    }
 
     public String getId() {
         return id;
@@ -65,6 +97,14 @@ public class Order implements Serializable {
         this.receipt = receipt;
     }
 
+    public OrderStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(OrderStatus status) {
+        this.status = status;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -72,22 +112,13 @@ public class Order implements Serializable {
 
         Order order = (Order) o;
 
-        if (customer != null ? !customer.equals(order.customer) : order.customer != null) return false;
-        if (date != null ? !date.equals(order.date) : order.date != null) return false;
         if (id != null ? !id.equals(order.id) : order.id != null) return false;
-        if (items != null ? !items.equals(order.items) : order.items != null) return false;
-        if (orderNumber != null ? !orderNumber.equals(order.orderNumber) : order.orderNumber != null) return false;
 
         return true;
     }
 
     @Override
     public int hashCode() {
-        int result = id != null ? id.hashCode() : 0;
-        result = 31 * result + (orderNumber != null ? orderNumber.hashCode() : 0);
-        result = 31 * result + (date != null ? date.hashCode() : 0);
-        result = 31 * result + (customer != null ? customer.hashCode() : 0);
-        result = 31 * result + (items != null ? items.hashCode() : 0);
-        return result;
+        return id != null ? id.hashCode() : 0;
     }
 }

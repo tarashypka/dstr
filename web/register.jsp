@@ -52,16 +52,31 @@
         border: solid 2px ;
         cursor: hand;
       }
-      #body .error {
-        position: fixed;
+      #body #error {
         top: 30%;
         left: 50%;
         transform: translate(-50%, -30%);
-        font-family: cursive;
-        font-size: 20px;
-        color: red;
       }
     </style>
+  </jsp:attribute>
+
+  <jsp:attribute name="error">
+    <c:if test="${requestScope.errtype ne null}">
+      <c:choose>
+        <c:when test="${requestScope.errtype eq 'name'}">
+          Введіть ім'я
+        </c:when>
+        <c:when test="${requestScope.errtype eq 'surname'}">
+          Введіть прізвище
+        </c:when>
+        <c:when test="${requestScope.errtype eq 'email'}">
+          Електронну пошту введено невірно
+        </c:when>
+        <c:when test="${requestScope.errtype eq 'password'}">
+          Занадто короткий пароль
+        </c:when>
+      </c:choose>
+    </c:if>
   </jsp:attribute>
 
   <jsp:body>
@@ -78,24 +93,5 @@
              placeholder="Пароль" name="password"><br>
       <input class="submit" type="submit" value="Зарегіструватись">
     </form>
-
-    <div class="error">
-      <c:if test="${requestScope.errtype ne null}">
-          <c:choose>
-            <c:when test="${requestScope.errtype eq 'name'}">
-              Введіть ім'я
-            </c:when>
-            <c:when test="${requestScope.errtype eq 'surname'}">
-              Введіть прізвище
-            </c:when>
-            <c:when test="${requestScope.errtype eq 'email'}">
-              Електронну пошту введено невірно
-            </c:when>
-            <c:when test="${requestScope.errtype eq 'password'}">
-              Занадто короткий пароль
-            </c:when>
-          </c:choose>
-      </c:if>
-    </div>
   </jsp:body>
 </t:genericpage>

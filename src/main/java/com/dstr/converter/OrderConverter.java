@@ -43,6 +43,9 @@ public class OrderConverter {
         }
         doc.append("items", itemsDbl);
 
+        String status = order.getStatus().name();
+        doc.append("status", Order.OrderStatus.valueOf(status));
+
         return doc;
     }
 
@@ -74,6 +77,9 @@ public class OrderConverter {
             receipt.put(price, currency);
         }
         order.setReceipt(receipt);
+
+        int status = doc.getInteger("status");
+        order.setStatus(Order.OrderStatus.orderStatusbyValue(status));
 
         return order;
     }

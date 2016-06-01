@@ -120,20 +120,82 @@
     <!-- Handle 404 errors and exceptions with predefined Servlet -->
     <error-page>
         <error-code>404</error-code>
-        <location>/errorHandler</location>
+        <location>/error</location>
+    </error-page>
+    <error-page>
+        <error-code>405</error-code>
+        <location>/error</location>
     </error-page>
     <error-page>
         <exception-type>java.lang.Throwable</exception-type>
-        <location>/errorHandler</location>
+        <location>/error</location>
     </error-page>
 
     <!-- Filter all incoming requests to validate the session -->
     <filter>
         <filter-name>AuthenticationFilter</filter-name>
         <filter-class>com.dstr.filter.AuthenticationFilter</filter-class>
+        <init-param>
+            <param-name>public</param-name>
+            <param-value>
+                /home
+                /item
+                /items
+                /error
+            </param-value>
+        </init-param>
+        <init-param>
+            <param-name>authFalse</param-name>
+            <param-value>
+                /login
+                /register
+            </param-value>
+        </init-param>
+        <init-param>
+            <param-name>authTrue</param-name>
+            <param-value>
+                /order
+                /orders
+                /logout
+            </param-value>
+        </init-param>
+        <init-param>
+            <param-name>customerPrivate</param-name>
+            <param-value>
+                /order/add
+                /order/edit
+                /order/delete
+            </param-value>
+        </init-param>
+        <init-param>
+            <param-name>adminPrivate</param-name>
+            <param-value>
+                /item/add
+                /item/edit
+                /item/delete
+                /customer
+                /customer/status
+                /customers
+                /order/status
+            </param-value>
+        </init-param>
     </filter>
     <filter-mapping>
         <filter-name>AuthenticationFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
+    <!-- Set custom encoding for all incoming requests -->
+    <filter>
+        <filter-name>EncodingFilter</filter-name>
+        <filter-class>com.dstr.filter.EncodingFilter</filter-class>
+        <init-param>
+            <param-name>encoding</param-name>
+            <param-value>UTF-8</param-value>
+        </init-param>
+    </filter>
+    <filter-mapping>
+        <filter-name>EncodingFilter</filter-name>
         <url-pattern>/*</url-pattern>
     </filter-mapping>
 </web-app>

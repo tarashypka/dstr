@@ -18,12 +18,10 @@ import java.util.*;
  * Created by deoxys on 29.05.16.
  */
 
-@WebServlet(name = "AddOrder", urlPatterns = "/orders/add")
-public class AddOrderServlet extends HttpServlet {
+@WebServlet(name = "OrderAdd", urlPatterns = "/order/add")
+public class OrderAddServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-
-        request.setCharacterEncoding("UTF-8");
 
         Order order = new Order();
 

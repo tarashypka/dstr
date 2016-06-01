@@ -22,6 +22,7 @@ public class ItemConverter {
         doc.append("category", item.getCategory());
         doc.append("price", item.getPrice());
         doc.append("currency", item.getCurrency().toString());
+        doc.append("left", item.getLeft());
 
         Map<String, String> extFields = item.getExtendedFields();
         if (extFields != null) {

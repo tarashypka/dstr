@@ -11,8 +11,8 @@ import java.io.IOException;
  * Created by deoxys on 31.05.16.
  */
 
-@WebServlet(name = "DeleteOrder", urlPatterns = "/orders/delete")
-public class DeleteOrderServlet extends HttpServlet {
+@WebServlet(name = "OrderDelete", urlPatterns = "/order/delete")
+public class OrderDeleteServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 

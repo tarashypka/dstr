@@ -38,6 +38,7 @@
         <tr>
           <th>Ініціали</th>
           <th>Електронна пошта</th>
+          <th>Статус</th>
         </tr>
         <c:forEach items="${sessionScope.customers}" var="customer">
           <c:url value="/customer" var="customerURL">
@@ -50,13 +51,26 @@
               </a>
             </td>
             <td><c:out value="${customer.email}"></c:out></td>
+            <td>
+              <c:choose>
+                <c:when test="${customer.enabled}">
+                  ОК
+                </c:when>
+                <c:otherwise>
+                  Забанений
+                </c:otherwise>
+              </c:choose>
+            </td>
             <c:if test="${sessionScope.customer.role eq 'admin'}">
-              <c:url value="/customers/delete" var="deleteCustomerURL">
+              <c:url value="/customer/status" var="customerDeleteURL">
                 <c:param name="email" value="${customer.email}"></c:param>
               </c:url>
               <td>
-                <a href='<c:out value="${deleteCustomerURL}" escapeXml="false"></c:out>'>
-                  Видалити
+                <a href='<c:out value="${customerDeleteURL}" escapeXml="false"></c:out>'>
+                  <c:choose>
+                    <c:when test="${customer.enabled}">Забанити</c:when>
+                    <c:otherwise>Розбанити</c:otherwise>
+                  </c:choose>
                 </a>
               </td>
             </c:if>

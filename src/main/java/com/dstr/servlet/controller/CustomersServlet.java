@@ -25,8 +25,6 @@ public class CustomersServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        request.setCharacterEncoding("UTF-8");
-
         DataSource source = (DataSource)
                 request.getServletContext().getAttribute("POSTGRES_CONNECTION_POOL");
 

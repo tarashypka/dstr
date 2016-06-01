@@ -53,21 +53,33 @@
           <td><c:out value="${requestScope.customer.email}"></c:out></td></tr>
         <tr>
           <th>Зробленo замовлень</th>
-          <th>
+          <td>
             <a href='<c:out value="${ordersURL}" escapeXml="false"></c:out>'>
               <c:out value="${requestScope.nOrders}"></c:out>
             </a>
-          </th>
+          </td>
         </tr>
         <tr>
           <th>Замовлено товарів</th>
-          <th>
+          <td>
             <a href='<c:out value="${itemsURL}" escapeXml="false"></c:out>'>
               <c:out value="${requestScope.nItems}"></c:out>
             </a>
-          </th>
+          </td>
         </tr>
-
+        <tr>
+          <th>Статус</th>
+          <td>
+            <c:choose>
+              <c:when test="${requestScope.customer.enabled eq true}">
+                ОК
+              </c:when>
+              <c:otherwise>
+                Забанений
+              </c:otherwise>
+            </c:choose>
+          </td>
+        </tr>
       </table>
     </c:if>
   </jsp:body>

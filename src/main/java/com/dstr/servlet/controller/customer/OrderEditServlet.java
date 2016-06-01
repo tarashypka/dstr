@@ -11,8 +11,8 @@ import java.io.IOException;
  * Created by deoxys on 29.05.16.
  */
 
-@WebServlet(name = "EditOrder", urlPatterns = "/orders/edit")
-public class EditOrderServlet extends HttpServlet {
+@WebServlet(name = "OrderEdit", urlPatterns = "/order/edit")
+public class OrderEditServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 

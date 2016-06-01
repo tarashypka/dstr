@@ -35,33 +35,35 @@
       <table>
         <tr>
           <th>ID</th>
-          <td><c:out value="${item.id}"></c:out></td>
+          <td><c:out value="${requestScope.item.id}"/></td>
         </tr>
         <tr>
           <th>Категорія</th>
-          <td><c:out value="${item.category}"></c:out></td>
+          <td><c:out value="${requestScope.item.category}"/></td>
         </tr>
         <tr>
           <th>Ціна</th>
-          <td><c:out value="${item.price}"></c:out></td>
+          <td><c:out value="${requestScope.item.price}"/></td>
         </tr>
         <tr>
           <th>Валюта</th>
-          <td><c:out value="${item.currency}"></c:out></td>
+          <td><c:out value="${requestScope.item.currency}"/></td>
         </tr>
         <tr>
           <th>Залишилось</th>
-          <td><c:out value="${item.left}"></c:out></td>
+          <td><c:out value="${item.left}"/></td>
+        </tr>
+        <tr>
+          <th>Продано</th>
+          <td><c:out value="${requestScope.sold}"/></td>
         </tr>
         <c:forEach items="${item.extendedFields}" var="field">
           <tr>
-            <th><c:out value="${item.key}"></c:out></th>
-            <td><c:out value="${item.value}"></c:out></td>
+            <th><c:out value="${item.key}"/></th>
+            <td><c:out value="${item.value}"/></td>
           </tr>
         </c:forEach>
       </table>
     </c:if>
   </jsp:body>
 </t:genericpage>
-
-

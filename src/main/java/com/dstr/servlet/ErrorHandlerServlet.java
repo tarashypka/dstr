@@ -13,7 +13,7 @@ import java.io.IOException;
  * Created by deoxys on 30.05.16.
  */
 
-@WebServlet(name = "ErrorHandler", urlPatterns = "/errorHandler")
+@WebServlet(name = "ErrorHandler", urlPatterns = "/error")
 public class ErrorHandlerServlet extends HttpServlet {
     final static Logger logger = Logger.getLogger(ErrorHandlerServlet.class);
 
@@ -31,8 +31,6 @@ public class ErrorHandlerServlet extends HttpServlet {
 
     private void processError(HttpServletRequest request, HttpServletResponse response)
             throws IOException, ServletException {
-
-        request.setCharacterEncoding("UTF-8");
 
         // Analyze servlet error/exception
         String servletName = (String) request

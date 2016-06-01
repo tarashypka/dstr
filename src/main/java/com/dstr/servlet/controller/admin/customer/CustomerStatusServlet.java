@@ -19,14 +19,12 @@ import java.util.List;
  * Created by deoxys on 28.05.16.
  */
 
-@WebServlet(name = "DeleteCustomer", urlPatterns = "/customers/delete")
-public class DeleteCustomerServlet extends HttpServlet {
-    final static Logger logger = Logger.getLogger(DeleteCustomerServlet.class);
+@WebServlet(name = "CustomerStatus", urlPatterns = "/customer/status")
+public class CustomerStatusServlet extends HttpServlet {
+    final static Logger logger = Logger.getLogger(CustomerStatusServlet.class);
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-
-        request.setCharacterEncoding("UTF-8");
 
         String email = request.getParameter("email");
 
@@ -40,17 +38,21 @@ public class DeleteCustomerServlet extends HttpServlet {
         try {
             PostgresCustomerDAO customerDAO = new PostgresCustomerDAO(source);
 
-            if (customerDAO.deleteCustomer(email)) {
-                logger.info("Customer with email=" + email + " was deleted");
+            if (customerDAO.changeCustomerStatus(email)) {
+                logger.info("Customer's with email=" + email + " status was changed");
 
                 // Update session
                 List<Customer> customers = (ArrayList)
                         request.getSession().getAttribute("customers");
 
-                customers.remove(new Customer(email));
+                Customer customer = customers.get(customers.indexOf(new Customer(email)));
+                customers.remove(customer);
+                customer.setEnabled( ! customer.isEnabled());
+                customers.add(customer);
+
                 request.getSession().setAttribute("customers", customers);
             } else {
-                logger.error("Customer with email=" + email + " was not deleted");
+                logger.error("Customer's with email=" + email + " status was not changed");
             }
             customerDAO.closeConnection();
         } catch (SQLException ex) {

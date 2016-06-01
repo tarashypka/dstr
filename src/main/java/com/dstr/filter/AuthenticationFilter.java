@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -18,10 +19,39 @@ import java.util.List;
 
 @WebFilter("/authenticationFilter")
 public class AuthenticationFilter implements Filter {
-
     private Logger logger = Logger.getLogger(AuthenticationFilter.class);
 
+    private String contextPath;
+
+    private List<String> publicPages;
+    private List<String> authFalsePages;
+    private List<String> authTruePages;
+    private List<String> customerPrivatePages;
+    private List<String> adminPrivatePages;
+
+
     public void init(FilterConfig config) throws ServletException {
+        String pub = config.getInitParameter("public");
+        String authFalse = config.getInitParameter("authFalse");
+        String authTrue = config.getInitParameter("authTrue");
+        String customerPriv = config.getInitParameter("customerPrivate");
+        String adminPriv = config.getInitParameter("adminPrivate");
+
+        String regex = "\\s*\n\\s*";
+
+        contextPath = config.getServletContext().getContextPath();
+
+        if (pub != null)
+            publicPages = toContextPages(Arrays.asList(pub.split(regex)));
+        if (authFalse != null)
+            authFalsePages = toContextPages(Arrays.asList(authFalse.split(regex)));
+        if (authTrue != null)
+            authTruePages = toContextPages(Arrays.asList(authTrue.split(regex)));
+        if (customerPriv != null)
+            customerPrivatePages = toContextPages(Arrays.asList(customerPriv.split(regex)));
+        if (adminPriv != null)
+            adminPrivatePages = toContextPages(Arrays.asList(adminPriv.split(regex)));
+
         logger.info("AuthenticationFilter: initialized successfully");
     }
 
@@ -32,10 +62,8 @@ public class AuthenticationFilter implements Filter {
         HttpServletResponse resp = (HttpServletResponse) response;
 
         String uri = req.getRequestURI();
-        logger.info("Requested Resource::" + uri);
-
         String contextPath = req.getContextPath();
-        logger.info("Context Path::" + contextPath);
+        logger.info("Requested Resource::" + contextPath + uri);
 
         if (uri.equals(contextPath + "/")) {
             chain.doFilter(request, response);
@@ -45,48 +73,38 @@ public class AuthenticationFilter implements Filter {
         HttpSession session = req.getSession(false);
         Customer customer = (Customer) session.getAttribute("customer");
 
-        List<String> allowedUris = new ArrayList<>();
-        allowedUris.add("/home");
-        allowedUris.add("/login");
-        allowedUris.add("/register");
-        allowedUris.add("/logout");
-        allowedUris.add("/item");
-        allowedUris.add("/items");
-        allowedUris.add("/errorHandler");
+        List<String> allowedPages = new ArrayList<>();
+
+        allowedPages.addAll(publicPages);
         if (customer != null) {
-            allowedUris.add("/order");
-            allowedUris.add("/orders");
-            if (customer.getRole().equals("admin")) {
-                allowedUris.add("/customer");
-                allowedUris.add("/customers");
+            allowedPages.addAll(authTruePages);
+            if (customer.isCustomer()) {
+                allowedPages.addAll(customerPrivatePages);
+            } else if (customer.isAdmin()) {
+                allowedPages.addAll(adminPrivatePages);
+            } else {
+                logger.error("Undefined customer role " + customer.getRole());
             }
+        } else {
+            allowedPages.addAll(authFalsePages);
         }
-        allowedUris = urisToContextUris(allowedUris, contextPath);
-        if (! uriStartsWith(uri, allowedUris)) {
+
+        if (! allowedPages.contains(uri)) {
             logger.error("Unauthorized access request");
-            resp.sendRedirect(req.getContextPath() + "/login");
+            resp.sendRedirect(contextPath + "/login");
         } else {
             // Pass the request along the filter chain
             chain.doFilter(request, response);
         }
     }
 
-    private static boolean uriStartsWith(String uri, List<String> uris) {
-        for (String start : uris) {
-            if (uri.startsWith(start)) {
-                return true;
+    private List<String> toContextPages(List<String> pages) {
+        if (contextPath.length() > 0) {
+            for (int i = 0; i < pages.size(); i++) {
+                pages.set(i, contextPath + pages.get(i));
             }
         }
-        return false;
-    }
-
-    private static List<String> urisToContextUris(List<String> uris, String context) {
-        if (context.length() > 0) {
-            for (int i = 0; i < uris.size(); i++) {
-                uris.set(i, context + uris.get(i));
-            }
-        }
-        return uris;
+        return pages;
     }
 
     public void destroy() { }

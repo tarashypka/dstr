@@ -29,8 +29,16 @@ public class PostgresCustomerDAO {
         stmt.setString(1, email);
         ResultSet rs = stmt.executeQuery();
 
-        return rs.next() ? new Customer(rs.getString("name"), rs.getString("surname"),
-                email, rs.getString("password"), rs.getString("role")) : null;
+        if (rs.next()) {
+            String name = rs.getString("name");
+            String surname = rs.getString("surname");
+            String password = rs.getString("password");
+            String role = rs.getString("role");
+            boolean enabled = rs.getBoolean("enabled");
+
+            return new Customer(name, surname, email, password, role, enabled);
+        }
+        return null;
     }
 
     public List<Customer> selectAllCustomers() throws SQLException {
@@ -40,13 +48,13 @@ public class PostgresCustomerDAO {
 
         List<Customer> customers = new ArrayList<>();
         while (rs.next()) {
-            int id = rs.getInt("id");
             String name = rs.getString("name");
             String surname = rs.getString("surname");
             String email = rs.getString("email");
             String password = rs.getString("password");
             String role = rs.getString("role");
-            customers.add(new Customer(name, surname, email, password, role));
+            boolean enabled = rs.getBoolean("enabled");
+            customers.add(new Customer(name, surname, email, password, role, enabled));
         }
         return customers;
     }
@@ -72,6 +80,25 @@ public class PostgresCustomerDAO {
         stmt.setString(2, customer.getSurname());
         stmt.setString(3, customer.getEmail());
         stmt.setString(4, customer.getPassword());
+
+        return stmt.executeUpdate() == 1;
+    }
+
+    public boolean changeCustomerStatus(String email) throws SQLException {
+        String query = "SELECT * FROM " + COLL + " WHERE email = ? ;";
+        PreparedStatement stmt = postgresConn.prepareStatement(query);
+        stmt.setString(1, email);
+        ResultSet rs = stmt.executeQuery();
+
+        if ( ! rs.next()) {
+            return false;
+        }
+        boolean enabled = rs.getBoolean("enabled");
+
+        query = "UPDATE " + COLL + " SET enabled = ? WHERE email = ? ;";
+        stmt = postgresConn.prepareStatement(query);
+        stmt.setBoolean(1, ! enabled);
+        stmt.setString(2, email);
 
         return stmt.executeUpdate() == 1;
     }

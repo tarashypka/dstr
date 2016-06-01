@@ -29,26 +29,27 @@
   </jsp:attribute>
 
   <jsp:body>
-    <c:if test="${requestScope.statusCode eq 404}">
-      <h3>Error Details</h3>
-      <ul>
-        <li>Status Code: 404</li>
-        <li>
-          Requested URI:
-          <c:out value="${requestScope.requestUri}"></c:out>
-          is not allowed or doesn't exist
-        </li>
-      </ul>
-    </c:if>
-
-    <c:if test="${requestScope.statusCode eq 500}">
-      <h3>Exception Details</h3>
-      <ul>
-        <li>Servlet Name: <c:out value="${requestScope.servletName}"></c:out></li>
-        <li>Requested URI: <c:out value="${requestScope.requestUri}"></c:out></li>
-        <li>Exception Name: <c:out value="${requestScope.exception}"></c:out></li>
-        <li>Exception Message: <c:out value="${requestScope.exceptionMsg}"></c:out></li>
-      </ul>
-    </c:if>
+    <c:choose>
+      <c:when test="${requestScope.statusCode eq 404}">
+        <h3>Error Details</h3>
+        <ul>
+          <li>Status Code: 404</li>
+          <li>
+            Requested URI:
+            <c:out value="${requestScope.requestUri}"></c:out>
+            is not allowed or doesn't exist
+          </li>
+        </ul>
+      </c:when>
+      <c:when test="${requestScope.statusCode eq 500}">
+        <h3>Exception Details</h3>
+        <ul>
+          <li>Servlet Name: <c:out value="${requestScope.servletName}"></c:out></li>
+          <li>Requested URI: <c:out value="${requestScope.requestUri}"></c:out></li>
+          <li>Exception Name: <c:out value="${requestScope.exception}"></c:out></li>
+          <li>Exception Message: <c:out value="${requestScope.exceptionMsg}"></c:out></li>
+        </ul>
+      </c:when>
+    </c:choose>
   </jsp:body>
 </t:genericpage>

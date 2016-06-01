@@ -2,6 +2,7 @@
 <%@ attribute name="title" fragment="true" %>
 <%@ attribute name="style" fragment="true" %>
 <%@ attribute name="buttons" fragment="true" %>
+<%@ attribute name="error" fragment="true" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
 <html>
@@ -95,6 +96,12 @@
             position: absolute;
             right: 5px;
         }
+        #body #error {
+            position: fixed;
+            font-family: cursive;
+            font-size: 20px;
+            color: red;
+        }
     </style>
     <jsp:invoke fragment="style"/>
 <body>
@@ -108,64 +115,82 @@
     <div id="buttons">
         <c:url value="/items" var="itemsURL"></c:url>
 
-        <c:if test="${sessionScope.customer eq null}">
-            <c:url value="/login" var="loginURL"></c:url>
-            <c:url value="/register" var="registrationURL"></c:url>
+        <c:choose>
+            <c:when test="${sessionScope.customer eq null}">
+                <c:url value="/login" var="loginURL"></c:url>
+                <c:url value="/register" var="registrationURL"></c:url>
 
-            <form class="button1" action='<c:out value="${itemsURL}"></c:out>' method="get">
-                <input type="submit" value="Усі товари">
-            </form>
-            <form class="button8" action='<c:out value="${loginURL}"></c:out>' method="get">
-                <input type="submit" value="Увійти в систему">
-            </form>
-            <form class="button9" action='<c:out value="${registrationURL}"></c:out>' method="get">
-                <input type="submit" value="Зарегіструватись">
-            </form>
-        </c:if>
-
-        <c:if test="${sessionScope.customer ne null}">
-            <c:url value="/orders" var="ordersURL"></c:url>
-            <c:url value="/logout" var="logoutURL"></c:url>
-
-            <c:if test="${sessionScope.customer.role eq 'customer'}">
-                <c:url value="/orders/add" var="addOrderURL"></c:url>
-
-                <form class="button1" action='<c:out value="${itemsURL}"></c:out>' method="get">
-                    <input type="submit" value="Мої товари">
-                </form>
-                <form class="button2" action='<c:out value="${ordersURL}"></c:out>' method="get">
-                    <input type="submit" value="Мої замовлення">
-                </form>
-                <form class="button3" action='<c:out value="${addOrderURL}"></c:out>' method="get">
-                    <input type="submit" value="Нове замовлення">
-                </form>
-            </c:if>
-            <c:if test="${sessionScope.customer.role eq 'admin'}">
-                <c:url value="/customers" var="customersURL"></c:url>
-                <c:url value="/items/add" var="addItemURL"></c:url>
-
-                <form class="button1" action='<c:out value="${itemsURL}"></c:out>' method="get">
+                <form class="button1"
+                      action='<c:out value="${itemsURL}"></c:out>' method="get">
                     <input type="submit" value="Усі товари">
                 </form>
-                <form class="button2" action='<c:out value="${ordersURL}"></c:out>' method="get">
-                    <input type="submit" value="Усі замовлення">
+                <form class="button8"
+                      action='<c:out value="${loginURL}"></c:out>' method="get">
+                    <input type="submit" value="Увійти в систему">
                 </form>
-                <form class="button3" action='<c:out value="${customersURL}"></c:out>' method="get">
-                    <input type="submit" value="Усі замовники">
+                <form class="button9"
+                      action='<c:out value="${registrationURL}"></c:out>' method="get">
+                    <input type="submit" value="Зарегіструватись">
                 </form>
-                <form class="button4" action='<c:out value="${addItemURL}"></c:out>' method="get">
-                    <input type="submit" value="Додати товар">
+            </c:when>
+            <c:otherwise>
+                <c:url value="/orders" var="ordersURL"></c:url>
+                <c:url value="/logout" var="logoutURL"></c:url>
+
+                <c:choose>
+                    <c:when test="${sessionScope.customer.role eq 'customer'}">
+                        <c:url value="/order/add" var="addOrderURL"></c:url>
+
+                        <form class="button1"
+                              action='<c:out value="${itemsURL}"></c:out>' method="get">
+                            <input type="submit" value="Мої товари">
+                        </form>
+                        <form class="button2"
+                              action='<c:out value="${ordersURL}"></c:out>' method="get">
+                            <input type="submit" value="Мої замовлення">
+                        </form>
+                        <form class="button3"
+                              action='<c:out value="${addOrderURL}"></c:out>' method="get">
+                            <input type="submit" value="Нове замовлення">
+                        </form>
+                    </c:when>
+                    <c:when test="${sessionScope.customer.role eq 'admin'}">
+                        <c:url value="/customers" var="customersURL"></c:url>
+                        <c:url value="/item/add" var="addItemURL"></c:url>
+
+                        <form class="button1"
+                              action='<c:out value="${itemsURL}"></c:out>' method="get">
+                            <input type="submit" value="Усі товари">
+                        </form>
+                        <form class="button2"
+                              action='<c:out value="${ordersURL}"></c:out>' method="get">
+                            <input type="submit" value="Усі замовлення">
+                        </form>
+                        <form class="button3"
+                              action='<c:out value="${customersURL}"></c:out>' method="get">
+                            <input type="submit" value="Усі замовники">
+                        </form>
+                        <form class="button4"
+                              action='<c:out value="${addItemURL}"></c:out>' method="get">
+                            <input type="submit" value="Додати товар">
+                        </form>
+                    </c:when>
+                </c:choose>
+                <form class="button10"
+                      action='<c:out value="${logoutURL}"></c:out>' method="post">
+                    <input type="submit" value="Вийти із системи">
                 </form>
-            </c:if>
-            <form class="button10" action='<c:out value="${logoutURL}"></c:out>' method="post">
-                <input type="submit" value="Вийти із системи">
-            </form>
-        </c:if>
+            </c:otherwise>
+        </c:choose>
+
         <jsp:invoke fragment="buttons"/>
     </div>
 
     <div id="body">
         <jsp:doBody/>
+        <div id="error">
+            <jsp:invoke fragment="error"/>
+        </div>
     </div>
 
     <div id="footer">

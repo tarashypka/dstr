@@ -2,6 +2,7 @@ package com.dstr.dao;
 
 import com.dstr.model.Item;
 import com.mongodb.BasicDBObject;
+import com.mongodb.DBObject;
 import com.mongodb.DBRef;
 import com.mongodb.MongoClient;
 import com.mongodb.client.MongoCollection;
@@ -116,11 +117,49 @@ public class MongoOrderDAO {
         return items;
     }
 
+    // Should be reimplemented
     public int ordersAmount(String email) {
         return findCustomerOrders(email).size();
     }
 
+    // Should be reimplemented
     public int itemsAmount(String email) {
         return findCustomerItems(email).size();
+    }
+
+    // It seems MongoCollection find method has no projection method
+    // to decrease network load:
+    // api.mongodb.com/java/current/com/mongodb/client/MongoCollection.html
+    public int itemSold(ObjectId _id) {
+        int amount = 0;
+
+        Document query = new Document("items.id", new DBRef("items", _id));
+        MongoCursor<Document> cursor = this.mongoColl.find(query).iterator();
+        try {
+            while (cursor.hasNext()) {
+                Document doc = cursor.next();
+
+                List<Document> itemsDocs = (ArrayList) doc.get("items");
+                for (Document itemDoc : itemsDocs) {
+                    DBRef itemRef = (DBRef) itemDoc.get("id");
+                    ObjectId itemId = (ObjectId) itemRef.getId();
+                    if (itemId.equals(_id)) {
+                        amount += itemDoc.getInteger("quantity");
+                    }
+                }
+            }
+        } finally {
+            cursor.close();
+        }
+        return amount;
+    }
+
+    public int changeOrderStatus(ObjectId _id, Order.OrderStatus status) {
+
+        UpdateResult updRes = this.mongoColl.updateOne(
+                eq("_id", _id),
+                new Document("$set", new Document("status", status.getValue()))
+        );
+        return (int) updRes.getModifiedCount();
     }
 }

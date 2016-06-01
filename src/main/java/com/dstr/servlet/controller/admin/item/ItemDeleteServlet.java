@@ -20,20 +20,14 @@ import java.util.Map;
  * Created by deoxys on 28.05.16.
  */
 
-@WebServlet(name = "DeleteItem", urlPatterns = "/items/delete")
-public class DeleteItemServlet extends HttpServlet {
-    final static Logger logger = Logger.getLogger(DeleteItemServlet.class);
+@WebServlet(name = "ItemDelete", urlPatterns = "/item/delete")
+public class ItemDeleteServlet extends HttpServlet {
+    final static Logger logger = Logger.getLogger(ItemDeleteServlet.class);
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        request.setCharacterEncoding("UTF-8");
-
         Customer customer = (Customer) request.getSession().getAttribute("customer");
-
-        if (customer == null || ! customer.getRole().equals("admin")) {
-            throw new ServletException("Not enough authority");
-        }
 
         String id = request.getParameter("id");
 

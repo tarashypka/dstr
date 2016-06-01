@@ -12,6 +12,7 @@ public class Customer implements Serializable {
     private String email;
     private String password;
     private String role;
+    private boolean enabled;
 
     public Customer() { }
 
@@ -19,12 +20,15 @@ public class Customer implements Serializable {
         this.email = email;
     }
 
-    public Customer(String name, String surname, String email, String password, String role) {
+    public Customer(String name, String surname, String email, String password,
+                    String role, boolean enabled) {
+
         this.name = name;
         this.surname = surname;
         this.email = email;
         this.password = password;
         this.role = role;
+        this.enabled = enabled;
     }
 
     public String getName() {
@@ -67,12 +71,30 @@ public class Customer implements Serializable {
         this.role = role;
     }
 
+    public boolean isCustomer() {
+        return role.equals("customer");
+    }
+
+    public boolean isAdmin() {
+        return role.equals("admin");
+    }
+
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
+
     @Override
     public String toString() {
         return  "{ name='" + name + '\'' +
                 ", surname='" + surname + '\'' +
                 ", email='" + email + '\'' +
-                ", role='" + role + '\'' + "} ";
+                ", password='" + password + '\'' +
+                ", role='" + role + '\'' +
+                ", enabled=" + enabled + " }";
     }
 
     @Override

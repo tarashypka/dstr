@@ -23,8 +23,6 @@ public class ItemsServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        response.setCharacterEncoding("UTF-8");
-
         String email = request.getParameter("email");
 
         if (email != null) {
@@ -38,7 +36,7 @@ public class ItemsServlet extends HttpServlet {
         MongoClient mongo = (MongoClient) request.getServletContext()
                 .getAttribute("MONGO_CLIENT");
 
-        if (customer != null && customer.getRole().equals("customer")) {
+        if (customer != null && customer.isCustomer()) {
             MongoOrderDAO orderDAO = new MongoOrderDAO(mongo);
             items = orderDAO.findCustomerItems(customer.getEmail());
         } else {

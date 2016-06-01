@@ -25,8 +25,6 @@ public class OrdersServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        response.setCharacterEncoding("UTF-8");
-
         String email = request.getParameter("email");
 
         if (email != null) {
@@ -42,9 +40,9 @@ public class OrdersServlet extends HttpServlet {
         MongoOrderDAO orderDAO = new MongoOrderDAO(mongo);
 
         if (customer != null) {
-            if (customer.getRole().equals("admin")) {
+            if (customer.isAdmin()) {
                 orders = orderDAO.findAllOrders();
-            } else if (customer.getRole().equals("customer")) {
+            } else if (customer.isCustomer()) {
                 orders = orderDAO.findCustomerOrders(customer.getEmail());
             }
         }
