@@ -4,9 +4,7 @@ package com.dstr.listener;
  * Created by deoxys on 17.05.16.
  */
 
-import com.mongodb.MongoClient;
-import com.mongodb.MongoCredential;
-import com.mongodb.ServerAddress;
+import com.mongodb.*;
 import org.apache.log4j.Logger;
 
 import javax.naming.InitialContext;
@@ -49,6 +47,11 @@ public class MongoContextListener implements ServletContextListener {
         auths.add(MongoCredential.createCredential(user, db, pswd.toCharArray()));
 
         MongoClient mongoClient = new MongoClient(seeds, auths);
+        mongoClient.setReadPreference(ReadPreference.secondary());
+        // MongoClient mongoClient = new MongoClient(
+        //        new MongoClientURI("mongodb://mongosvr1:27017,mongosvr2:27017,mongosvr3:27017/?replicaSet=rs0&slaveOk=true&user=dstrDbAdmin&db=dstr&password=1234"));
+        // mongoClient.slaveOk();
+
         ctx.setAttribute("MONGO_CLIENT", mongoClient);
 
         // Expand MongoClient beyond Servlets via JNDI

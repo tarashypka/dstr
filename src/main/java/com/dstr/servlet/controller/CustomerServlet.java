@@ -18,6 +18,7 @@ import java.sql.SQLException;
 /**
  * Created by deoxys on 01.06.16.
  */
+
 @WebServlet(name = "Customer", urlPatterns = "/customer")
 public class CustomerServlet extends HttpServlet {
     final static Logger logger = Logger.getLogger(CustomerServlet.class);

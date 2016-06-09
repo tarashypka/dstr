@@ -44,16 +44,17 @@ public class LoginServlet extends HttpServlet {
                     response.sendRedirect(request.getContextPath() + "/home");
                     logger.info("Customer " + selectedCustomer + " logged in");
                 } else {
-                    request.setAttribute("email", email);
-                    request.setAttribute("errtype", "password");
-                    request.getRequestDispatcher("/login.jsp").forward(request, response);
                     logger.info("Customer " + selectedCustomer + " didn't log in");
+
+                    request.setAttribute("email", email);
+                    request.setAttribute("error", "Пароль введено невірно");
+                    request.getRequestDispatcher("/login.jsp").forward(request, response);
                 }
             } else {
-                request.setAttribute("errtype", "email");
                 logger.info("Customer " + customer + " not found");
-                request.getRequestDispatcher("/login.jsp")
-                        .forward(request, response);
+
+                request.setAttribute("error", "Електронну пошту введено невірно");
+                request.getRequestDispatcher("/login.jsp").forward(request, response);
             }
             customerDAO.closeConnection();
         } catch (SQLException ex) {

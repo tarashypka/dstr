@@ -1,6 +1,7 @@
 package com.dstr.dao;
 
 import com.mongodb.MongoClient;
+import com.mongodb.ReadPreference;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.result.DeleteResult;
@@ -43,14 +44,17 @@ public class MongoItemDAO {
     }
 
     public Item findItem(ObjectId _id) {
-        Document doc = this.mongoColl.find(
-                eq("_id", _id)).first();
+        Document doc = this.mongoColl.
+                withReadPreference(ReadPreference.secondaryPreferred()).
+                find(eq("_id", _id)).first();
         return ItemConverter.toItem(doc);
     }
 
     public List<Item> findAllItems() {
         List<Item> items = new ArrayList<>();
-        MongoCursor<Document> cursor = this.mongoColl.find().iterator();
+        MongoCursor<Document> cursor = this.mongoColl.
+                withReadPreference(ReadPreference.secondaryPreferred()).
+                find().iterator();
         try {
             while (cursor.hasNext()) {
                 Document doc = cursor.next();

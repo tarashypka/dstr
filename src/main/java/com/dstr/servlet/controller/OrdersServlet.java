@@ -1,7 +1,6 @@
 package com.dstr.servlet.controller;
 
 import com.dstr.model.Customer;
-import com.dstr.model.Item;
 import com.mongodb.MongoClient;
 import com.dstr.dao.MongoOrderDAO;
 import com.dstr.model.Order;
@@ -12,9 +11,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by deoxys on 29.05.16.
@@ -25,35 +22,43 @@ public class OrdersServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        String email = request.getParameter("email");
-
-        if (email != null) {
-            customerOrders(request, response);
-        }
-
         Customer customer = (Customer) request.getSession().getAttribute("customer");
 
-        List<Order> orders = new ArrayList<>();
+        if (customer.isCustomer()) {
+            customerOrders(request, response, customer.getEmail());
+        } else if (customer.isAdmin()) {
+            if (request.getParameter("email") != null) {
+                customerOrders(request, response, request.getParameter("email"));
+            } else {
+                allOrders(request, response);
+            }
+        }
+    }
+
+    /* Supposed there could be a lot of orders at all,
+        then it's preferred to save them in Hz instance
+        and not to download all of them after
+        each time admin requests /orders
+     */
+    private void allOrders(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
 
         MongoClient mongo = (MongoClient) request.getServletContext()
                 .getAttribute("MONGO_CLIENT");
         MongoOrderDAO orderDAO = new MongoOrderDAO(mongo);
 
-        if (customer != null) {
-            if (customer.isAdmin()) {
-                orders = orderDAO.findAllOrders();
-            } else if (customer.isCustomer()) {
-                orders = orderDAO.findCustomerOrders(customer.getEmail());
-            }
-        }
+        List<Order> orders = orderDAO.findAllOrders();
         request.getSession().setAttribute("orders", orders);
         request.getRequestDispatcher("/orders.jsp").forward(request, response);
     }
 
-    private void customerOrders(HttpServletRequest request, HttpServletResponse response)
+    /* Supposed customer's orders list is not that big
+        and admin can change each order status,
+        then it's preferred to save them in customer's session
+        and update the list every time customer requests /orders
+     */
+    private void customerOrders(HttpServletRequest request, HttpServletResponse response, String email)
             throws ServletException, IOException {
-
-        String email = request.getParameter("email");
 
         if (email.equals("")) {
             throw new ServletException("Wrong customer email");
@@ -66,7 +71,7 @@ public class OrdersServlet extends HttpServlet {
 
         List<Order> orders = orderDAO.findCustomerOrders(email);
 
-        request.setAttribute("orders", orders);
-        request.getRequestDispatcher("/customer/orders.jsp").forward(request, response);
+        request.getSession().setAttribute("orders", orders);
+        request.getRequestDispatcher("/orders.jsp").forward(request, response);
     }
 }

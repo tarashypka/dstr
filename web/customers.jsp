@@ -12,22 +12,7 @@
 
 <t:genericpage>
   <jsp:attribute name="title">
-    <title>Клієнти</title>
-  </jsp:attribute>
-
-  <jsp:attribute name="style">
-    <style>
-      #body table {
-        position: fixed;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-      }
-      #body table, tr, th, td {
-        border: 1px solid black;
-        text-align: center;
-      }
-    </style>
+    <title>Користувачі</title>
   </jsp:attribute>
 
   <jsp:body>

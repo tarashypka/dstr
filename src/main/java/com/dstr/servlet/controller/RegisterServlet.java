@@ -29,22 +29,22 @@ public class RegisterServlet extends HttpServlet {
         String email = request.getParameter("email");
         String password = request.getParameter("password");
 
-        String errtype = null;
+        String error = null;
         Customer customer = new Customer();
         customer.setName(name);
         customer.setSurname(surname);
         customer.setEmail(email);
         customer.setPassword(password);
         if (name == null || name.equals(""))
-            errtype = "name";
+            error = "Введіть ім'я";
         else if (surname == null || surname.equals(""))
-            errtype = "surname";
+            error = "Введіть прізвище";
         else if (email == null || ! email.matches("\\S+@\\w+\\.\\w+"))
-            errtype = "email";
+            error = "Електронну пошту введено невірно";
         else if (password == null || password.length() < 8)
-            errtype = "password";
-        if (errtype != null) {
-            request.setAttribute("errtype", errtype);
+            error = "Занадто короткий пароль";
+        if (error != null) {
+            request.setAttribute("error", error);
             request.setAttribute("customer", customer);
             request.getRequestDispatcher("/register.jsp").forward(request, response);
         } else {
@@ -54,18 +54,18 @@ public class RegisterServlet extends HttpServlet {
             try {
                 PostgresCustomerDAO customerDAO = new PostgresCustomerDAO(source);
                 if (customerDAO.insertCustomer(customer)) {
-                    response.sendRedirect(request.getContextPath() + "/login");
                     logger.info("New customer " + customer + " was created");
+                    response.sendRedirect(request.getContextPath() + "/login");
                 } else {
-                    request.setAttribute("errtype", "duplicate");
                     logger.info("New customer " + customer + " wasn't created");
+                    request.setAttribute("errtype", "duplicate");
                     request.getRequestDispatcher("/register.jsp")
                             .forward(request, response);
                 }
                 customerDAO.closeConnection();
             } catch (SQLException ex) {
-                ex.printStackTrace();
                 logger.error("Register: " + ex.getMessage());
+                ex.printStackTrace();
                 throw new ServletException("DB Connection/Insert error: "
                         + ex.getMessage());
             }

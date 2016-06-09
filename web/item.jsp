@@ -15,21 +15,6 @@
     <title>Товар</title>
   </jsp:attribute>
 
-  <jsp:attribute name="style">
-    <style>
-      #body table {
-        position: fixed;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-      }
-      #body table, tr, th, td {
-        border: 1px solid black;
-        text-align: center;
-      }
-    </style>
-  </jsp:attribute>
-
   <jsp:body>
     <c:if test="${requestScope.item ne null}">
       <table>

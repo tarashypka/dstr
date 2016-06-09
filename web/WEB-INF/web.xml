@@ -12,6 +12,33 @@
         <welcome-file>home.jsp</welcome-file>
     </welcome-file-list>
 
+    <!-- Distributed session with Hazelcast -->
+    <filter>
+        <filter-name>hazelcast-filter</filter-name>
+        <filter-class>com.hazelcast.web.WebFilter</filter-class>
+
+        <!-- Name of the distributed map storing for web session objects -->
+        <init-param>
+            <param-name>map-name</param-name>
+            <param-value>my-sessions</param-value>
+        </init-param>
+        <!-- Name of session id cookie -->
+        <init-param>
+            <param-name>cookie-name</param-name>
+            <param-value>hazelcast.sessionId</param-value>
+        </init-param>
+    </filter>
+    <filter-mapping>
+        <filter-name>hazelcast-filter</filter-name>
+        <url-pattern>/*</url-pattern>
+        <dispatcher>FORWARD</dispatcher>
+        <dispatcher>INCLUDE</dispatcher>
+        <dispatcher>REQUEST</dispatcher>
+    </filter-mapping>
+    <listener>
+        <listener-class>com.hazelcast.web.SessionListener</listener-class>
+    </listener>
+
     <!-- Hazelcast context params -->
     <context-param>
         <param-name>HZ_HOSTS</param-name>
@@ -90,33 +117,6 @@
         <param-value>1234</param-value>
     </context-param>
 
-    <!-- Distributed session with Hazelcast -->
-    <filter>
-        <filter-name>hazelcast-filter</filter-name>
-        <filter-class>com.hazelcast.web.WebFilter</filter-class>
-
-        <!-- Name of the distributed map storing for web session objects -->
-        <init-param>
-            <param-name>map-name</param-name>
-            <param-value>my-sessions</param-value>
-        </init-param>
-        <!-- Name of session id cookie -->
-        <init-param>
-            <param-name>cookie-name</param-name>
-            <param-value>hazelcast.sessionId</param-value>
-        </init-param>
-    </filter>
-    <filter-mapping>
-        <filter-name>hazelcast-filter</filter-name>
-        <url-pattern>/*</url-pattern>
-        <dispatcher>FORWARD</dispatcher>
-        <dispatcher>INCLUDE</dispatcher>
-        <dispatcher>REQUEST</dispatcher>
-    </filter-mapping>
-    <listener>
-        <listener-class>com.hazelcast.web.SessionListener</listener-class>
-    </listener>
-
     <!-- Handle 404 errors and exceptions with predefined Servlet -->
     <error-page>
         <error-code>404</error-code>
@@ -142,6 +142,7 @@
                 /item
                 /items
                 /error
+                /favicon.ico
             </param-value>
         </init-param>
         <init-param>

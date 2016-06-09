@@ -13,7 +13,7 @@ public class Order implements Serializable {
     private Date date;
     private Customer customer;
     private Map<String, Integer> items;
-    private Map<Double, Currency> receipt;
+    private Map<Currency, Double> receipt;
     private OrderStatus status;
 
     public Order() { }
@@ -89,11 +89,11 @@ public class Order implements Serializable {
         this.items = items;
     }
 
-    public Map<Double, Currency> getReceipt() {
+    public Map<Currency, Double> getReceipt() {
         return receipt;
     }
 
-    public void setReceipt(Map<Double, Currency> receipt) {
+    public void setReceipt(Map<Currency, Double> receipt) {
         this.receipt = receipt;
     }
 
@@ -103,6 +103,17 @@ public class Order implements Serializable {
 
     public void setStatus(OrderStatus status) {
         this.status = status;
+    }
+
+    @Override
+    public String toString() {
+        return  "{ id='" + id + '\'' +
+                ", orderNumber='" + orderNumber + '\'' +
+                ", date=" + date +
+                ", customer=" + customer +
+                ", items=" + items +
+                ", receipt=" + receipt +
+                ", status=" + status + " }";
     }
 
     @Override

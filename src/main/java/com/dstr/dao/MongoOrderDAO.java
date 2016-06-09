@@ -1,15 +1,11 @@
 package com.dstr.dao;
 
 import com.dstr.model.Item;
-import com.mongodb.BasicDBObject;
-import com.mongodb.DBObject;
-import com.mongodb.DBRef;
-import com.mongodb.MongoClient;
+import com.mongodb.*;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.result.UpdateResult;
 import com.dstr.converter.OrderConverter;
-import com.dstr.model.Customer;
 import com.dstr.model.Order;
 import org.bson.Document;
 import org.bson.types.ObjectId;
@@ -51,14 +47,17 @@ public class MongoOrderDAO {
     }
 
     public Order findOrder(ObjectId _id) {
-        Document doc = this.mongoColl.find(
-                eq("_id", _id)).first();
+        Document doc = this.mongoColl.
+                withReadPreference(ReadPreference.secondaryPreferred()).
+                find(eq("_id", _id)).first();
         return OrderConverter.toOrder(doc);
     }
 
     public List<Order> findAllOrders() {
         List<Order> orders = new ArrayList<>();
-        MongoCursor<Document> cursor = this.mongoColl.find().iterator();
+        MongoCursor<Document> cursor = this.mongoColl.
+                withReadPreference(ReadPreference.secondaryPreferred()).
+                find().iterator();
         try {
             while (cursor.hasNext()) {
                 Document doc = cursor.next();
@@ -75,8 +74,9 @@ public class MongoOrderDAO {
 
         BasicDBObject query = new BasicDBObject("customer.email", email);
 
-        MongoCursor<Document> cursor = this.mongoColl.find(query).iterator();
-
+        MongoCursor<Document> cursor = this.mongoColl.
+                withReadPreference(ReadPreference.secondaryPreferred()).
+                find(query).iterator();
         try {
             while (cursor.hasNext()) {
                 Document doc = cursor.next();
@@ -93,15 +93,15 @@ public class MongoOrderDAO {
 
         BasicDBObject query = new BasicDBObject("customer.email", email);
 
-        MongoCursor<Document> cursor = this.mongoColl.find(query).iterator();
-
+        MongoCursor<Document> cursor = this.mongoColl.
+                withReadPreference(ReadPreference.secondaryPreferred()).
+                find(query).iterator();
         try {
             MongoItemDAO itemDAO = new MongoItemDAO(mongoClient);
 
             while (cursor.hasNext()) {
                 Document doc = cursor.next();
                 List itemsDbl = (ArrayList) doc.get("items");
-                System.out.println("items=" + itemsDbl.size());
 
                 for (Object el : itemsDbl) {
                     Document itemRef = (Document) el;
@@ -134,7 +134,9 @@ public class MongoOrderDAO {
         int amount = 0;
 
         Document query = new Document("items.id", new DBRef("items", _id));
-        MongoCursor<Document> cursor = this.mongoColl.find(query).iterator();
+        MongoCursor<Document> cursor = this.mongoColl.
+                withReadPreference(ReadPreference.secondaryPreferred()).
+                find(query).iterator();
         try {
             while (cursor.hasNext()) {
                 Document doc = cursor.next();

@@ -1,5 +1,7 @@
 #! /bin/zsh
 
+START_REPLICA_SH=/home/deoxys/mongodb/startreplica.sh
+
 if [[ $1 == "start" ]]; then
     # Start mongod/tomcat instance[s]
     for arg in ${@:2}; do
@@ -7,7 +9,8 @@ if [[ $1 == "start" ]]; then
             if ! ping -c 1 -W 1 $arg > /dev/null; then
                 echo "You should start $arg first"
             elif [[ $arg =~ "mongosvr[1-3]" ]]; then
-                if ssh $arg /home/deoxys/mongodb/startreplica.sh; then
+                export LC_ALL=C
+                if ssh $arg $START_REPLICA_SH; then
                     echo "Successfully started mongod on $arg"
                 fi
             elif [[ $arg =~ "tomcatsvr[1-3]" ]]; then

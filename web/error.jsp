@@ -15,20 +15,7 @@
     <title>Помилка</title>
   </jsp:attribute>
 
-  <jsp:attribute name="style">
-    <style>
-      #body {
-        position: absolute;
-        top: 140px;
-        left: 100px;
-        color: red;
-        font-family: cursive;
-        font-size: 22px;
-      }
-    </style>
-  </jsp:attribute>
-
-  <jsp:body>
+  <jsp:attribute name="error">
     <c:choose>
       <c:when test="${requestScope.statusCode eq 404}">
         <h3>Error Details</h3>
@@ -51,5 +38,5 @@
         </ul>
       </c:when>
     </c:choose>
-  </jsp:body>
+  </jsp:attribute>
 </t:genericpage>

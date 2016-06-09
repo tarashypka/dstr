@@ -25,13 +25,11 @@ public class OrderConverter {
         }
         doc.append("orderNumber", order.getOrderNumber());
 
-        Date date = (Date) order.getDate();
-        doc.append("date", date);
+        doc.append("date", order.getDate());
 
         Customer customer = order.getCustomer();
         doc.append("customer", CustomerConverter.toDocument(customer));
 
-        // Items list and payment object should be converted here
         BasicDBList itemsDbl = new BasicDBList();
         Map<String, Integer> items = order.getItems();
 
@@ -43,8 +41,19 @@ public class OrderConverter {
         }
         doc.append("items", itemsDbl);
 
+        Map<Currency, Double> receipt = order.getReceipt();
+        List<Document> receiptList = new ArrayList<>();
+
+        for (Currency currency : receipt.keySet()) {
+            Document priceDoc = new Document();
+            priceDoc.append("currency", currency.toString());
+            priceDoc.append("price", receipt.get(currency));
+            receiptList.add(priceDoc);
+        }
+        doc.append("receipt", receiptList);
+
         String status = order.getStatus().name();
-        doc.append("status", Order.OrderStatus.valueOf(status));
+        doc.append("status", Order.OrderStatus.valueOf(status).getValue());
 
         return doc;
     }
@@ -69,12 +78,12 @@ public class OrderConverter {
         }
         order.setItems(items);
 
-        Map<Double, Currency> receipt = new HashMap<>();
+        Map<Currency, Double> receipt = new HashMap<>();
         List<Document> receiptDocs = (ArrayList) doc.get("receipt");
         for (Document receiptDoc : receiptDocs) {
             Double price = receiptDoc.getDouble("price");
             Currency currency = Currency.getInstance(receiptDoc.getString("currency"));
-            receipt.put(price, currency);
+            receipt.put(currency, price);
         }
         order.setReceipt(receipt);
 
