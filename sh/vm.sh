@@ -64,11 +64,15 @@ elif [[ $1 == "stop" ]]; then
                     echo "$arg is already stopped"
                 elif [[ $arg =~ "mongosvr[1-3]" ]]; then
                     if ssh $arg pkill mongod; then
-                        echo "Successfully stopped mongod on mongosvr$i"
+                        echo "Successfully stopped mongod on $arg"
                     fi
                     sleep 3
                     ssh $arg sudo /sbin/poweroff
                 elif [[ $arg =~ "tomcatsvr[1-3]" ]]; then
+                    if ssh $arg sudo /bin/systemctl stop tomcat; then
+                        echo "Successfully stopped tomcat on $arg"
+                    fi
+                    sleep 3
                     ssh $arg sudo /sbin/poweroff
                 fi
             else
