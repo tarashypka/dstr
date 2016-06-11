@@ -82,7 +82,8 @@ public class ItemEditServlet extends HttpServlet {
         } else {
             request.setAttribute("errtype", errtypes.get(0));
             request.setAttribute("item", item);
-            request.getRequestDispatcher("/itemadd.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/jsp/itemadd.jsp")
+                    .forward(request, response);
         }
     }
 
@@ -98,6 +99,7 @@ public class ItemEditServlet extends HttpServlet {
         MongoItemDAO itemDAO = new MongoItemDAO(mongo);
         Item item = itemDAO.findItem(new ObjectId(id));
         request.setAttribute("item", item);
-        request.getRequestDispatcher("/itemedit.jsp").forward(request, response);
+        request.getRequestDispatcher("/WEB-INF/jsp/itemedit.jsp")
+                .forward(request, response);
     }
 }

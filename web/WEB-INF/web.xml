@@ -9,7 +9,7 @@
 
     <!-- Files to load on home -->
     <welcome-file-list>
-        <welcome-file>home.jsp</welcome-file>
+        <welcome-file>/WEB-INF/jsp/home.jsp</welcome-file>
     </welcome-file-list>
 
     <!-- Distributed session with Hazelcast -->
@@ -178,6 +178,12 @@
                 /customer/status
                 /customers
                 /order/status
+            </param-value>
+        </init-param>
+        <init-param>
+            <param-name>publicResources</param-name>
+            <param-value>
+                /resources
             </param-value>
         </init-param>
     </filter>

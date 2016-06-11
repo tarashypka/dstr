@@ -58,6 +58,7 @@ public class ErrorHandlerServlet extends HttpServlet {
         } else {
             logger.error(statusCode);
         }
-        request.getRequestDispatcher("/error.jsp").forward(request, response);
+        request.getRequestDispatcher("/WEB-INF/jsp/error.jsp")
+                .forward(request, response);
     }
 }

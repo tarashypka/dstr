@@ -39,6 +39,7 @@ public class ItemServlet extends HttpServlet {
         int sold = orderDAO.itemSold(_id);
         request.setAttribute("sold", sold);
 
-        request.getRequestDispatcher("/item.jsp").forward(request, response);
+        request.getRequestDispatcher("/WEB-INF/jsp/item.jsp")
+                .forward(request, response);
     }
 }

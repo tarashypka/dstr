@@ -66,13 +66,15 @@ public class OrderAddServlet extends HttpServlet {
 
             if (item == null) {
                 request.setAttribute("error", "Товар не знайдено");
-                request.getRequestDispatcher("/orderadd.jsp").forward(request, response);
+                request.getRequestDispatcher("/WEB-INF/jsp/orderadd.jsp")
+                        .forward(request, response);
             } else {
                 int left = item.getLeft();
 
                 if (quantity > left) {
                     request.setAttribute("error", "Недостатньо товарів");
-                    request.getRequestDispatcher("/orderadd.jsp").forward(request, response);
+                    request.getRequestDispatcher("/WEB-INF/jsp/orderadd.jsp")
+                            .forward(request, response);
                 }
 
                 Currency currency = item.getCurrency();
@@ -92,7 +94,8 @@ public class OrderAddServlet extends HttpServlet {
 
                 orderItems.put(item, quantity);
                 request.getSession().setAttribute("orderItems", orderItems);
-                request.getRequestDispatcher("/orderadd.jsp").forward(request, response);
+                request.getRequestDispatcher("/WEB-INF/jsp/orderadd.jsp")
+                        .forward(request, response);
             }
         } else if (action.equals("order")) {
 
@@ -125,7 +128,8 @@ public class OrderAddServlet extends HttpServlet {
                 response.sendRedirect(request.getContextPath() + "/orders");
             } else {
                 logger.info("New order " + order + " was not added");
-                request.getRequestDispatcher("/orderadd.jsp").forward(request, response);
+                request.getRequestDispatcher("/WEB-INF/jsp/orderadd.jsp")
+                        .forward(request, response);
             }
         }
     }
@@ -142,6 +146,7 @@ public class OrderAddServlet extends HttpServlet {
         for (Item i : itemDAO.findAllItems()) items.put(i, null);
 
         request.getSession().setAttribute("items", items);
-        request.getRequestDispatcher("/orderadd.jsp").forward(request, response);
+        request.getRequestDispatcher("/WEB-INF/jsp/orderadd.jsp")
+                .forward(request, response);
     }
 }

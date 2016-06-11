@@ -23,12 +23,12 @@ public class AuthenticationFilter implements Filter {
 
     private String contextPath;
 
-    private List<String> publicPages;
+    private List<String> pubPages;
     private List<String> authFalsePages;
     private List<String> authTruePages;
-    private List<String> customerPrivatePages;
-    private List<String> adminPrivatePages;
-
+    private List<String> customerPrivPages;
+    private List<String> adminPrivPages;
+    private List<String> pubResourcesDirs;
 
     public void init(FilterConfig config) throws ServletException {
         String pub = config.getInitParameter("public");
@@ -36,21 +36,24 @@ public class AuthenticationFilter implements Filter {
         String authTrue = config.getInitParameter("authTrue");
         String customerPriv = config.getInitParameter("customerPrivate");
         String adminPriv = config.getInitParameter("adminPrivate");
+        String pubResources = config.getInitParameter("publicResources");
 
         String regex = "\\s*\n\\s*";
 
         contextPath = config.getServletContext().getContextPath();
 
         if (pub != null)
-            publicPages = toContextPages(Arrays.asList(pub.split(regex)));
+            pubPages = toContextPaths(Arrays.asList(pub.split(regex)));
         if (authFalse != null)
-            authFalsePages = toContextPages(Arrays.asList(authFalse.split(regex)));
+            authFalsePages = toContextPaths(Arrays.asList(authFalse.split(regex)));
         if (authTrue != null)
-            authTruePages = toContextPages(Arrays.asList(authTrue.split(regex)));
+            authTruePages = toContextPaths(Arrays.asList(authTrue.split(regex)));
         if (customerPriv != null)
-            customerPrivatePages = toContextPages(Arrays.asList(customerPriv.split(regex)));
+            customerPrivPages = toContextPaths(Arrays.asList(customerPriv.split(regex)));
         if (adminPriv != null)
-            adminPrivatePages = toContextPages(Arrays.asList(adminPriv.split(regex)));
+            adminPrivPages = toContextPaths(Arrays.asList(adminPriv.split(regex)));
+        if (pubResources != null)
+            pubResourcesDirs = toContextPaths(Arrays.asList(pubResources.split(regex)));
 
         logger.info("AuthenticationFilter: initialized successfully");
     }
@@ -63,7 +66,7 @@ public class AuthenticationFilter implements Filter {
 
         String uri = req.getRequestURI();
         String contextPath = req.getContextPath();
-        logger.info("Requested Resource::" + contextPath + uri);
+        logger.info("Requested Resource::" + uri);
 
         if (uri.equals(contextPath + "/")) {
             chain.doFilter(request, response);
@@ -74,14 +77,16 @@ public class AuthenticationFilter implements Filter {
         Customer customer = (Customer) session.getAttribute("customer");
 
         List<String> allowedPages = new ArrayList<>();
+        List<String> allowedResources = new ArrayList<>();
 
-        allowedPages.addAll(publicPages);
+        allowedPages.addAll(pubPages);
+        allowedResources.addAll(pubResourcesDirs);
         if (customer != null) {
             allowedPages.addAll(authTruePages);
             if (customer.isCustomer()) {
-                allowedPages.addAll(customerPrivatePages);
+                allowedPages.addAll(customerPrivPages);
             } else if (customer.isAdmin()) {
-                allowedPages.addAll(adminPrivatePages);
+                allowedPages.addAll(adminPrivPages);
             } else {
                 logger.error("Undefined customer role " + customer.getRole());
             }
@@ -89,7 +94,7 @@ public class AuthenticationFilter implements Filter {
             allowedPages.addAll(authFalsePages);
         }
 
-        if (! allowedPages.contains(uri)) {
+        if (! allowedPages.contains(uri) && ! isAllowedResource(uri, allowedResources)) {
             logger.error("Unauthorized access request");
             resp.sendRedirect(contextPath + "/login");
         } else {
@@ -98,7 +103,19 @@ public class AuthenticationFilter implements Filter {
         }
     }
 
-    private List<String> toContextPages(List<String> pages) {
+    private boolean isAllowedResource(String uri, List<String> allowedResources) {
+        for (String resourceDir : allowedResources) {
+            if (uri.startsWith(resourceDir)) {
+                // Should be a file
+                if (! uri.replaceAll(resourceDir + "/", "").contains("/")) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private List<String> toContextPaths(List<String> pages) {
         if (contextPath.length() > 0) {
             for (int i = 0; i < pages.size(); i++) {
                 pages.set(i, contextPath + pages.get(i));

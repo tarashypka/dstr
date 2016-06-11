@@ -74,7 +74,8 @@ public class ItemAddServlet extends HttpServlet {
         } else {
             request.setAttribute("errtype", errtypes.get(0));
             request.setAttribute("item", item);
-            request.getRequestDispatcher("/itemadd.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/jsp/itemadd.jsp")
+                    .forward(request, response);
         }
     }
 
@@ -82,6 +83,7 @@ public class ItemAddServlet extends HttpServlet {
             throws ServletException, IOException {
 
         request.setAttribute("item", null);
-        request.getRequestDispatcher("/itemadd.jsp").forward(request, response);
+        request.getRequestDispatcher("/WEB-INF/jsp/itemadd.jsp")
+                .forward(request, response);
     }
 }

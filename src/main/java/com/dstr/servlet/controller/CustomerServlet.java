@@ -48,7 +48,8 @@ public class CustomerServlet extends HttpServlet {
 
                 request.setAttribute("nOrders", orderDAO.ordersAmount(email));
                 request.setAttribute("nItems", orderDAO.itemsAmount(email));
-                request.getRequestDispatcher("/customer.jsp").forward(request, response);
+                request.getRequestDispatcher("/WEB-INF/jsp/customer.jsp")
+                        .forward(request, response);
 
                 customerDAO.closeConnection();
             } else {

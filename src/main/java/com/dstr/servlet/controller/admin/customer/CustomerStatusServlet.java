@@ -60,6 +60,7 @@ public class CustomerStatusServlet extends HttpServlet {
             logger.info("Delete error: " + ex.getMessage());
             throw new ServletException("DB Connection/Delete error: " + ex.getMessage());
         }
-        request.getRequestDispatcher("/customers.jsp").forward(request, response);
+        request.getRequestDispatcher("/WEB-INF/jsp/customers.jsp")
+                .forward(request, response);
     }
 }

@@ -59,7 +59,7 @@ public class RegisterServlet extends HttpServlet {
                 } else {
                     logger.info("New customer " + customer + " wasn't created");
                     request.setAttribute("errtype", "duplicate");
-                    request.getRequestDispatcher("/register.jsp")
+                    request.getRequestDispatcher("/WEB-INF/jsp/register.jsp")
                             .forward(request, response);
                 }
                 customerDAO.closeConnection();
@@ -79,6 +79,7 @@ public class RegisterServlet extends HttpServlet {
             String contextPath = request.getContextPath();
             response.sendRedirect(contextPath.isEmpty() ? "/" : contextPath);
         }
-        request.getRequestDispatcher("/register.jsp").forward(request, response);
+        request.getRequestDispatcher("/WEB-INF/jsp/register.jsp")
+                .forward(request, response);
     }
 }

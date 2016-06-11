@@ -59,6 +59,7 @@ public class OrderStatusServlet extends HttpServlet {
         } else {
             logger.error("Order's with id=" + id + " status was not changed");
         }
-        request.getRequestDispatcher("/orders.jsp").forward(request, response);
+        request.getRequestDispatcher("/WEB-INF/jsp/orders.jsp")
+                .forward(request, response);
     }
 }

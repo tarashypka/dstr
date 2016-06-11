@@ -35,7 +35,8 @@ public class CustomersServlet extends HttpServlet {
             customers.remove(new Customer("dstrdbadmin"));
 
             request.getSession().setAttribute("customers", customers);
-            request.getRequestDispatcher("/customers.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/jsp/customers.jsp")
+                    .forward(request, response);
             customerDAO.closeConnection();
         } catch (SQLException ex) {
             ex.printStackTrace();

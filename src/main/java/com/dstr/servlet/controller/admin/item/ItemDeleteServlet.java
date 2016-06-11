@@ -1,6 +1,5 @@
 package com.dstr.servlet.controller.admin.item;
 
-import com.dstr.model.Customer;
 import com.dstr.model.Item;
 import com.mongodb.MongoClient;
 import com.dstr.dao.MongoItemDAO;
@@ -27,8 +26,6 @@ public class ItemDeleteServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        Customer customer = (Customer) request.getSession().getAttribute("customer");
-
         String id = request.getParameter("id");
 
         if (id == null || id.equals("")) {
@@ -51,6 +48,7 @@ public class ItemDeleteServlet extends HttpServlet {
         } else {
             logger.error("Item with id=" + id + " was not deleted");
         }
-        request.getRequestDispatcher("/items.jsp").forward(request, response);
+        request.getRequestDispatcher("/WEB-INF/jsp/items.jsp")
+                .forward(request, response);
     }
 }

@@ -44,7 +44,8 @@ public class ItemsServlet extends HttpServlet {
             for (Item i : itemDAO.findAllItems()) items.put(i, null);
         }
         request.getSession().setAttribute("items", items);
-        request.getRequestDispatcher("/items.jsp").forward(request, response);
+        request.getRequestDispatcher("/WEB-INF/jsp/items.jsp")
+                .forward(request, response);
     }
 
     private void customerItems(HttpServletRequest request, HttpServletResponse response)
@@ -64,6 +65,7 @@ public class ItemsServlet extends HttpServlet {
         Map<Item, Integer> items = orderDAO.findCustomerItems(email);
 
         request.setAttribute("items", items);
-        request.getRequestDispatcher("/customer/items.jsp").forward(request, response);
+        request.getRequestDispatcher("/WEB-INF/jsp/customer/items.jsp")
+                .forward(request, response);
     }
 }

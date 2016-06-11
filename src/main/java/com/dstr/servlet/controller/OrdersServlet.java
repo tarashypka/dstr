@@ -49,7 +49,8 @@ public class OrdersServlet extends HttpServlet {
 
         List<Order> orders = orderDAO.findAllOrders();
         request.getSession().setAttribute("orders", orders);
-        request.getRequestDispatcher("/orders.jsp").forward(request, response);
+        request.getRequestDispatcher("/WEB-INF/jsp/orders.jsp")
+                .forward(request, response);
     }
 
     /* Supposed customer's orders list is not that big
@@ -72,6 +73,7 @@ public class OrdersServlet extends HttpServlet {
         List<Order> orders = orderDAO.findCustomerOrders(email);
 
         request.getSession().setAttribute("orders", orders);
-        request.getRequestDispatcher("/orders.jsp").forward(request, response);
+        request.getRequestDispatcher("/WEB-INF/jsp/orders.jsp")
+                .forward(request, response);
     }
 }

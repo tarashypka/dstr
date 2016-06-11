@@ -48,13 +48,15 @@ public class LoginServlet extends HttpServlet {
 
                     request.setAttribute("email", email);
                     request.setAttribute("error", "Пароль введено невірно");
-                    request.getRequestDispatcher("/login.jsp").forward(request, response);
+                    request.getRequestDispatcher("/WEB-INF/jsp/login.jsp")
+                            .forward(request, response);
                 }
             } else {
                 logger.info("Customer " + customer + " not found");
 
                 request.setAttribute("error", "Електронну пошту введено невірно");
-                request.getRequestDispatcher("/login.jsp").forward(request, response);
+                request.getRequestDispatcher("/WEB-INF/jsp/login.jsp")
+                        .forward(request, response);
             }
             customerDAO.closeConnection();
         } catch (SQLException ex) {
@@ -71,6 +73,7 @@ public class LoginServlet extends HttpServlet {
             String contextPath = request.getContextPath();
             response.sendRedirect(contextPath.isEmpty() ? "/" : contextPath);
         }
-        request.getRequestDispatcher("/login.jsp").forward(request, response);
+        request.getRequestDispatcher("/WEB-INF/jsp/login.jsp")
+                .forward(request, response);
     }
 }
