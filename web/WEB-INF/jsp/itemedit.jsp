@@ -16,36 +16,25 @@
   </jsp:attribute>
 
   <jsp:attribute name="error">
-    <c:if test="${requestScope.errtype ne null}">
-      <c:choose>
-        <c:when test="${requestScope.errtype eq 'category'}">
-          Введіть категорію
-        </c:when>
-        <c:when test="${requestScope.errtype eq 'priceNull'}">
-          Введіть ціну
-        </c:when>
-        <c:when test="${requestScope.errtype eq 'priceNegative'}">
-          Ціну введено невірно
-        </c:when>
-        <c:when test="${requestScope.errtype eq 'currency'}">
-          Виберіть валюту
-        </c:when>
-        <c:when test="${requestScope.errtype eq 'leftNull'}">
-          Введіть кількість одиниць товару
-        </c:when>
-        <c:when test="${requestScope.errtype eq 'leftNegative'}">
-          Поле залишилось введено невірно
-        </c:when>
-      </c:choose>
+    <c:if test="${requestScope.error ne null}">
+      <c:out value="${requestScope.error}"/>
     </c:if>
   </jsp:attribute>
 
   <jsp:body>
-    <c:url value="/item/edit" var="itemEditURL"></c:url>
+    <c:url value="/item/edit" var="itemEditURL"/>
     <c:set var="price"
-           value="${(requestScope.item.price ne -1.0) ? requestScope.item.price : ''}" />
-    <c:set var="left"
-           value="${(requestScope.item.left ne -1) ? requestScope.item.left : ''}" />
+           value="${(requestScope.item.price ge 0.0) ?
+           requestScope.item.price : ''}"/>
+    <c:set var="stocked"
+           value="${(requestScope.item.status.stocked ge 0) ?
+           requestScope.item.status.stocked : ''}"/>
+    <c:set var="reserved"
+           value="${(requestScope.item.status.reserved ge 0) ?
+           requestScope.item.status.reserved : ''}"/>
+    <c:set var="sold"
+           value="${(requestScope.item.status.sold ge 0) ?
+           requestScope.item.status.sold : ''}"/>
 
     <form action='<c:out value="${itemEditURL}"></c:out>' method="post">
       <input type="hidden" value="${requestScope.item.id}" name="id">
@@ -58,10 +47,13 @@
         <option value="EUR">євро (€)</option>
         <option value="UAH">гривня (₴)</option>
         <option value="RUB">російський рубль (₽)</option>
-      </select>
-      <br>
-      <input type="number" value="${left}"
-             placeholder="Залишилось" name="left"><br>
+      </select><br>
+      <input type="number" value="${stocked}"
+             placeholder="Залишилось" name="status.stocked"><br>
+      <input type="number" value="${reserved}"
+             placeholder="Зарезервовано" name="status.reserved"><br>
+      <input type="number" value="${sold}"
+             placeholder="Продано" name="status.sold"><br>
       <input type="submit" value="Редагувати товар">
     </form>
   </jsp:body>

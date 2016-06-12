@@ -36,16 +36,20 @@
         </tr>
         <tr>
           <th>Залишилось</th>
-          <td><c:out value="${item.left}"/></td>
+          <td><c:out value="${requestScope.item.status.stocked}"/></td>
+        </tr>
+        <tr>
+          <th>Зарезервовано</th>
+          <td><c:out value="${requestScope.item.status.reserved}"/></td>
         </tr>
         <tr>
           <th>Продано</th>
-          <td><c:out value="${requestScope.sold}"/></td>
+          <td><c:out value="${requestScope.item.status.sold}"/></td>
         </tr>
-        <c:forEach items="${item.extendedFields}" var="field">
+        <c:forEach items="${requestScope.item.extendedFields}" var="field">
           <tr>
-            <th><c:out value="${item.key}"/></th>
-            <td><c:out value="${item.value}"/></td>
+            <th><c:out value="${requestScope.item.key}"/></th>
+            <td><c:out value="${requestScope.item.value}"/></td>
           </tr>
         </c:forEach>
       </table>

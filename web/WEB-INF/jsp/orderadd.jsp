@@ -65,20 +65,20 @@
         </tr>
         <c:forEach items="${sessionScope.items}" var="item">
           <c:url value="/item" var="itemURL">
-            <c:param name="id" value="${item.key.id}"></c:param>
+            <c:param name="id" value="${item.key.id}"/>
           </c:url>
           <tr>
             <td>
-              <a href='<c:out value="${itemURL}"></c:out>'>
-                <c:out value="${item.key.id}"></c:out>
+              <a href='<c:out value="${itemURL}"/>'>
+                <c:out value="${item.key.id}"/>
               </a>
             </td>
-            <td><c:out value="${item.key.category}"></c:out></td>
-            <td><c:out value="${item.key.price}"></c:out></td>
-            <td><c:out value="${item.key.currency}"></c:out></td>
-            <td><c:out value="${item.key.left}"></c:out></td>
+            <td><c:out value="${item.key.category}"/></td>
+            <td><c:out value="${item.key.price}"/></td>
+            <td><c:out value="${item.key.currency}"/></td>
+            <td><c:out value="${item.key.status.stocked}"/></td>
               <c:url value="/order/add" var="orderAddURL"/>
-              <form action='<c:out value="${orderAddURL}"></c:out>' method="post">
+              <form action='<c:out value="${orderAddURL}"/>' method="post">
                 <input type="hidden" name="action" value="item">
                 <input type="hidden" name="id" value='<c:out value="${item.key.id}"/>'>
                 <td><input type="number" name="quantity"

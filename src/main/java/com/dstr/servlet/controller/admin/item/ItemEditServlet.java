@@ -1,5 +1,6 @@
 package com.dstr.servlet.controller.admin.item;
 
+import com.dstr.model.ItemStatus;
 import com.mongodb.MongoClient;
 import com.dstr.dao.MongoItemDAO;
 import com.dstr.model.Item;
@@ -26,63 +27,75 @@ public class ItemEditServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        String id = request.getParameter("id");
-        if (id == null || id.equals("")) {
+        String itemId = request.getParameter("id");
+        if (itemId == null || itemId.equals("")) {
             throw new ServletException("Невірний id товару");
         }
 
         String category = request.getParameter("category");
         String priceStr = request.getParameter("price");
         String currency = request.getParameter("currency");
-        String leftStr = request.getParameter("left");
+        String stockedStr = request.getParameter("status.stocked");
+        String reservedStr = request.getParameter("status.reserved");
+        String soldStr = request.getParameter("status.sold");
 
         Item item = new Item();
-        item.setId(id);
+        item.setId(itemId);
         item.setCategory(category);
 
-        double price;
-        int left;
-
-        List<String> errtypes = new ArrayList<>();
+        List<String> errors = new ArrayList<>();
 
         if (category == null || category.equals(""))
-            errtypes.add("category");
+            errors.add("Введіть категорію");
+
+        double price = -1.0;
 
         if (priceStr == null || priceStr.equals("")) {
-            errtypes.add("priceNull");
-            item.setPrice(-1.0);
+            errors.add("Введіть ціну");
         } else if ((price = Double.parseDouble(priceStr)) <= 0.0) {
-            errtypes.add("priceNegative");
-            item.setPrice(-1.0);
+            errors.add("Ціну введено невірно");
         } else item.setPrice(price);
 
-        if (currency == null || currency.equals(""))
-            errtypes.add("currency");
-        else item.setCurrency(currency);
+        if (currency == null || currency.equals("")) {
+            errors.add("Виберіть валюту");
+        } else item.setCurrency(currency);
 
-        if (leftStr == null || leftStr.equals("")) {
-            errtypes.add("leftNull");
-            item.setLeft(-1);
-        } else if ((left = Integer.parseInt(leftStr)) < 0) {
-            errtypes.add("leftNegative");
-            item.setLeft(-1);
-        } else item.setLeft(left);
+        int stocked = -1, reserved = -1, sold = -1;
 
-        if (errtypes.isEmpty()) {
+        if (stockedStr == null || stockedStr.equals("")) {
+            stocked = 0;
+        } else if ((stocked = Integer.parseInt(stockedStr)) < 0) {
+            errors.add("Поле 'залишилось' введено невірно");
+        }
+
+        if (reservedStr == null || reservedStr.equals("")) {
+            reserved = 0;
+        } else if ((reserved = Integer.parseInt(reservedStr)) < 0) {
+            errors.add("Поле 'зарезервовано' введено невірно");
+        }
+
+        if (soldStr == null || soldStr.equals("")) {
+            sold = 0;
+        } else if ((sold = Integer.parseInt(soldStr)) < 0) {
+            errors.add("Поле 'продано' введено невірно");
+        }
+        item.setStatus(new ItemStatus(stocked, reserved, sold));
+
+        if (errors.isEmpty()) {
             MongoClient mongo = (MongoClient) request.getServletContext()
                     .getAttribute("MONGO_CLIENT");
             MongoItemDAO itemDAO = new MongoItemDAO(mongo);
 
-            if (itemDAO.updateItem(item) > 0) {
-                logger.info("Item " + item + " was successfully edited");
+            if (itemDAO.updateItem(item)) {
+                logger.info("Товар " + item + " успішно редаговано");
             } else {
-                logger.error("Item " + item + " was not edited");
+                logger.error("Товар " + item + " не редаговано");
             }
             response.sendRedirect(request.getContextPath() + "/items");
         } else {
-            request.setAttribute("errtype", errtypes.get(0));
+            request.setAttribute("error", errors.get(0));
             request.setAttribute("item", item);
-            request.getRequestDispatcher("/WEB-INF/jsp/itemadd.jsp")
+            request.getRequestDispatcher("/WEB-INF/jsp/itemedit.jsp")
                     .forward(request, response);
         }
     }
@@ -90,14 +103,14 @@ public class ItemEditServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        String id = request.getParameter("id");
-        if (id == null || id.equals("")) {
+        String itemId = request.getParameter("id");
+        if (itemId == null || itemId.equals("")) {
             throw new ServletException("Невірний id товару");
         }
         MongoClient mongo = (MongoClient) request.getServletContext()
                 .getAttribute("MONGO_CLIENT");
         MongoItemDAO itemDAO = new MongoItemDAO(mongo);
-        Item item = itemDAO.findItem(new ObjectId(id));
+        Item item = itemDAO.findItem(new ObjectId(itemId));
         request.setAttribute("item", item);
         request.getRequestDispatcher("/WEB-INF/jsp/itemedit.jsp")
                 .forward(request, response);

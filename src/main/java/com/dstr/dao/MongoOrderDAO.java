@@ -1,120 +1,174 @@
 package com.dstr.dao;
 
-import com.dstr.model.Item;
 import com.mongodb.*;
-import com.mongodb.client.MongoCollection;
-import com.mongodb.client.MongoCursor;
-import com.mongodb.client.result.UpdateResult;
 import com.dstr.converter.OrderConverter;
 import com.dstr.model.Order;
-import org.bson.Document;
 import org.bson.types.ObjectId;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import static com.mongodb.client.model.Filters.eq;
+import java.util.*;
 
 /**
  * Created by deoxys on 27.05.16.
  */
 
+/* Mongo 3.2 Java Driver proposes at least two approaches
+    to complete basic collection queries:
+    1. Using newly implemented (after 2.10.0) classes MongoClient, MongoCollection, Document, ...
+    2. Using standard classes Mongo, DBCollection, DBObject, ...
+   First approach does not support queries with projections yet,
+   so second (deprecated) was used.
+ */
+
 public class MongoOrderDAO {
-    private MongoClient mongoClient;
-    private MongoCollection<Document> mongoColl;
+
+    private DBCollection collection;
+
     public final static String MONGO_DB = "dstr";
     public final static String MONGO_COLL = "orders";
 
     public MongoOrderDAO(MongoClient mongoClient) {
-        this.mongoClient = mongoClient;
-        this.mongoColl = mongoClient.getDatabase(MONGO_DB).getCollection(MONGO_COLL);
+        DB db = mongoClient.getDB(MONGO_DB);
+        db.setReadPreference(ReadPreference.secondaryPreferred());
+        this.collection = db.getCollection(MONGO_COLL);
     }
 
-    public Order createOrder(Order order) {
-        Document doc = OrderConverter.toDocument(order);
-        this.mongoColl.insertOne(doc);
-        order.setId(doc.get("_id").toString());
-        return order;
+    public Order insertOrder(Order order) {
+
+        // Change today's orders total amount
+        DBObject exists = new BasicDBObject("$exists", true);
+        DBObject query = new BasicDBObject("nOrders", exists);
+        DBObject nOrdersDoc = this.collection.findOne(query);
+
+        Calendar cal = Calendar.getInstance();
+        cal.setTime((Date) nOrdersDoc.get("date"));
+        int lastOrderYear = cal.get(Calendar.YEAR);
+        int lastOrderYearDay = cal.get(Calendar.DAY_OF_YEAR);
+
+        cal.setTime(new Date());
+        int currYear = cal.get(Calendar.YEAR);
+        int currYearDay = cal.get(Calendar.DAY_OF_YEAR);
+        int currMonth = cal.get(Calendar.MONTH);
+        int currMonthDay = cal.get(Calendar.DAY_OF_MONTH);
+
+        int nOrders = 1;
+        if (lastOrderYear == currYear && lastOrderYearDay == currYearDay) {
+            nOrders = (Integer) nOrdersDoc.get("nOrders") + 1;
+        }
+        nOrdersDoc.put("date", new Date());
+        nOrdersDoc.put("nOrders", nOrders);
+
+        if ( ! this.collection.save(nOrdersDoc).isUpdateOfExisting()) {
+            return null;
+        }
+
+        order.setOrderNumber(currYear + "-" + currMonth + "-" +
+                currMonthDay + "-" + nOrders);
+
+        DBObject orderDoc = OrderConverter.toDocument(order);
+
+        // Insert new order
+        // It's important that nOrders document is always updated before,
+        // so whenever new document was created, nOrders status will be also changed
+        if (this.collection.insert(orderDoc).wasAcknowledged()) {
+            order.setId(orderDoc.get("_id").toString());
+            return order;
+        }
+        return null;
     }
 
-    public int updateOrder(Order order) {
-        Document doc = OrderConverter.toDocument(order);
-        UpdateResult updRes = this.mongoColl.updateOne(
-                eq("_id", new ObjectId(order.getId())), new Document("$set", doc));
-        return (int) updRes.getModifiedCount();
+    public Order findOrder(ObjectId _orderId) {
+        DBObject query = new BasicDBObject("_id", _orderId);
+        DBObject orderDoc = this.collection.findOne(query);
+
+        if (orderDoc == null) {
+            return null;
+        }
+        return OrderConverter.toOrder(orderDoc);
     }
 
-    public Order findOrder(ObjectId _id) {
-        Document doc = this.mongoColl.
-                withReadPreference(ReadPreference.secondaryPreferred()).
-                find(eq("_id", _id)).first();
-        return OrderConverter.toOrder(doc);
+    public Order.OrderStatus findOrderStatus(Object _id) {
+        DBObject query = new BasicDBObject("_id", _id);
+        DBObject projection = new BasicDBObject("status", 1);
+
+        DBObject doc = this.collection.findOne(query, projection);
+
+        int statusVal = (Integer) doc.get("status");
+
+        return Order.OrderStatus.orderStatusbyValue(statusVal);
+    }
+
+    public boolean updateOrderStatus(ObjectId _orderId, Order.OrderStatus newStatus) {
+
+        // Get current status
+        Order.OrderStatus oldStatus = findOrderStatus(_orderId);
+
+        if (newStatus.equals(oldStatus)) {
+            return false;
+        }
+
+        // If without $set operator,
+        // than order document will be not updated, but replaced
+        DBObject query = new BasicDBObject("_id", _orderId);
+        DBObject update = new BasicDBObject("status", newStatus.getValue());
+        DBObject set = new BasicDBObject("$set", update);
+
+        return this.collection.update(query, set).wasAcknowledged();
     }
 
     public List<Order> findAllOrders() {
         List<Order> orders = new ArrayList<>();
-        MongoCursor<Document> cursor = this.mongoColl.
-                withReadPreference(ReadPreference.secondaryPreferred()).
-                find().iterator();
-        try {
-            while (cursor.hasNext()) {
-                Document doc = cursor.next();
-                orders.add(OrderConverter.toOrder(doc));
+
+        DBObject exists = new BasicDBObject("$exists", true);
+        DBObject query = new BasicDBObject("orderNumber", exists);
+        DBCursor cursor = this.collection.find(query);
+
+        while (cursor.hasNext()) {
+            DBObject orderDoc = cursor.next();
+            if ( ! orderDoc.containsField("nOrders")) {
+                orders.add(OrderConverter.toOrder(orderDoc));
             }
-        } finally {
-            cursor.close();
         }
+        cursor.close();
+
         return orders;
     }
 
     public List<Order> findCustomerOrders(String email) {
         List<Order> orders = new ArrayList<>();
 
-        BasicDBObject query = new BasicDBObject("customer.email", email);
+        DBObject query = new BasicDBObject("customer.email", email);
+        DBCursor cursor = this.collection.find(query);
 
-        MongoCursor<Document> cursor = this.mongoColl.
-                withReadPreference(ReadPreference.secondaryPreferred()).
-                find(query).iterator();
-        try {
-            while (cursor.hasNext()) {
-                Document doc = cursor.next();
-                orders.add(OrderConverter.toOrder(doc));
-            }
-        } finally {
-            cursor.close();
+        while (cursor.hasNext()) {
+            DBObject orderDoc = cursor.next();
+            orders.add(OrderConverter.toOrder(orderDoc));
         }
+        cursor.close();
+
         return orders;
     }
 
-    public Map<Item, Integer> findCustomerItems(String email) {
-        Map<Item, Integer> items = new HashMap<>();
+    public Map<String, Integer> findCustomerItems(String email) {
+        Map<String, Integer> customerItems = new HashMap<>();
 
-        BasicDBObject query = new BasicDBObject("customer.email", email);
+        DBObject query = new BasicDBObject("customer.email", email);
+        DBCursor cursor = this.collection.find(query);
 
-        MongoCursor<Document> cursor = this.mongoColl.
-                withReadPreference(ReadPreference.secondaryPreferred()).
-                find(query).iterator();
-        try {
-            MongoItemDAO itemDAO = new MongoItemDAO(mongoClient);
+        while (cursor.hasNext()) {
+            DBObject orderDoc = cursor.next();
+            BasicDBList orderItemsDbl = (BasicDBList) orderDoc.get("items");
 
-            while (cursor.hasNext()) {
-                Document doc = cursor.next();
-                List itemsDbl = (ArrayList) doc.get("items");
-
-                for (Object el : itemsDbl) {
-                    Document itemRef = (Document) el;
-                    DBRef dbRef = (DBRef) itemRef.get("id");
-                    ObjectId _id = (ObjectId) dbRef.getId();
-                    Item item = itemDAO.findItem(_id);
-                    items.put(item, itemRef.getInteger("quantity"));
-                }
+            for (Object orderItemObj : orderItemsDbl) {
+                DBObject orderItemDoc = (DBObject) orderItemObj;
+                DBRef orderItemDbRef = (DBRef) orderItemDoc.get("id");
+                String orderItemId = orderItemDbRef.getId().toString();
+                Integer quantity = (Integer) orderItemDoc.get("quantity");
+                customerItems.put(orderItemId, quantity);
             }
-        } finally {
-            cursor.close();
         }
-        return items;
+        cursor.close();
+
+        return customerItems;
     }
 
     // Should be reimplemented
@@ -125,43 +179,5 @@ public class MongoOrderDAO {
     // Should be reimplemented
     public int itemsAmount(String email) {
         return findCustomerItems(email).size();
-    }
-
-    // It seems MongoCollection find method has no projection method
-    // to decrease network load:
-    // api.mongodb.com/java/current/com/mongodb/client/MongoCollection.html
-    public int itemSold(ObjectId _id) {
-        int amount = 0;
-
-        Document query = new Document("items.id", new DBRef("items", _id));
-        MongoCursor<Document> cursor = this.mongoColl.
-                withReadPreference(ReadPreference.secondaryPreferred()).
-                find(query).iterator();
-        try {
-            while (cursor.hasNext()) {
-                Document doc = cursor.next();
-
-                List<Document> itemsDocs = (ArrayList) doc.get("items");
-                for (Document itemDoc : itemsDocs) {
-                    DBRef itemRef = (DBRef) itemDoc.get("id");
-                    ObjectId itemId = (ObjectId) itemRef.getId();
-                    if (itemId.equals(_id)) {
-                        amount += itemDoc.getInteger("quantity");
-                    }
-                }
-            }
-        } finally {
-            cursor.close();
-        }
-        return amount;
-    }
-
-    public int changeOrderStatus(ObjectId _id, Order.OrderStatus status) {
-
-        UpdateResult updRes = this.mongoColl.updateOne(
-                eq("_id", _id),
-                new Document("$set", new Document("status", status.getValue()))
-        );
-        return (int) updRes.getModifiedCount();
     }
 }

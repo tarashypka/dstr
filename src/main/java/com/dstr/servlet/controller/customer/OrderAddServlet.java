@@ -4,6 +4,7 @@ import com.dstr.dao.MongoItemDAO;
 import com.dstr.dao.MongoOrderDAO;
 import com.dstr.model.Customer;
 import com.dstr.model.Item;
+import com.dstr.model.ItemStatus;
 import com.dstr.model.Order;
 import com.mongodb.MongoClient;
 import org.apache.log4j.Logger;
@@ -49,13 +50,13 @@ public class OrderAddServlet extends HttpServlet {
             }
 
             String quantityStr = request.getParameter("quantity");
-            int quantity = 0;
             if (quantityStr == null || quantityStr.equals("")) {
                 request.setAttribute("error", "Скільки одиниць товару?");
-                request.getRequestDispatcher("/orderadd.jsp").forward(request, response);
-            } else {
-                quantity = Integer.parseInt(quantityStr);
+                request.getRequestDispatcher("/WEB-INF/jsp/orderadd.jsp")
+                        .forward(request, response);
             }
+
+            int quantity = Integer.parseInt(quantityStr);
 
             // Check if there are enough items
             MongoClient mongo = (MongoClient) request.getServletContext()
@@ -63,15 +64,16 @@ public class OrderAddServlet extends HttpServlet {
             MongoItemDAO itemDAO = new MongoItemDAO(mongo);
 
             Item item = itemDAO.findItem(new ObjectId(id));
+            ItemStatus itemStatus = item.getStatus();
 
-            if (item == null) {
+            if (itemStatus == null) {
                 request.setAttribute("error", "Товар не знайдено");
                 request.getRequestDispatcher("/WEB-INF/jsp/orderadd.jsp")
                         .forward(request, response);
             } else {
-                int left = item.getLeft();
+                int stocked = itemStatus.getStocked();
 
-                if (quantity > left) {
+                if (quantity > stocked) {
                     request.setAttribute("error", "Недостатньо товарів");
                     request.getRequestDispatcher("/WEB-INF/jsp/orderadd.jsp")
                             .forward(request, response);
@@ -118,7 +120,7 @@ public class OrderAddServlet extends HttpServlet {
                     .getAttribute("MONGO_CLIENT");
             MongoOrderDAO orderDAO = new MongoOrderDAO(mongo);
 
-            if (orderDAO.createOrder(order) != null) {
+            if (orderDAO.insertOrder(order) != null) {
                 logger.info("New order " + order + " was successfully added");
 
                 // Delete order data from session

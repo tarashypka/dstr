@@ -1,6 +1,5 @@
 package com.dstr.servlet.controller;
 
-import com.dstr.dao.MongoOrderDAO;
 import com.mongodb.MongoClient;
 import com.dstr.dao.MongoItemDAO;
 import com.dstr.model.Item;
@@ -22,22 +21,19 @@ public class ItemServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        String id = request.getParameter("id");
-        if (id == null || id.equals("")) {
+        String itemId = request.getParameter("id");
+        if (itemId == null || itemId.equals("")) {
             throw new ServletException("Wrong item id");
         }
 
-        ObjectId _id = new ObjectId(id);
+        ObjectId _itemId = new ObjectId(itemId);
 
         MongoClient mongo = (MongoClient) request.getServletContext()
                 .getAttribute("MONGO_CLIENT");
         MongoItemDAO itemDAO = new MongoItemDAO(mongo);
-        Item item = itemDAO.findItem(_id);
-        request.setAttribute("item", item);
 
-        MongoOrderDAO orderDAO = new MongoOrderDAO(mongo);
-        int sold = orderDAO.itemSold(_id);
-        request.setAttribute("sold", sold);
+        Item item = itemDAO.findItem(_itemId);
+        request.setAttribute("item", item);
 
         request.getRequestDispatcher("/WEB-INF/jsp/item.jsp")
                 .forward(request, response);

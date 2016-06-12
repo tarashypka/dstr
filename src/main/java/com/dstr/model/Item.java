@@ -9,7 +9,7 @@ public class Item implements Serializable {
     private String category;
     private double price;
     private Currency currency;
-    private int left;
+    private ItemStatus status;
     private Map<String, String> extendedFields;
 
     public Item() { }
@@ -54,12 +54,28 @@ public class Item implements Serializable {
         this.currency = Currency.getInstance(currencyCode.toUpperCase());
     }
 
-    public int getLeft() {
-        return left;
+    public ItemStatus getStatus() {
+        return status;
     }
 
-    public void setLeft(int left) {
-        this.left = left;
+    public void setStatus(ItemStatus status) {
+        this.status = status;
+    }
+
+    public boolean enoughInStock(int required) {
+        return required <= this.status.getStocked();
+    }
+
+    public int stocked() {
+        return this.status.getStocked();
+    }
+
+    public int reserved() {
+        return this.status.getReserved();
+    }
+
+    public int sold() {
+        return this.status.getSold();
     }
 
     public Map<String, String> getExtendedFields() {
@@ -76,7 +92,7 @@ public class Item implements Serializable {
                 ", category='" + category + '\'' +
                 ", price=" + price +
                 ", currency=" + currency +
-                ", left=" + left +
+                ", status=" + status +
                 ", extendedFields=" + extendedFields + " }";
     }
 

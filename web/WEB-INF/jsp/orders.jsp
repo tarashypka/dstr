@@ -86,50 +86,41 @@
               <c:out value="${status}"></c:out>
             </td>
 
+            <c:url value="/order/status" var="setStatusInProcessURL">
+              <c:param name="id" value="${order.id}"/>
+              <c:param name="status" value="IN_PROCESS"/>
+            </c:url>
             <c:choose>
               <c:when test="${sessionScope.customer.role eq 'customer'}">
-                <c:url value="/order/edit" var="orderEditURL">
-                  <c:param name="id" value="${order.id}"/>
-                </c:url>
-                <c:url value="/order/delete" var="orderDeleteURL">
-                  <c:param name="id" value="${order.id}"/>
-                </c:url>
-                <td>
-                  <a href='<c:out value="${orderEditURL}" escapeXml="false"/>'>
-                    Редагувати
-                  </a>
-                </td>
-                <td>
-                  <a href='<c:out value="${orderDeleteURL}" escapeXml="false"/>'>
-                    Видалити
-                  </a>
-                </td>
+                <c:if test="${order.status.value eq -1}">
+                  <td>
+                    <a href='<c:out value="${setStatusInProcessURL}" escapeXml="false"/>'>
+                      В процесі
+                    </a>
+                  </td>
+                </c:if>
               </c:when>
               <c:when test="${sessionScope.customer.role eq 'admin'}">
-                <c:url value="/order/status" var="orderStatusRejectedURL">
+                <c:url value="/order/status" var="setStatusRejectedURL">
                   <c:param name="id" value="${order.id}"/>
                   <c:param name="status" value="REJECTED"/>
                 </c:url>
-                <c:url value="/order/status" var="orderStatusInProcessURL">
-                  <c:param name="id" value="${order.id}"/>
-                  <c:param name="status" value="IN_PROCESS"/>
-                </c:url>
-                <c:url value="/order/status" var="orderStatusProcessedURL">
+                <c:url value="/order/status" var="setStatusProcessedURL">
                   <c:param name="id" value="${order.id}"/>
                   <c:param name="status" value="PROCESSED"/>
                 </c:url>
                 <td>
-                  <a href='<c:out value="${orderStatusRejectedURL}" escapeXml="false"/>'>
+                  <a href='<c:out value="${setStatusRejectedURL}" escapeXml="false"/>'>
                     Відмовити
                   </a>
                 </td>
                 <td>
-                  <a href='<c:out value="${orderStatusInProcessURL}" escapeXml="false"/>'>
+                  <a href='<c:out value="${setStatusInProcessURL}" escapeXml="false"/>'>
                     В процесі
                   </a>
                 </td>
                 <td>
-                  <a href='<c:out value="${orderStatusProcessedURL}" escapeXml="false"/>'>
+                  <a href='<c:out value="${setStatusProcessedURL}" escapeXml="false"/>'>
                     Оброблено
                   </a>
                 </td>

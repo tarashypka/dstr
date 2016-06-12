@@ -1,7 +1,9 @@
 package com.dstr.converter;
 
 import com.dstr.model.Item;
-import org.bson.Document;
+import com.dstr.model.ItemStatus;
+import com.mongodb.BasicDBObject;
+import com.mongodb.DBObject;
 import org.bson.types.ObjectId;
 
 import java.util.HashMap;
@@ -13,44 +15,54 @@ import java.util.Map;
 
 public class ItemConverter {
 
-    public static Document toDocument(Item item) {
-        Document doc = new Document();
+    public static DBObject toDocument(Item item) {
+        DBObject doc = new BasicDBObject();
 
         if (item.getId() != null) {
-            doc.append("_id", new ObjectId(item.getId()));
+            doc.put("_id", new ObjectId(item.getId()));
         }
-        doc.append("category", item.getCategory());
-        doc.append("price", item.getPrice());
-        doc.append("currency", item.getCurrency().toString());
-        doc.append("left", item.getLeft());
+        doc.put("category", item.getCategory());
+        doc.put("price", item.getPrice());
+        doc.put("currency", item.getCurrency().toString());
+
+        DBObject statusDoc = new BasicDBObject();
+        statusDoc.put("stocked", item.stocked());
+        statusDoc.put("reserved", item.reserved());
+        statusDoc.put("sold", item.sold());
+        doc.put("status", statusDoc);
 
         Map<String, String> extFields = item.getExtendedFields();
         if (extFields != null) {
             for (String fieldKey: extFields.keySet()) {
-                doc.append(fieldKey, extFields.get(fieldKey));
+                doc.put(fieldKey, extFields.get(fieldKey));
             }
         }
         return doc;
     }
 
-    public static Item toItem(Document doc) {
+    public static Item toItem(DBObject doc) {
         Item item = new Item();
 
         item.setId(doc.get("_id").toString());
-        doc.remove("_id");
+        doc.removeField("_id");
 
-        String category = doc.getString("category");
+        String category = (String) doc.get("category");
         item.setCategory(category);
-        doc.remove("category");
+        doc.removeField("category");
 
-        item.setPrice(doc.getDouble("price"));
-        doc.remove("price");
+        item.setPrice((Double) doc.get("price"));
+        doc.removeField("price");
 
-        item.setCurrency(doc.getString("currency"));
-        doc.remove("currency");
+        item.setCurrency((String) doc.get("currency"));
+        doc.removeField("currency");
 
-        item.setLeft(doc.getInteger("left"));
-        doc.remove("left");
+        DBObject statusDoc = (DBObject) doc.get("status");
+        int stocked = (Integer) statusDoc.get("stocked");
+        int reserved = (Integer) statusDoc.get("reserved");
+        int sold = (Integer) statusDoc.get("sold");
+
+        item.setStatus(new ItemStatus(stocked, reserved, sold));
+        doc.removeField("status");
 
         Map<String, String> extFields = new HashMap<>();
 

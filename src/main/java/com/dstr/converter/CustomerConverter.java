@@ -1,29 +1,30 @@
 package com.dstr.converter;
 
 import com.dstr.model.Customer;
-import org.bson.Document;
-
+import com.mongodb.BasicDBObject;
+import com.mongodb.DBObject;
 /**
  * Created by deoxys on 27.05.16.
  */
 
 public class CustomerConverter {
-    public static Document toDocument(Customer customer) {
-        Document doc = new Document();
 
-        doc.append("name", customer.getName());
-        doc.append("surname", customer.getSurname());
-        doc.append("email", customer.getEmail());
+    public static DBObject toDocument(Customer customer) {
+        DBObject doc = new BasicDBObject();
+
+        doc.put("name", customer.getName());
+        doc.put("surname", customer.getSurname());
+        doc.put("email", customer.getEmail());
 
         return doc;
     }
 
-    public static Customer toCustomer(Document doc) {
+    public static Customer toCustomer(DBObject doc) {
         Customer customer = new Customer();
 
-        customer.setName(doc.getString("name"));
-        customer.setSurname(doc.getString("surname"));
-        customer.setEmail(doc.getString("email"));
+        customer.setName((String) doc.get("name"));
+        customer.setSurname((String) doc.get("surname"));
+        customer.setEmail((String )doc.get("email"));
 
         return customer;
     }

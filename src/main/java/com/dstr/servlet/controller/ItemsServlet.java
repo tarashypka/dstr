@@ -36,11 +36,16 @@ public class ItemsServlet extends HttpServlet {
         MongoClient mongo = (MongoClient) request.getServletContext()
                 .getAttribute("MONGO_CLIENT");
 
+        MongoOrderDAO orderDAO = new MongoOrderDAO(mongo);
+        MongoItemDAO itemDAO = new MongoItemDAO(mongo);
+
         if (customer != null && customer.isCustomer()) {
-            MongoOrderDAO orderDAO = new MongoOrderDAO(mongo);
-            items = orderDAO.findCustomerItems(customer.getEmail());
+            Map<String, Integer> customerItems = orderDAO.findCustomerItems(customer.getEmail());
+            List<String> itemsIds = new ArrayList<>();
+            itemsIds.addAll(customerItems.keySet());
+            List<Item> itemsList = itemDAO.findItemsByIds(itemsIds);
+            for (Item i : itemsList) items.put(i, customerItems.get(i.getId()));
         } else {
-            MongoItemDAO itemDAO = new MongoItemDAO(mongo);
             for (Item i : itemDAO.findAllItems()) items.put(i, null);
         }
         request.getSession().setAttribute("items", items);
@@ -61,8 +66,16 @@ public class ItemsServlet extends HttpServlet {
                 .getAttribute("MONGO_CLIENT");
 
         MongoOrderDAO orderDAO = new MongoOrderDAO(mongo);
+        MongoItemDAO itemDAO = new MongoItemDAO(mongo);
 
-        Map<Item, Integer> items = orderDAO.findCustomerItems(email);
+        Map<String, Integer> customerItems = orderDAO.findCustomerItems(email);
+
+        List<String> itemsIds = new ArrayList<>();
+        itemsIds.addAll(customerItems.keySet());
+
+        List<Item> itemsList = itemDAO.findItemsByIds(itemsIds);
+        Map<Item, Integer> items = new HashMap<>();
+        for (Item i : itemsList) items.put(i, customerItems.get(i.getId()));
 
         request.setAttribute("items", items);
         request.getRequestDispatcher("/WEB-INF/jsp/customer/items.jsp")

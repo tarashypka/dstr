@@ -156,6 +156,7 @@
             <param-name>authTrue</param-name>
             <param-value>
                 /order
+                /order/status
                 /orders
                 /logout
             </param-value>
@@ -177,7 +178,6 @@
                 /customer
                 /customer/status
                 /customers
-                /order/status
             </param-value>
         </init-param>
         <init-param>

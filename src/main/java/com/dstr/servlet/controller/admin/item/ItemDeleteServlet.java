@@ -26,9 +26,9 @@ public class ItemDeleteServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        String id = request.getParameter("id");
+        String itemId = request.getParameter("id");
 
-        if (id == null || id.equals("")) {
+        if (itemId == null || itemId.equals("")) {
             throw new ServletException("Wrong item id");
         }
 
@@ -36,17 +36,17 @@ public class ItemDeleteServlet extends HttpServlet {
                 .getAttribute("MONGO_CLIENT");
         MongoItemDAO itemDAO = new MongoItemDAO(mongo);
 
-        if (itemDAO.deleteItem(new ObjectId(id)) > 0) {
-            logger.info("Item with id=" + id + " was deleted");
+        if (itemDAO.removeItem(new ObjectId(itemId))) {
+            logger.info("Товар з id=" + itemId + " успішно видалено");
 
             // Update session
             Map<Item, Integer> items = (HashMap)
                     request.getSession().getAttribute("items");
 
-            items.remove(new Item(id));
+            items.remove(new Item(itemId));
             request.getSession().setAttribute("items", items);
         } else {
-            logger.error("Item with id=" + id + " was not deleted");
+            logger.error("Товар з id=" + itemId + " не видалено");
         }
         request.getRequestDispatcher("/WEB-INF/jsp/items.jsp")
                 .forward(request, response);

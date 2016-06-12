@@ -23,54 +23,52 @@
           <th>Категорія</th>
           <th>Ціна</th>
           <th>Валюта</th>
-          <c:choose>
-            <c:when test="${sessionScope.customer.role eq 'customer'}">
-              <th>Кількість</th>
-              <th>До оплати</th>
-            </c:when>
-            <c:when test="${sessionScope.customer.role eq 'admin'}">
-              <th>Залишилось</th>
-            </c:when>
-          </c:choose>
+          <c:if test="${sessionScope.customer.role eq 'customer'}">
+            <th>Кількість</th>
+            <th>Загальна вартість</th>
+          </c:if>
+          <th>Залишилось</th>
+          <th>Зарезервовано</th>
+          <th>Продано</th>
         </tr>
         <c:forEach items="${sessionScope.items}" var="item">
           <c:url value="/item" var="itemURL">
-            <c:param name="id" value="${item.key.id}"></c:param>
+            <c:param name="id" value="${item.key.id}"/>
           </c:url>
           <tr>
             <td>
-              <a href='<c:out value="${itemURL}"></c:out>'>
-                <c:out value="${item.key.id}"></c:out>
+              <a href='<c:out value="${itemURL}"/>'>
+                <c:out value="${item.key.id}"/>
               </a>
             </td>
-            <td><c:out value="${item.key.category}"></c:out></td>
-            <td><c:out value="${item.key.price}"></c:out></td>
-            <td><c:out value="${item.key.currency}"></c:out></td>
-            <c:choose>
-              <c:when test="${sessionScope.customer.role eq 'customer'}">
-                <td><c:out value="${item.value}"></c:out></td>
-                <td><c:out value="${item.value * item.key.price}"></c:out></td>
-              </c:when>
-              <c:when test="${sessionScope.customer.role eq 'admin'}">
-                <td><c:out value="${item.key.left}"></c:out></td>
-                <c:url value="/item/edit" var="itemEditURL">
-                  <c:param name="id" value="${item.key.id}"></c:param>
-                </c:url>
-                <c:url value="/item/delete" var="itemDeleteURL">
-                  <c:param name="id" value="${item.key.id}"></c:param>
-                </c:url>
-                <td>
-                  <a href='<c:out value="${itemEditURL}" escapeXml="false"></c:out>'>
-                    Редагувати
-                  </a>
-                </td>
-                <td>
-                  <a href='<c:out value="${itemDeleteURL}" escapeXml="false"></c:out>'>
-                    Видалити
-                  </a>
-                </td>
-              </c:when>
-            </c:choose>
+            <td><c:out value="${item.key.category}"/></td>
+            <td><c:out value="${item.key.price}"/></td>
+            <td><c:out value="${item.key.currency}"/></td>
+            <c:if test="${sessionScope.customer.role eq 'customer'}">
+              <td><c:out value="${item.value}"/></td>
+              <td><c:out value="${item.value * item.key.price}"/></td>
+            </c:if>
+            <td><c:out value="${item.key.status.stocked}"/></td>
+            <td><c:out value="${item.key.status.reserved}"/></td>
+            <td><c:out value="${item.key.status.sold}"/></td>
+            <c:if test="${sessionScope.customer.role eq 'admin'}">
+              <c:url value="/item/edit" var="itemEditURL">
+                <c:param name="id" value="${item.key.id}"/>
+              </c:url>
+              <c:url value="/item/delete" var="itemDeleteURL">
+                <c:param name="id" value="${item.key.id}"/>
+              </c:url>
+              <td>
+                <a href='<c:out value="${itemEditURL}" escapeXml="false"/>'>
+                  Редагувати
+                </a>
+              </td>
+              <td>
+                <a href='<c:out value="${itemDeleteURL}" escapeXml="false"/>'>
+                  Видалити
+                </a>
+              </td>
+            </c:if>
           </tr>
         </c:forEach>
       </table>
