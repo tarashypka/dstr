@@ -57,7 +57,7 @@ public class MongoItemDAO {
         // than order document will be not updated, but replaced
         DBObject update = new BasicDBObject("status", statusDoc);
         DBObject set = new BasicDBObject("$set", update);
-        return this.collection.update(query, update).wasAcknowledged();
+        return this.collection.update(query, set).wasAcknowledged();
     }
 
     public Item findItem(ObjectId _itemId) {
