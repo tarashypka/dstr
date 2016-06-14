@@ -104,15 +104,6 @@ public class MongoItemDAO {
         return items;
     }
 
-    public List<Item> findItemsByIds(List<String> itemsIds) {
-        List<Item> items = new ArrayList<>();
-
-        for (String itemId : itemsIds) {
-            items.add(findItem(new ObjectId(itemId)));
-        }
-        return items;
-    }
-
     public boolean moveStockedToReserved(Map<String, Integer> orderItems) {
 
         for (String itemId : orderItems.keySet()) {

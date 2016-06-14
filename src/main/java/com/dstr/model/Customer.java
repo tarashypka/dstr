@@ -1,6 +1,8 @@
 package com.dstr.model;
 
 import java.io.Serializable;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by deoxys on 27.05.16.
@@ -12,6 +14,8 @@ public class Customer implements Serializable {
     private String email;
     private String password;
     private String role;
+    List<Order> orders;
+    Map<Item, Integer> items;
     private boolean enabled;
 
     public Customer() { }
@@ -85,6 +89,22 @@ public class Customer implements Serializable {
 
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
+    }
+
+    public List<Order> getOrders() {
+        return orders;
+    }
+
+    public void setOrders(List<Order> orders) {
+        this.orders = orders;
+    }
+
+    public Map<Item, Integer> getItems() {
+        return items;
+    }
+
+    public void setItems(Map<Item, Integer> items) {
+        this.items = items;
     }
 
     @Override

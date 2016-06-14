@@ -1,7 +1,9 @@
 package com.dstr.servlet.controller;
 
+import com.dstr.dao.MongoOrderDAO;
 import com.dstr.model.Customer;
 import com.dstr.dao.PostgresCustomerDAO;
+import com.mongodb.MongoClient;
 import org.apache.log4j.Logger;
 
 import javax.servlet.ServletException;
@@ -28,9 +30,19 @@ public class CustomersServlet extends HttpServlet {
         DataSource source = (DataSource)
                 request.getServletContext().getAttribute("POSTGRES_CONNECTION_POOL");
 
+        MongoClient mongo = (MongoClient) request.getServletContext()
+                .getAttribute("MONGO_CLIENT");
+
+        MongoOrderDAO orderDAO = new MongoOrderDAO(mongo);
+
         try {
             PostgresCustomerDAO customerDAO = new PostgresCustomerDAO(source);
             List<Customer> customers = customerDAO.selectAllCustomers();
+
+            for (Customer customer : customers) {
+                customer.setOrders(orderDAO.findCustomerOrders(customer.getEmail()));
+                customer.setItems(orderDAO.findCustomerItems(customer.getEmail()));
+            }
 
             customers.remove(new Customer("dstrdbadmin"));
 

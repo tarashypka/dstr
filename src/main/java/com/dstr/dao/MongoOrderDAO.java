@@ -1,5 +1,6 @@
 package com.dstr.dao;
 
+import com.dstr.model.Item;
 import com.mongodb.*;
 import com.dstr.converter.OrderConverter;
 import com.dstr.model.Order;
@@ -20,7 +21,6 @@ import java.util.*;
  */
 
 public class MongoOrderDAO {
-
     private MongoClient client;
     private DBCollection collection;
 
@@ -166,11 +166,14 @@ public class MongoOrderDAO {
         return orders;
     }
 
-    public Map<String, Integer> findCustomerItems(String email) {
-        Map<String, Integer> customerItems = new HashMap<>();
+    public Map<Item, Integer> findCustomerItems(String email) {
+        Map<Item, Integer> customerItems = new HashMap<>();
 
         DBObject query = new BasicDBObject("customer.email", email);
+        query.put("status", Order.OrderStatus.PROCESSED.getValue());
         DBCursor cursor = this.collection.find(query);
+
+        MongoItemDAO itemDAO = new MongoItemDAO(client);
 
         while (cursor.hasNext()) {
             DBObject orderDoc = cursor.next();
@@ -179,23 +182,20 @@ public class MongoOrderDAO {
             for (Object orderItemObj : orderItemsDbl) {
                 DBObject orderItemDoc = (DBObject) orderItemObj;
                 DBRef orderItemDbRef = (DBRef) orderItemDoc.get("id");
-                String orderItemId = orderItemDbRef.getId().toString();
+                ObjectId orderItemId = (ObjectId) orderItemDbRef.getId();
+                Item orderItem = itemDAO.findItem(orderItemId);
                 Integer quantity = (Integer) orderItemDoc.get("quantity");
-                customerItems.put(orderItemId, quantity);
+
+                if (customerItems.containsKey(orderItem)) {
+                    int newQuantity = customerItems.get(orderItem) + quantity;
+                    customerItems.put(orderItem, newQuantity);
+                } else {
+                    customerItems.put(orderItem, quantity);
+                }
             }
         }
         cursor.close();
 
         return customerItems;
-    }
-
-    // Should be reimplemented
-    public int ordersAmount(String email) {
-        return findCustomerOrders(email).size();
-    }
-
-    // Should be reimplemented
-    public int itemsAmount(String email) {
-        return findCustomerItems(email).size();
     }
 }

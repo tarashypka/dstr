@@ -46,7 +46,7 @@
                     <c:url value="/order/add" var="addOrderURL"/>
 
                     <form action='<c:out value="${itemsURL}"/>' method="get">
-                        <input type="submit" value="Мої товари">
+                        <input type="submit" value="Куплені товари">
                     </form>
 
                     <form action='<c:out value="${ordersURL}"/>' method="get">

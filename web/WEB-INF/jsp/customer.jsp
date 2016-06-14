@@ -1,6 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="t" tagdir="/WEB-INF/tags" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
 <%--
   Created by IntelliJ IDEA.
@@ -40,7 +41,7 @@
           <th>Зробленo замовлень</th>
           <td>
             <a href='<c:out value="${ordersURL}" escapeXml="false"></c:out>'>
-              <c:out value="${requestScope.nOrders}"></c:out>
+              <c:out value="${fn:length(requestScope.customer.orders)}"></c:out>
             </a>
           </td>
         </tr>
@@ -48,7 +49,7 @@
           <th>Замовлено товарів</th>
           <td>
             <a href='<c:out value="${itemsURL}" escapeXml="false"></c:out>'>
-              <c:out value="${requestScope.nItems}"></c:out>
+              <c:out value="${fn:length(requestScope.customer.items)}"></c:out>
             </a>
           </td>
         </tr>

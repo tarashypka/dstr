@@ -1,6 +1,7 @@
 <%@ page contentType="text/html" pageEncoding="UTF-8" %>
 <%@ taglib prefix="t" tagdir="/WEB-INF/tags" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
 <%--
   Created by IntelliJ IDEA.
@@ -23,10 +24,18 @@
         <tr>
           <th>Ініціали</th>
           <th>Електронна пошта</th>
+          <th>Зроблено замовлень</th>
+          <th>Куплено товарів</th>
           <th>Статус</th>
         </tr>
         <c:forEach items="${sessionScope.customers}" var="customer">
           <c:url value="/customer" var="customerURL">
+            <c:param name="email" value="${customer.email}"></c:param>
+          </c:url>
+          <c:url value="/orders" var="customerOrdersURL">
+            <c:param name="email" value="${customer.email}"></c:param>
+          </c:url>
+          <c:url value="/items" var="customerItemsURL">
             <c:param name="email" value="${customer.email}"></c:param>
           </c:url>
           <tr>
@@ -36,6 +45,17 @@
               </a>
             </td>
             <td><c:out value="${customer.email}"></c:out></td>
+            <td>
+              <a href='<c:out value="${customerOrdersURL}" escapeXml="false"></c:out>'>
+                <c:out value="${fn:length(customer.orders)}"></c:out>
+              </a>
+            </td>
+            <td>
+              <a href='<c:out value="${customerItemsURL}" escapeXml="false"></c:out>'>
+                <c:out value="${fn:length(customer.items)}"></c:out>
+              </a>
+            </td>
+
             <td>
               <c:choose>
                 <c:when test="${customer.enabled}">

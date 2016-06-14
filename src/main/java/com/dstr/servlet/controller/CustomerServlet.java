@@ -37,17 +37,17 @@ public class CustomerServlet extends HttpServlet {
 
         try {
             PostgresCustomerDAO customerDAO = new PostgresCustomerDAO(source);
-            Customer selectedCustomer = customerDAO.selectCustomer(email);
+            Customer customer = customerDAO.selectCustomer(email);
             customerDAO.closeConnection();
-            if (selectedCustomer != null) {
-                request.setAttribute("customer", selectedCustomer);
-
+            if (customer != null) {
                 MongoClient mongo = (MongoClient) request.getServletContext()
                         .getAttribute("MONGO_CLIENT");
-                MongoOrderDAO orderDAO = new MongoOrderDAO(mongo);
 
-                request.setAttribute("nOrders", orderDAO.ordersAmount(email));
-                request.setAttribute("nItems", orderDAO.itemsAmount(email));
+                MongoOrderDAO orderDAO = new MongoOrderDAO(mongo);
+                customer.setOrders(orderDAO.findCustomerOrders(customer.getEmail()));
+                customer.setItems(orderDAO.findCustomerItems(customer.getEmail()));
+
+                request.setAttribute("customer", customer);
                 request.getRequestDispatcher("/WEB-INF/jsp/customer.jsp")
                         .forward(request, response);
 
