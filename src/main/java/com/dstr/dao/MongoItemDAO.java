@@ -8,6 +8,7 @@ import org.bson.types.ObjectId;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by deoxys on 27.05.16.
@@ -112,75 +113,144 @@ public class MongoItemDAO {
         return items;
     }
 
-    public boolean moveStockedToReserved(ObjectId _itemId, int quantity) {
-        ItemStatus newStatus = findItemStatus(_itemId);
+    public boolean moveStockedToReserved(Map<String, Integer> orderItems) {
 
-        if (newStatus == null) {
-            return false;
+        for (String itemId : orderItems.keySet()) {
+            ObjectId _itemId = new ObjectId(itemId);
+            int quantity = orderItems.get(itemId);
+
+            ItemStatus newStatus = findItemStatus(_itemId);
+
+            if (newStatus == null) {
+                return false;
+            }
+            newStatus.changeStocked(-quantity);
+            newStatus.changeReserved(+quantity);
+
+            if ( ! updateItemStatus(_itemId, newStatus)) {
+                return false;
+            }
         }
-        newStatus.changeStocked(-quantity);
-        newStatus.changeReserved(+quantity);
-
-        return updateItemStatus(_itemId, newStatus);
+        return true;
     }
 
-    public boolean moveStockedToSold(ObjectId _itemId, int quantity) {
-        ItemStatus newStatus = findItemStatus(_itemId);
+    public boolean moveStockedToSold(Map<String, Integer> orderItems) {
 
-        if (newStatus == null) {
-            return false;
+        for (String itemId : orderItems.keySet()) {
+            ObjectId _itemId = new ObjectId(itemId);
+            int quantity = orderItems.get(itemId);
+
+            ItemStatus newStatus = findItemStatus(_itemId);
+
+            if (newStatus == null) {
+                return false;
+            }
+            newStatus.changeStocked(-quantity);
+            newStatus.changeSold(+quantity);
+
+            if ( ! updateItemStatus(_itemId, newStatus)) {
+                return false;
+            }
         }
-        newStatus.changeStocked(-quantity);
-        newStatus.changeSold(+quantity);
-
-        return updateItemStatus(_itemId, newStatus);
+        return true;
     }
 
-    public boolean moveReservedtoStocked(ObjectId _itemId, int quantity) {
-        ItemStatus newStatus = findItemStatus(_itemId);
+    public boolean moveReservedtoStocked(Map<String, Integer> orderItems) {
 
-        if (newStatus == null) {
-            return false;
+        for (String itemId : orderItems.keySet()) {
+            ObjectId _itemId = new ObjectId(itemId);
+            int quantity = orderItems.get(itemId);
+
+            ItemStatus newStatus = findItemStatus(_itemId);
+
+            if (newStatus == null) {
+                return false;
+            }
+            newStatus.changeReserved(-quantity);
+            newStatus.changeStocked(+quantity);
+
+            if ( ! updateItemStatus(_itemId, newStatus)) {
+                return false;
+            }
         }
-        newStatus.changeReserved(-quantity);
-        newStatus.changeStocked(+quantity);
-
-        return updateItemStatus(_itemId, newStatus);
+        return true;
     }
 
-    public boolean moveReservedToSold(ObjectId _itemId, int quantity) {
-        ItemStatus newStatus = findItemStatus(_itemId);
+    public boolean moveReservedToSold(Map<String, Integer> orderItems) {
 
-        if (newStatus == null) {
-            return false;
+        for (String itemId : orderItems.keySet()) {
+            ObjectId _itemId = new ObjectId(itemId);
+            int quantity = orderItems.get(itemId);
+
+            ItemStatus newStatus = findItemStatus(_itemId);
+
+            if (newStatus == null) {
+                return false;
+            }
+            newStatus.changeReserved(-quantity);
+            newStatus.changeSold(+quantity);
+
+            if ( ! updateItemStatus(_itemId, newStatus)) {
+                return false;
+            }
         }
-        newStatus.changeReserved(-quantity);
-        newStatus.changeSold(+quantity);
-
-        return updateItemStatus(_itemId, newStatus);
+        return true;
     }
 
-    public boolean moveSoldToStocked(ObjectId _itemId, int quantity) {
-        ItemStatus newStatus = findItemStatus(_itemId);
+    public boolean moveSoldToStocked(Map<String, Integer> orderItems) {
 
-        if (newStatus == null) {
-            return false;
+        for (String itemId : orderItems.keySet()) {
+            ObjectId _itemId = new ObjectId(itemId);
+            int quantity = orderItems.get(itemId);
+
+            ItemStatus newStatus = findItemStatus(_itemId);
+
+            if (newStatus == null) {
+                return false;
+            }
+            newStatus.changeSold(-quantity);
+            newStatus.changeStocked(+quantity);
+
+            if ( ! updateItemStatus(_itemId, newStatus)) {
+                return false;
+            }
         }
-        newStatus.changeSold(-quantity);
-        newStatus.changeStocked(+quantity);
-
-        return updateItemStatus(_itemId, newStatus);
+        return true;
     }
 
-    public boolean moveSoldtoReserved(ObjectId _itemId, int quantity) {
-        ItemStatus newStatus = findItemStatus(_itemId);
+    public boolean moveSoldtoReserved(Map<String, Integer> orderItems) {
 
-        if (newStatus == null) {
-            return false;
+        for (String itemId : orderItems.keySet()) {
+            ObjectId _itemId = new ObjectId(itemId);
+            int quantity = orderItems.get(itemId);
+
+            ItemStatus newStatus = findItemStatus(_itemId);
+
+            if (newStatus == null) {
+                return false;
+            }
+            newStatus.changeSold(-quantity);
+            newStatus.changeReserved(+quantity);
+
+            if ( ! updateItemStatus(_itemId, newStatus)) {
+                return false;
+            }
         }
-        newStatus.changeSold(-quantity);
-        newStatus.changeReserved(+quantity);
+        return true;
+    }
 
-        return updateItemStatus(_itemId, newStatus);
+    public boolean enoughItems(Map<String, Integer> orderItems) {
+
+        for (String itemId : orderItems.keySet()) {
+            ObjectId _itemId = new ObjectId(itemId);
+            int quantity = orderItems.get(itemId);
+
+            ItemStatus status = findItemStatus(_itemId);
+
+            if (status == null || quantity > status.getStocked()) {
+                return false;
+            }
+        }
+        return true;
     }
 }

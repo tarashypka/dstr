@@ -27,10 +27,10 @@ public class OrderStatusServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        String id = request.getParameter("id");
+        String orderId = request.getParameter("id");
         String newOrderStatusStr = request.getParameter("status");
 
-        if (id == null || id.equals("")) {
+        if (orderId == null || orderId.equals("")) {
             throw new ServletException("Wrong order id");
         }
 
@@ -40,7 +40,7 @@ public class OrderStatusServlet extends HttpServlet {
         MongoOrderDAO orderDAO = new MongoOrderDAO(mongo);
         MongoItemDAO itemDAO = new MongoItemDAO(mongo);
 
-        ObjectId _orderId = new ObjectId(id);
+        ObjectId _orderId = new ObjectId(orderId);
         Order.OrderStatus oldOrderStatus = orderDAO.findOrderStatus(_orderId);
         Order.OrderStatus newOrderStatus = Order.OrderStatus.valueOf(newOrderStatusStr);
 
@@ -59,65 +59,56 @@ public class OrderStatusServlet extends HttpServlet {
         }
 
         if (orderDAO.updateOrderStatus(_orderId, newOrderStatus)) {
-            logger.info("Order's with id=" + id + " status was changed: "
+            logger.info("Order's with id=" + orderId + " status was changed: "
                     + oldOrderStatus.name() + " -> " + newOrderStatus.name());
 
             List<Order> orders = (ArrayList)
                     request.getSession().getAttribute("orders");
 
-            Order order = orders.get(orders.indexOf(new Order(id)));
+            Order order = orders.get(orders.indexOf(new Order(orderId)));
 
             // Update order items statuses
             Map<String, Integer> itemsInReceipt = order.getItems();
 
-            for (String itemId : itemsInReceipt.keySet()) {
-                int quantity = itemsInReceipt.get(itemId);
-                ObjectId _itemId = new ObjectId(itemId);
-
-                boolean succeed = false;
-                switch (oldOrderStatus) {
-                    case REJECTED:
-                        switch (newOrderStatus) {
-                            case IN_PROCESS:
-                                succeed = itemDAO.moveStockedToReserved(_itemId, quantity);
-                                break;
-                            case PROCESSED:
-                                succeed = itemDAO.moveStockedToSold(_itemId, quantity);
-                                break;
-                        }
-                        break;
-                    case IN_PROCESS:
-                        switch (newOrderStatus) {
-                            case REJECTED:
-                                succeed = itemDAO.moveReservedtoStocked(_itemId, quantity);
-                                break;
-                            case PROCESSED:
-                                succeed = itemDAO.moveReservedToSold(_itemId, quantity);
-                                break;
-                        }
-                        break;
-                    case PROCESSED:
-                        switch (newOrderStatus) {
-                            case REJECTED:
-                                succeed = itemDAO.moveSoldToStocked(_itemId, quantity);
-                                break;
-                            case IN_PROCESS:
-                                succeed = itemDAO.moveSoldtoReserved(_itemId, quantity);
-                                break;
-                        }
-                        break;
-                }
-                if (succeed) {
-                    logger.info("Successfully changed order status"
-                            + " for item with id=" + itemId
-                            + ": " + oldOrderStatus.name()
-                            + " -> " + newOrderStatus.name());
-                } else {
-                    logger.error("Couldn't change order status"
-                            + " for item with id=" + itemId
-                            + ": " + oldOrderStatus.name()
-                            + " -> " + newOrderStatus.name());
-                }
+            boolean succeed = false;
+            switch (oldOrderStatus) {
+                case REJECTED:
+                    switch (newOrderStatus) {
+                        case IN_PROCESS:
+                            succeed = itemDAO.moveStockedToReserved(itemsInReceipt);
+                            break;
+                        case PROCESSED:
+                            succeed = itemDAO.moveStockedToSold(itemsInReceipt);
+                            break;
+                    }
+                    break;
+                case IN_PROCESS:
+                    switch (newOrderStatus) {
+                        case REJECTED:
+                            succeed = itemDAO.moveReservedtoStocked(itemsInReceipt);
+                            break;
+                        case PROCESSED:
+                            succeed = itemDAO.moveReservedToSold(itemsInReceipt);
+                            break;
+                    }
+                    break;
+                case PROCESSED:
+                    switch (newOrderStatus) {
+                        case REJECTED:
+                            succeed = itemDAO.moveSoldToStocked(itemsInReceipt);
+                            break;
+                        case IN_PROCESS:
+                            succeed = itemDAO.moveSoldtoReserved(itemsInReceipt);
+                            break;
+                    }
+                    break;
+            }
+            if (succeed) {
+                logger.error("Couldn't change status for one of items in order with "
+                        + " id=" + orderId);
+            } else {
+                logger.info("Successfully changed status for items in order with "
+                        + " id=" + orderId);
             }
 
             // Update session
@@ -127,7 +118,7 @@ public class OrderStatusServlet extends HttpServlet {
 
             request.getSession().setAttribute("orders", orders);
         } else {
-            logger.error("Order's with id=" + id + " status was not changed");
+            logger.error("Order's with id=" + orderId + " status was not changed");
         }
         request.getRequestDispatcher("/WEB-INF/jsp/orders.jsp")
                 .forward(request, response);

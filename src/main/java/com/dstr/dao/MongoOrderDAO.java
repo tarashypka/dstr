@@ -21,18 +21,31 @@ import java.util.*;
 
 public class MongoOrderDAO {
 
+    private MongoClient client;
     private DBCollection collection;
 
     public final static String MONGO_DB = "dstr";
     public final static String MONGO_COLL = "orders";
 
     public MongoOrderDAO(MongoClient mongoClient) {
-        DB db = mongoClient.getDB(MONGO_DB);
+        client = mongoClient;
+        DB db = client.getDB(MONGO_DB);
         db.setReadPreference(ReadPreference.secondaryPreferred());
         this.collection = db.getCollection(MONGO_COLL);
     }
 
     public Order insertOrder(Order order) {
+        MongoItemDAO itemDAO = new MongoItemDAO(client);
+
+        // Verify if there are enough items
+        // Another order with required items could have been made,
+        // before this order was acknowledged by customer
+        // This could be reimplemented according to magazine's politics:
+        // Sometimes it's better to have items in reserve
+        // and boost performance by avoiding additional issues covered here
+        if ( ! itemDAO.enoughItems(order.getItems())) {
+            return null;
+        }
 
         // Change today's orders total amount
         DBObject exists = new BasicDBObject("$exists", true);
@@ -64,11 +77,16 @@ public class MongoOrderDAO {
         order.setOrderNumber(currYear + "-" + currMonth + "-" +
                 currMonthDay + "-" + nOrders);
 
+        // Move ordered items to reserved
+        if ( ! itemDAO.moveStockedToReserved(order.getItems())) {
+            return null;
+        }
+
         DBObject orderDoc = OrderConverter.toDocument(order);
 
-        // Insert new order
-        // It's important that nOrders document is always updated before,
-        // so whenever new document was created, nOrders status will be also changed
+        // It's important that nOrders and ordered items documents
+        // are always updated before, so whenever new document was created,
+        // nOrders and ordered items statuses will be also changed
         if (this.collection.insert(orderDoc).wasAcknowledged()) {
             order.setId(orderDoc.get("_id").toString());
             return order;
