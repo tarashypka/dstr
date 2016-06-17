@@ -1,10 +1,12 @@
 package com.dstr.model;
 
+import java.io.Serializable;
+
 /**
  * Created by deoxys on 12.06.16.
  */
 
-public class ItemStatus {
+public class ItemStatus implements Serializable {
     private int stocked;
     private int reserved;
     private int sold;

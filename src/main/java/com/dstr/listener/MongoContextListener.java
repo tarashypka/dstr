@@ -21,8 +21,7 @@ public class MongoContextListener implements ServletContextListener {
     final static Logger logger = Logger.getLogger(MongoContextListener.class);
 
     // Public constructor is required by servlet spec
-    public MongoContextListener() {
-    }
+    public MongoContextListener() { }
 
     // -------------------------------------------------------
     // ServletContextListener implementation
@@ -46,17 +45,14 @@ public class MongoContextListener implements ServletContextListener {
         String pswd = ctx.getInitParameter("MONGO_PASSWORD");
         auths.add(MongoCredential.createCredential(user, db, pswd.toCharArray()));
 
-        MongoClient mongoClient = new MongoClient(seeds, auths);
-        mongoClient.setReadPreference(ReadPreference.secondary());
-        // MongoClient mongoClient = new MongoClient(
-        //        new MongoClientURI("mongodb://mongosvr1:27017,mongosvr2:27017,mongosvr3:27017/?replicaSet=rs0&slaveOk=true&user=dstrDbAdmin&db=dstr&password=1234"));
-        // mongoClient.slaveOk();
+        MongoClient mongo = new MongoClient(seeds, auths);
+        mongo.setReadPreference(ReadPreference.secondary());
 
-        ctx.setAttribute("MONGO_CLIENT", mongoClient);
+        ctx.setAttribute("MONGO_CLIENT", mongo);
 
         // Expand MongoClient beyond Servlets via JNDI
         try {
-            new InitialContext().rebind("MONGO_CLIENT", mongoClient);
+            new InitialContext().rebind("MONGO_CLIENT", mongo);
         } catch (NamingException ex) {
             ex.printStackTrace();
         }
@@ -68,9 +64,9 @@ public class MongoContextListener implements ServletContextListener {
          (the Web application) is undeployed or 
          Application Server shuts down.
       */
-        MongoClient mongoClient = (MongoClient) sce.getServletContext().
+        MongoClient mongo = (MongoClient) sce.getServletContext().
                 getAttribute("MONGO_CLIENT");
-        mongoClient.close();
+        mongo.close();
         logger.info("MongoClient: closed successfully");
     }
 }

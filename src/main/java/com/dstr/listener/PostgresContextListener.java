@@ -19,8 +19,7 @@ public class PostgresContextListener implements ServletContextListener {
     final static Logger logger = Logger.getLogger(PostgresContextListener.class);
 
     // Public constructor is required by servlet spec
-    public PostgresContextListener() {
-    }
+    public PostgresContextListener() { }
 
     // -------------------------------------------------------
     // ServletContextListener implementation

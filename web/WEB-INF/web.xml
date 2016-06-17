@@ -12,6 +12,14 @@
         <welcome-file>/WEB-INF/jsp/home.jsp</welcome-file>
     </welcome-file-list>
 
+    <!-- Run listeners in order, as Hz uses Mongo connection -->
+    <listener>
+        <listener-class>com.dstr.listener.MongoContextListener</listener-class>
+    </listener>
+    <listener>
+        <listener-class>com.dstr.listener.HzContextListener</listener-class>
+    </listener>
+
     <!-- Distributed session with Hazelcast -->
     <filter>
         <filter-name>hazelcast-filter</filter-name>
@@ -58,7 +66,7 @@
     </context-param>
     <context-param>
         <param-name>HZ_PORT</param-name>
-        <param-value>5701</param-value>
+        <param-value>5705</param-value>
     </context-param>
 
     <!-- MongoDB context params -->
