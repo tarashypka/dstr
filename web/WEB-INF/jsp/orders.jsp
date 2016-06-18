@@ -16,7 +16,7 @@
   </jsp:attribute>
 
   <jsp:body>
-    <c:if test="${sessionScope.customer ne null && sessionScope.orders ne null}">
+    <c:if test="${sessionScope.customer ne null and sessionScope.orders ne null}">
       <table>
         <tr>
           <th>№ замовлення</th>
@@ -49,10 +49,10 @@
             <td>
               <c:forEach items="${order.items}" var="item">
                 <c:url value="/item" var="itemURL">
-                  <c:param name="id" value="${item.key}"/>
+                  <c:param name="id" value="${item.key.id}"/>
                 </c:url>
                 <a href='<c:out value="${itemURL}" escapeXml="false"/>'>
-                    <c:out value="${item.key}"/><br>
+                    <c:out value="${item.key.id}"/><br>
                 </a>
               </c:forEach>
             </td>

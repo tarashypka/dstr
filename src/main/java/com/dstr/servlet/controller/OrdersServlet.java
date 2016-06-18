@@ -48,6 +48,9 @@ public class OrdersServlet extends HttpServlet {
         MongoOrderDAO orderDAO = new MongoOrderDAO(mongo);
 
         List<Order> orders = orderDAO.findAllOrders();
+        for (Order order : orders) {
+            System.out.println(order);
+        }
         request.getSession().setAttribute("orders", orders);
         request.getRequestDispatcher("/WEB-INF/jsp/orders.jsp")
                 .forward(request, response);

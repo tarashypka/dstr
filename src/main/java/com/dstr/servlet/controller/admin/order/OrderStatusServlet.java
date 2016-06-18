@@ -3,6 +3,7 @@ package com.dstr.servlet.controller.admin.order;
 import com.dstr.dao.MongoItemDAO;
 import com.dstr.dao.MongoOrderDAO;
 import com.dstr.model.Customer;
+import com.dstr.model.Item;
 import com.dstr.model.Order;
 import com.mongodb.MongoClient;
 import org.apache.log4j.Logger;
@@ -68,37 +69,37 @@ public class OrderStatusServlet extends HttpServlet {
             Order order = orders.get(orders.indexOf(new Order(orderId)));
 
             // Update order items statuses
-            Map<String, Integer> itemsInReceipt = order.getItems();
+            Map<Item, Integer> orderItems = order.getItems();
 
             boolean succeed = false;
             switch (oldOrderStatus) {
                 case REJECTED:
                     switch (newOrderStatus) {
                         case IN_PROCESS:
-                            succeed = itemDAO.moveStockedToReserved(itemsInReceipt);
+                            succeed = itemDAO.moveStockedToReserved(orderItems);
                             break;
                         case PROCESSED:
-                            succeed = itemDAO.moveStockedToSold(itemsInReceipt);
+                            succeed = itemDAO.moveStockedToSold(orderItems);
                             break;
                     }
                     break;
                 case IN_PROCESS:
                     switch (newOrderStatus) {
                         case REJECTED:
-                            succeed = itemDAO.moveReservedtoStocked(itemsInReceipt);
+                            succeed = itemDAO.moveReservedtoStocked(orderItems);
                             break;
                         case PROCESSED:
-                            succeed = itemDAO.moveReservedToSold(itemsInReceipt);
+                            succeed = itemDAO.moveReservedToSold(orderItems);
                             break;
                     }
                     break;
                 case PROCESSED:
                     switch (newOrderStatus) {
                         case REJECTED:
-                            succeed = itemDAO.moveSoldToStocked(itemsInReceipt);
+                            succeed = itemDAO.moveSoldToStocked(orderItems);
                             break;
                         case IN_PROCESS:
-                            succeed = itemDAO.moveSoldtoReserved(itemsInReceipt);
+                            succeed = itemDAO.moveSoldtoReserved(orderItems);
                             break;
                     }
                     break;

@@ -104,11 +104,11 @@ public class MongoItemDAO {
         return items;
     }
 
-    public boolean moveStockedToReserved(Map<String, Integer> orderItems) {
+    public boolean moveStockedToReserved(Map<Item, Integer> orderItems) {
 
-        for (String itemId : orderItems.keySet()) {
-            ObjectId _itemId = new ObjectId(itemId);
-            int quantity = orderItems.get(itemId);
+        for (Item item : orderItems.keySet()) {
+            ObjectId _itemId = new ObjectId(item.getId());
+            int quantity = orderItems.get(item);
 
             ItemStatus newStatus = findItemStatus(_itemId);
 
@@ -125,11 +125,11 @@ public class MongoItemDAO {
         return true;
     }
 
-    public boolean moveStockedToSold(Map<String, Integer> orderItems) {
+    public boolean moveStockedToSold(Map<Item, Integer> orderItems) {
 
-        for (String itemId : orderItems.keySet()) {
-            ObjectId _itemId = new ObjectId(itemId);
-            int quantity = orderItems.get(itemId);
+        for (Item item : orderItems.keySet()) {
+            ObjectId _itemId = new ObjectId(item.getId());
+            int quantity = orderItems.get(item.getId());
 
             ItemStatus newStatus = findItemStatus(_itemId);
 
@@ -146,11 +146,11 @@ public class MongoItemDAO {
         return true;
     }
 
-    public boolean moveReservedtoStocked(Map<String, Integer> orderItems) {
+    public boolean moveReservedtoStocked(Map<Item, Integer> orderItems) {
 
-        for (String itemId : orderItems.keySet()) {
-            ObjectId _itemId = new ObjectId(itemId);
-            int quantity = orderItems.get(itemId);
+        for (Item item : orderItems.keySet()) {
+            ObjectId _itemId = new ObjectId(item.getId());
+            int quantity = orderItems.get(item);
 
             ItemStatus newStatus = findItemStatus(_itemId);
 
@@ -167,11 +167,11 @@ public class MongoItemDAO {
         return true;
     }
 
-    public boolean moveReservedToSold(Map<String, Integer> orderItems) {
+    public boolean moveReservedToSold(Map<Item, Integer> orderItems) {
 
-        for (String itemId : orderItems.keySet()) {
-            ObjectId _itemId = new ObjectId(itemId);
-            int quantity = orderItems.get(itemId);
+        for (Item item : orderItems.keySet()) {
+            ObjectId _itemId = new ObjectId(item.getId());
+            int quantity = orderItems.get(item);
 
             ItemStatus newStatus = findItemStatus(_itemId);
 
@@ -188,11 +188,11 @@ public class MongoItemDAO {
         return true;
     }
 
-    public boolean moveSoldToStocked(Map<String, Integer> orderItems) {
+    public boolean moveSoldToStocked(Map<Item, Integer> orderItems) {
 
-        for (String itemId : orderItems.keySet()) {
-            ObjectId _itemId = new ObjectId(itemId);
-            int quantity = orderItems.get(itemId);
+        for (Item item : orderItems.keySet()) {
+            ObjectId _itemId = new ObjectId(item.getId());
+            int quantity = orderItems.get(item);
 
             ItemStatus newStatus = findItemStatus(_itemId);
 
@@ -209,11 +209,11 @@ public class MongoItemDAO {
         return true;
     }
 
-    public boolean moveSoldtoReserved(Map<String, Integer> orderItems) {
+    public boolean moveSoldtoReserved(Map<Item, Integer> orderItems) {
 
-        for (String itemId : orderItems.keySet()) {
-            ObjectId _itemId = new ObjectId(itemId);
-            int quantity = orderItems.get(itemId);
+        for (Item item : orderItems.keySet()) {
+            ObjectId _itemId = new ObjectId(item.getId());
+            int quantity = orderItems.get(item);
 
             ItemStatus newStatus = findItemStatus(_itemId);
 
@@ -230,11 +230,11 @@ public class MongoItemDAO {
         return true;
     }
 
-    public boolean enoughItems(Map<String, Integer> orderItems) {
+    public boolean enoughItems(Map<Item, Integer> orderItems) {
 
-        for (String itemId : orderItems.keySet()) {
-            ObjectId _itemId = new ObjectId(itemId);
-            int quantity = orderItems.get(itemId);
+        for (Item item : orderItems.keySet()) {
+            ObjectId _itemId = new ObjectId(item.getId());
+            int quantity = orderItems.get(item);
 
             ItemStatus status = findItemStatus(_itemId);
 

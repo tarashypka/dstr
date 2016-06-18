@@ -109,8 +109,8 @@ public class OrderAddServlet extends HttpServlet {
             Customer customer = (Customer) request.getSession().getAttribute("customer");
             order.setCustomer(customer);
 
-            Map<String, Integer> items = new HashMap<>();
-            for (Item i : orderItems.keySet()) items.put(i.getId(), orderItems.get(i));
+            Map<Item, Integer> items = new HashMap<>();
+            for (Item i : orderItems.keySet()) items.put(i, orderItems.get(i));
 
             order.setItems(items);
             order.setReceipt(receipt);

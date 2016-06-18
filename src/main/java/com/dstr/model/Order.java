@@ -12,7 +12,7 @@ public class Order implements Serializable {
     private String orderNumber;
     private Date date;
     private Customer customer;
-    private Map<String, Integer> items;
+    private Map<Item, Integer> items;
     private Map<Currency, Double> receipt;
     private OrderStatus status;
 
@@ -81,11 +81,11 @@ public class Order implements Serializable {
         this.customer = customer;
     }
 
-    public Map<String, Integer> getItems() {
+    public Map<Item, Integer> getItems() {
         return items;
     }
 
-    public void setItems(Map<String, Integer> items) {
+    public void setItems(Map<Item, Integer> items) {
         this.items = items;
     }
 

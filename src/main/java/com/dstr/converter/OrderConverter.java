@@ -1,5 +1,6 @@
 package com.dstr.converter;
 
+import com.dstr.model.Item;
 import com.mongodb.BasicDBList;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
@@ -31,14 +32,14 @@ public class OrderConverter {
         doc.put("customer", CustomerConverter.toDocument(customer));
 
         BasicDBList itemsDbl = new BasicDBList();
-        Map<String, Integer> orderItems = order.getItems();
+        Map<Item, Integer> orderItems = order.getItems();
 
-        for (String itemId : orderItems.keySet()) {
-            ObjectId _itemId = new ObjectId(itemId);
+        for (Item item : orderItems.keySet()) {
+            ObjectId _itemId = new ObjectId(item.getId());
             DBRef dbRef = new DBRef(COLL, _itemId);
             DBObject orderItemsDoc = new BasicDBObject();
             orderItemsDoc.put("id", dbRef);
-            orderItemsDoc.put("quantity", orderItems.get(itemId));
+            orderItemsDoc.put("quantity", orderItems.get(item));
             itemsDbl.add(orderItemsDoc);
         }
         doc.put("items", itemsDbl);
@@ -70,13 +71,13 @@ public class OrderConverter {
         DBObject customerDoc = (DBObject) doc.get("customer");
         order.setCustomer(CustomerConverter.toCustomer(customerDoc));
 
-        Map<String, Integer> items = new HashMap<>();
+        Map<Item, Integer> items = new HashMap<>();
         BasicDBList itemsDbl = (BasicDBList) doc.get("items");
         for (Object itemObj : itemsDbl) {
             DBObject itemDoc = (DBObject) itemObj;
             DBRef dbRef = (DBRef) itemDoc.get("id");
             String id = dbRef.getId().toString();
-            items.put(id, (Integer) itemDoc.get("quantity"));
+            items.put(new Item(id), (Integer) itemDoc.get("quantity"));
         }
         order.setItems(items);
 
