@@ -35,7 +35,7 @@
                     <url>http://localhost:8080/manager/text</url>
                     <server>TomcatServer</server>
                     <path>/dstr</path>
-                    <username>dstrprjadmin</username>
+                    <username>dstrAdmin</username>
                     <password>1234</password>
                 </configuration>
             </plugin>

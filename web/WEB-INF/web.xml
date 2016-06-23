@@ -49,24 +49,12 @@
 
     <!-- Hazelcast context params -->
     <context-param>
-        <param-name>HZ_HOSTS</param-name>
-        <param-value>3</param-value>
-    </context-param>
-    <context-param>
-        <param-name>HZ_HOST_1</param-name>
-        <param-value>tomcatsvr1</param-value>
-    </context-param>
-    <context-param>
-        <param-name>HZ_HOST_2</param-name>
-        <param-value>tomcatsvr2</param-value>
-    </context-param>
-    <context-param>
-        <param-name>HZ_HOST_3</param-name>
-        <param-value>tomcatsvr3</param-value>
+        <param-name>HZ_HOST</param-name>
+        <param-value>localhost</param-value>
     </context-param>
     <context-param>
         <param-name>HZ_PORT</param-name>
-        <param-value>5705</param-value>
+        <param-value>5701</param-value>
     </context-param>
 
     <!-- MongoDB context params -->
@@ -76,19 +64,27 @@
     </context-param>
     <context-param>
         <param-name>MONGO_HOST_1</param-name>
-        <param-value>mongosvr1</param-value>
+        <param-value>localhost</param-value>
+    </context-param>
+    <context-param>
+        <param-name>MONGO_PORT_1</param-name>
+        <param-value>27017</param-value>
     </context-param>
     <context-param>
         <param-name>MONGO_HOST_2</param-name>
-        <param-value>mongosvr2</param-value>
+        <param-value>localhost</param-value>
+    </context-param>
+    <context-param>
+        <param-name>MONGO_PORT_2</param-name>
+        <param-value>27018</param-value>
     </context-param>
     <context-param>
         <param-name>MONGO_HOST_3</param-name>
-        <param-value>mongosvr3</param-value>
+        <param-value>localhost</param-value>
     </context-param>
     <context-param>
-        <param-name>MONGO_PORT</param-name>
-        <param-value>27017</param-value>
+        <param-name>MONGO_PORT_3</param-name>
+        <param-value>27019</param-value>
     </context-param>
     <context-param>
         <param-name>MONGO_DB</param-name>
@@ -106,7 +102,7 @@
     <!-- PostgreSQL context params -->
     <context-param>
         <param-name>POSTGRES_HOST</param-name>
-        <param-value>thinkpad</param-value>
+        <param-value>localhost</param-value>
     </context-param>
     <context-param>
         <param-name>POSTGRES_PORT</param-name>
