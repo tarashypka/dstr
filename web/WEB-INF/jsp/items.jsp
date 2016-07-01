@@ -16,7 +16,7 @@
   </jsp:attribute>
 
   <jsp:body>
-    <c:if test="${sessionScope.items ne null}">
+    <c:if test="${requestScope.items ne null}">
       <table>
         <tr>
           <th>ID</th>
@@ -31,32 +31,32 @@
           <th>Зарезервовано</th>
           <th>Продано</th>
         </tr>
-        <c:forEach items="${sessionScope.items}" var="item">
+        <c:forEach items="${requestScope.items}" var="item">
           <c:url value="/item" var="itemURL">
-            <c:param name="id" value="${item.key.id}"/>
+            <c:param name="id" value="${item.id}"/>
           </c:url>
           <tr>
             <td>
               <a href='<c:out value="${itemURL}"/>'>
-                <c:out value="${item.key.id}"/>
+                <c:out value="${item.id}"/>
               </a>
             </td>
-            <td><c:out value="${item.key.category}"/></td>
-            <td><c:out value="${item.key.price}"/></td>
-            <td><c:out value="${item.key.currency}"/></td>
+            <td><c:out value="${item.category}"/></td>
+            <td><c:out value="${item.price}"/></td>
+            <td><c:out value="${item.currency}"/></td>
             <c:if test="${sessionScope.customer.role eq 'customer'}">
               <td><c:out value="${item.value}"/></td>
               <td><c:out value="${item.value * item.key.price}"/></td>
             </c:if>
-            <td><c:out value="${item.key.status.stocked}"/></td>
-            <td><c:out value="${item.key.status.reserved}"/></td>
-            <td><c:out value="${item.key.status.sold}"/></td>
+            <td><c:out value="${item.status.stocked}"/></td>
+            <td><c:out value="${item.status.reserved}"/></td>
+            <td><c:out value="${item.status.sold}"/></td>
             <c:if test="${sessionScope.customer.role eq 'admin'}">
               <c:url value="/item/edit" var="itemEditURL">
-                <c:param name="id" value="${item.key.id}"/>
+                <c:param name="id" value="${item.id}"/>
               </c:url>
               <c:url value="/item/delete" var="itemDeleteURL">
-                <c:param name="id" value="${item.key.id}"/>
+                <c:param name="id" value="${item.id}"/>
               </c:url>
               <td>
                 <a href='<c:out value="${itemEditURL}" escapeXml="false"/>'>

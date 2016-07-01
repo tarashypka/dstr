@@ -1,15 +1,22 @@
 # dstr
 ###### *Study project*
 
-### Requirements
+### Description
+
+
+### Software and Tools used
 
 ```
-psql (PostgreSQL) v9.5.3
-MongoDB v3.2.6  
-Tomcat v8.0.33
-httpd v2.4.20
-JK v1.2.41
-Maven v3.3.9
+Java v.1.7.0_80
+PostgreSQL v9.5.3
+MongoDB v3.2.6
+Hazelcast Open Source v3.6.2
+Apache HTTP Server (httpd) v2.4.20
+Apache Tomcat v8.0.33
+Apache Tomcat Connector (mod_jk) v1.2.41
+Apache Maven v3.3.9
+Intellij IDEA Ultimate v14.0.2
+Ubuntu v16.04
 ```
 ### PostgreSQL configuration
 
@@ -44,7 +51,7 @@ host    all             all             mongosvr3/24       trust
 ```
 $ sudo -u postgres psql -d template1
 template1=# CREATE DATABASE dstr;
-template1=# CREATE USER dstrDbAdmin WITH PASSWORD '1234';
+template1=# CREATE USER dstrdbadmin WITH PASSWORD '1234';
 template1=# GRANT ALL PRIVILEGES ON DATABASE dstr to dstrdbadmin;
 template1=# \q
 $ psql -d dstr -U dstrdbadmin -W

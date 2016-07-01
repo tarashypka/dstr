@@ -14,10 +14,10 @@
 
     <!-- Run listeners in order, as Hz uses Mongo connection -->
     <listener>
-        <listener-class>com.dstr.listener.MongoContextListener</listener-class>
+        <listener-class>com.deoxys.dev.dstr.presentation.listener.MongoContextListener</listener-class>
     </listener>
     <listener>
-        <listener-class>com.dstr.listener.HzContextListener</listener-class>
+        <listener-class>com.deoxys.dev.dstr.presentation.listener.HzContextListener</listener-class>
     </listener>
 
     <!-- Distributed session with Hazelcast -->
@@ -138,7 +138,7 @@
     <!-- Filter all incoming requests to validate the session -->
     <filter>
         <filter-name>AuthenticationFilter</filter-name>
-        <filter-class>com.dstr.filter.AuthenticationFilter</filter-class>
+        <filter-class>com.deoxys.dev.dstr.presentation.filter.AuthenticationFilter</filter-class>
         <init-param>
             <param-name>public</param-name>
             <param-value>
@@ -199,7 +199,7 @@
     <!-- Set custom encoding for all incoming requests -->
     <filter>
         <filter-name>EncodingFilter</filter-name>
-        <filter-class>com.dstr.filter.EncodingFilter</filter-class>
+        <filter-class>com.deoxys.dev.dstr.presentation.filter.EncodingFilter</filter-class>
         <init-param>
             <param-name>encoding</param-name>
             <param-value>UTF-8</param-value>
