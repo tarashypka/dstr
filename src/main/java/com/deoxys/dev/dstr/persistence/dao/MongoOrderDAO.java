@@ -112,7 +112,7 @@ public class MongoOrderDAO {
 
         int statusVal = (Integer) doc.get("status");
 
-        return Order.OrderStatus.orderStatusByValue(statusVal);
+        return Order.OrderStatus.getStatus(statusVal);
     }
 
     public boolean updateOrderStatus(ObjectId _orderId, Order.OrderStatus newStatus) {

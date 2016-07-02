@@ -23,11 +23,11 @@ import java.util.List;
 public class CustomersServlet extends HttpServlet {
     final static Logger logger = Logger.getLogger(CustomersServlet.class);
 
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
 
-        DataSource source = (DataSource) request.getServletContext()
-                .getAttribute("POSTGRES_CONNECTION_POOL");
+        DataSource source = (DataSource)
+                req.getServletContext().getAttribute("POSTGRES_CONNECTION_POOL");
 
         List<Customer> customers = new ArrayList<>();
 
@@ -35,11 +35,10 @@ public class CustomersServlet extends HttpServlet {
             PostgresCustomerDAO customerDAO = new PostgresCustomerDAO(source);
             customers.addAll(customerDAO.selectAllCustomers());
         } catch (SQLException ex) {
-            logger.error("PostgreSQL error");
-            ex.printStackTrace();
+            logger.error("DB Connection/Select error:" + ex.getMessage());
+            throw new ServletException("DB Connection/Select error:" + ex.getMessage());
         }
-        request.setAttribute("customers", customers);
-        request.getRequestDispatcher("/jsp/customers.jsp")
-                .forward(request, response);
+        req.setAttribute("customers", customers);
+        req.getRequestDispatcher("/WEB-INF/jsp/customers.jsp").forward(req, resp);
     }
 }

@@ -23,7 +23,7 @@ import java.util.*;
 public class ItemsServlet extends HttpServlet {
     final static Logger logger = Logger.getLogger(ItemsServlet.class);
 
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
 
         /**
@@ -45,15 +45,12 @@ public class ItemsServlet extends HttpServlet {
 
         if (items.size() == 0) {
             // Fetch all items to HZ_CACHE
-            MongoClient mongo = (MongoClient) request.getServletContext()
-                    .getAttribute("MONGO_CLIENT");
+            MongoClient mongo = (MongoClient) req.getServletContext().getAttribute("MONGO_CLIENT");
             MongoItemDAO itemDAO = new MongoItemDAO(mongo);
 
             items.addAll(itemDAO.findAllItems());
         }
-
-        request.setAttribute("items", items);
-        request.getRequestDispatcher("/WEB-INF/jsp/items.jsp")
-                .forward(request, response);
+        req.setAttribute("items", items);
+        req.getRequestDispatcher("/WEB-INF/jsp/items.jsp").forward(req, resp);
     }
 }

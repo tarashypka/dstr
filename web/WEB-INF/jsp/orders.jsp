@@ -16,36 +16,43 @@
   </jsp:attribute>
 
   <jsp:body>
-    <c:if test="${sessionScope.customer ne null and sessionScope.orders ne null}">
+    <c:if test="${requestScope.orders ne null}">
       <table>
         <tr>
           <th>№ замовлення</th>
           <th>Дата</th>
-          <c:if test="${sessionScope.customer.role eq 'admin'}">
-            <th>Замовник</th>
-          </c:if>
+          <th>Замовник</th>
           <th>Товар</th>
           <th>Кількість</th>
           <th>Вартість</th>
           <th>Валюта</th>
           <th>Статус</th>
         </tr>
-        <c:forEach items="${sessionScope.orders}" var="order">
+        <c:set value="${requestScope.orders}" var="orders"/>
+        <c:forEach items="${orders}" var="order">
+          <c:url value="/customer" var="customerURL">
+            <c:param name="email" value="${order.customer.email}"/>
+          </c:url>
+          <c:url value="/order/status" var="setStatusRejectedURL">
+            <c:param name="id" value="${order.id}"/>
+            <c:param name="status" value="REJECTED"/>
+          </c:url>
+          <c:url value="/order/status" var="setStatusInProcessURL">
+            <c:param name="id" value="${order.id}"/>
+            <c:param name="status" value="IN_PROCESS"/>
+          </c:url>
+          <c:url value="/order/status" var="setStatusProcessedURL">
+            <c:param name="id" value="${order.id}"/>
+            <c:param name="status" value="PROCESSED"/>
+          </c:url>
           <tr>
             <td><c:out value="${order.orderNumber}"/></td>
             <td><c:out value="${order.date}"/></td>
-
-            <c:if test="${sessionScope.customer.role eq 'admin'}">
-              <c:url value="/customer" var="customerURL">
-                <c:param name="email" value="${order.customer.email}"/>
-              </c:url>
-              <td>
-                <a href='<c:out value="${customerURL}" escapeXml="false"/>'>
-                  <c:out value="${order.customer.name} ${order.customer.surname}"/>
-                </a>
-              </td>
-            </c:if>
-
+            <td>
+              <a href='<c:out value="${customerURL}" escapeXml="false"/>'>
+                <c:out value="${order.customer.name} ${order.customer.surname}"/>
+              </a>
+            </td>
             <td>
               <c:forEach items="${order.items}" var="item">
                 <c:url value="/item" var="itemURL">
@@ -85,47 +92,21 @@
               </c:choose>
               <c:out value="${status}"></c:out>
             </td>
-
-            <c:url value="/order/status" var="setStatusInProcessURL">
-              <c:param name="id" value="${order.id}"/>
-              <c:param name="status" value="IN_PROCESS"/>
-            </c:url>
-            <c:choose>
-              <c:when test="${sessionScope.customer.role eq 'customer'}">
-                <c:if test="${order.status.value eq -1}">
-                  <td>
-                    <a href='<c:out value="${setStatusInProcessURL}" escapeXml="false"/>'>
-                      В процесі
-                    </a>
-                  </td>
-                </c:if>
-              </c:when>
-              <c:when test="${sessionScope.customer.role eq 'admin'}">
-                <c:url value="/order/status" var="setStatusRejectedURL">
-                  <c:param name="id" value="${order.id}"/>
-                  <c:param name="status" value="REJECTED"/>
-                </c:url>
-                <c:url value="/order/status" var="setStatusProcessedURL">
-                  <c:param name="id" value="${order.id}"/>
-                  <c:param name="status" value="PROCESSED"/>
-                </c:url>
-                <td>
-                  <a href='<c:out value="${setStatusRejectedURL}" escapeXml="false"/>'>
-                    Відмовити
-                  </a>
-                </td>
-                <td>
-                  <a href='<c:out value="${setStatusInProcessURL}" escapeXml="false"/>'>
-                    В процесі
-                  </a>
-                </td>
-                <td>
-                  <a href='<c:out value="${setStatusProcessedURL}" escapeXml="false"/>'>
-                    Оброблено
-                  </a>
-                </td>
-              </c:when>
-            </c:choose>
+            <td>
+              <a href='<c:out value="${setStatusRejectedURL}" escapeXml="false"/>'>
+                Відмовити
+              </a>
+            </td>
+            <td>
+              <a href='<c:out value="${setStatusInProcessURL}" escapeXml="false"/>'>
+                В процесі
+              </a>
+            </td>
+            <td>
+              <a href='<c:out value="${setStatusProcessedURL}" escapeXml="false"/>'>
+                Оброблено
+              </a>
+            </td>
           </tr>
         </c:forEach>
       </table>

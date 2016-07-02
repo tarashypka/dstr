@@ -17,9 +17,7 @@
   </jsp:attribute>
 
   <jsp:body>
-    <c:if test="${sessionScope.customer ne null &&
-                  sessionScope.customer.role eq 'admin' &&
-                  sessionScope.customers ne null}">
+    <c:if test="${requestScope.customers ne null}">
       <table>
         <tr>
           <th>Ініціали</th>
@@ -28,7 +26,7 @@
           <th>Куплено товарів</th>
           <th>Статус</th>
         </tr>
-        <c:forEach items="${sessionScope.customers}" var="customer">
+        <c:forEach items="${requestScope.customers}" var="customer">
           <c:url value="/customer" var="customerURL">
             <c:param name="email" value="${customer.email}"></c:param>
           </c:url>
@@ -67,11 +65,11 @@
               </c:choose>
             </td>
             <c:if test="${sessionScope.customer.role eq 'admin'}">
-              <c:url value="/customer/status" var="customerDeleteURL">
+              <c:url value="/customer/status" var="customerStatusURL">
                 <c:param name="email" value="${customer.email}"></c:param>
               </c:url>
               <td>
-                <a href='<c:out value="${customerDeleteURL}" escapeXml="false"></c:out>'>
+                <a href='<c:out value="${customerStatusURL}" escapeXml="false"></c:out>'>
                   <c:choose>
                     <c:when test="${customer.enabled}">Забанити</c:when>
                     <c:otherwise>Розбанити</c:otherwise>

@@ -58,7 +58,7 @@
                         <input type="submit" value="Нове замовлення">
                     </form>
                 </c:when>
-                <c:when test="${sessionScope.customer.role eq 'admin'}">
+                <c:otherwise>
                     <c:url value="/items" var="itemsURL"/>
                     <c:url value="/orders" var="ordersURL"/>
                     <c:url value="/customers" var="customersURL"/>
@@ -79,7 +79,7 @@
                     <form action='<c:out value="${addItemURL}"/>' method="get">
                         <input type="submit" value="Додати товар">
                     </form>
-                </c:when>
+                </c:otherwise>
             </c:choose>
 
             <form action='<c:out value="${logoutURL}"/>' method="post">

@@ -23,42 +23,38 @@ import java.sql.SQLException;
 public class CustomerServlet extends HttpServlet {
     final static Logger logger = Logger.getLogger(CustomerServlet.class);
 
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
 
-        String email = request.getParameter("email");
+        String email = req.getParameter("email");
 
         if (email == null || email.equals("")) {
             throw new ServletException("Wrong customer email");
         }
 
         DataSource source = (DataSource)
-                request.getServletContext().getAttribute("POSTGRES_CONNECTION_POOL");
+                req.getServletContext().getAttribute("POSTGRES_CONNECTION_POOL");
 
         try {
             PostgresCustomerDAO customerDAO = new PostgresCustomerDAO(source);
             Customer customer = customerDAO.selectCustomer(email);
             customerDAO.closeConnection();
             if (customer != null) {
-                MongoClient mongo = (MongoClient) request.getServletContext()
+                MongoClient mongo = (MongoClient) req.getServletContext()
                         .getAttribute("MONGO_CLIENT");
-
                 MongoOrderDAO orderDAO = new MongoOrderDAO(mongo);
+
                 customer.setOrders(orderDAO.findCustomerOrders(customer.getEmail()));
                 customer.setItems(orderDAO.findCustomerItems(customer.getEmail()));
 
-                request.setAttribute("customer", customer);
-                request.getRequestDispatcher("/WEB-INF/jsp/customer.jsp")
-                        .forward(request, response);
-
-                customerDAO.closeConnection();
+                req.setAttribute("customer", customer);
+                req.getRequestDispatcher("/WEB-INF/jsp/customer.jsp").forward(req, resp);
             } else {
                 logger.info("Customer with email " + email + " not found");
                 throw new ServletException("Customer with email " + email + " not found");
             }
         } catch (SQLException ex) {
-            ex.printStackTrace();
-            logger.error("Login error: " + ex.getMessage());
+            logger.error("DB Connection/Select error: " + ex.getMessage());
             throw new ServletException("DB Connection/Select error: " + ex.getMessage());
         }
     }

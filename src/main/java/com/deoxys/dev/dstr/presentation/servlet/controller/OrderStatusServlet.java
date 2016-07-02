@@ -1,4 +1,4 @@
-package com.deoxys.dev.dstr.presentation.servlet.controller.admin.order;
+package com.deoxys.dev.dstr.presentation.servlet.controller;
 
 import com.deoxys.dev.dstr.persistence.dao.MongoItemDAO;
 import com.deoxys.dev.dstr.persistence.dao.MongoOrderDAO;
@@ -25,56 +25,60 @@ import java.util.*;
 public class OrderStatusServlet extends HttpServlet {
     Logger logger = Logger.getLogger(OrderStatusServlet.class);
 
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
 
-        String orderId = request.getParameter("id");
-        String newOrderStatusStr = request.getParameter("status");
+        String orderId = req.getParameter("id");
+        String newStatusName = req.getParameter("status");
 
         if (orderId == null || orderId.equals("")) {
             throw new ServletException("Wrong order id");
         }
 
-        MongoClient mongo = (MongoClient) request.getServletContext()
+        MongoClient mongo = (MongoClient) req.getServletContext()
                 .getAttribute("MONGO_CLIENT");
 
         MongoOrderDAO orderDAO = new MongoOrderDAO(mongo);
         MongoItemDAO itemDAO = new MongoItemDAO(mongo);
 
         ObjectId _orderId = new ObjectId(orderId);
-        Order.OrderStatus oldOrderStatus = orderDAO.findOrderStatus(_orderId);
-        Order.OrderStatus newOrderStatus = Order.OrderStatus.valueOf(newOrderStatusStr);
+        Order.OrderStatus oldStatus = orderDAO.findOrderStatus(_orderId);
+        Order.OrderStatus newStatus = Order.OrderStatus.valueOf(newStatusName);
 
-        Customer customer = (Customer) request.getSession().getAttribute("customer");
+        Customer customer = (Customer) req.getSession().getAttribute("customer");
 
-        // Customer is only authorized to renew rejected order
+        /**
+         * Customer is authorized only to:
+         *  - renew rejected order
+         *  - reject new order
+         */
         if (customer != null && customer.isCustomer()) {
             boolean allowed =
-                    oldOrderStatus.equals(Order.OrderStatus.REJECTED) &&
-                    newOrderStatus.equals(Order.OrderStatus.IN_PROCESS);
+                    oldStatus.equals(Order.OrderStatus.REJECTED) &&
+                    newStatus.equals(Order.OrderStatus.IN_PROCESS);
+            allowed |=
+                    oldStatus.equals(Order.OrderStatus.IN_PROCESS) &&
+                    newStatus.equals(Order.OrderStatus.REJECTED);
             if ( ! allowed) {
                 logger.error("Customer tried to change order status: "
-                        + oldOrderStatus.name() + " -> " + newOrderStatus.name());
+                        + oldStatus.name() + " -> " + newStatus.name());
                 throw new ServletException("Not authorized");
             }
         }
 
-        if (orderDAO.updateOrderStatus(_orderId, newOrderStatus)) {
+        if (orderDAO.updateOrderStatus(_orderId, newStatus)) {
             logger.info("Order's with id=" + orderId + " status was changed: "
-                    + oldOrderStatus.name() + " -> " + newOrderStatus.name());
+                    + oldStatus.name() + " -> " + newStatus.name());
 
-            List<Order> orders = (ArrayList)
-                    request.getSession().getAttribute("orders");
-
-            Order order = orders.get(orders.indexOf(new Order(orderId)));
+            Order order = orderDAO.findOrder(_orderId);
 
             // Update order items statuses
             Map<Item, Integer> orderItems = order.getItems();
 
             boolean succeed = false;
-            switch (oldOrderStatus) {
+            switch (oldStatus) {
                 case REJECTED:
-                    switch (newOrderStatus) {
+                    switch (newStatus) {
                         case IN_PROCESS:
                             succeed = itemDAO.moveStockedToReserved(orderItems);
                             break;
@@ -84,7 +88,7 @@ public class OrderStatusServlet extends HttpServlet {
                     }
                     break;
                 case IN_PROCESS:
-                    switch (newOrderStatus) {
+                    switch (newStatus) {
                         case REJECTED:
                             succeed = itemDAO.moveReservedtoStocked(orderItems);
                             break;
@@ -94,7 +98,7 @@ public class OrderStatusServlet extends HttpServlet {
                     }
                     break;
                 case PROCESSED:
-                    switch (newOrderStatus) {
+                    switch (newStatus) {
                         case REJECTED:
                             succeed = itemDAO.moveSoldToStocked(orderItems);
                             break;
@@ -104,24 +108,18 @@ public class OrderStatusServlet extends HttpServlet {
                     }
                     break;
             }
-            if (succeed) {
-                logger.error("Couldn't change status for one of items in order with "
-                        + " id=" + orderId);
-            } else {
-                logger.info("Successfully changed status for items in order with "
-                        + " id=" + orderId);
-            }
-
-            // Update session
-            orders.remove(order);
-            order.setStatus(newOrderStatus);
-            orders.add(order);
-
-            request.getSession().setAttribute("orders", orders);
+            logger.error((succeed
+                    ? "Couldn't change status for one of items "
+                    : "Successfully changed status for items ")
+                    + "in order with id=" + orderId);
         } else {
             logger.error("Order's with id=" + orderId + " status was not changed");
         }
-        request.getRequestDispatcher("/WEB-INF/jsp/orders.jsp")
-                .forward(request, response);
+
+        if (customer.isAdmin()) {
+            resp.sendRedirect(req.getContextPath() + "/orders");
+        } else {
+            resp.sendRedirect(req.getContextPath() + "/customer/orders");
+        }
     }
 }

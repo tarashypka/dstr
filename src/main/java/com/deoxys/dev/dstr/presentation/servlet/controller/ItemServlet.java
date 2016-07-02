@@ -18,24 +18,22 @@ import java.io.IOException;
 
 @WebServlet(name = "Item", urlPatterns = "/item")
 public class ItemServlet extends HttpServlet {
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
 
-        String itemId = request.getParameter("id");
+        String itemId = req.getParameter("id");
         if (itemId == null || itemId.equals("")) {
             throw new ServletException("Wrong item id");
         }
 
         ObjectId _itemId = new ObjectId(itemId);
 
-        MongoClient mongo = (MongoClient) request.getServletContext()
-                .getAttribute("MONGO_CLIENT");
+        MongoClient mongo = (MongoClient) req.getServletContext().getAttribute("MONGO_CLIENT");
         MongoItemDAO itemDAO = new MongoItemDAO(mongo);
 
         Item item = itemDAO.findItem(_itemId);
-        request.setAttribute("item", item);
 
-        request.getRequestDispatcher("/WEB-INF/jsp/item.jsp")
-                .forward(request, response);
+        req.setAttribute("item", item);
+        req.getRequestDispatcher("/WEB-INF/jsp/item.jsp").forward(req, resp);
     }
 }

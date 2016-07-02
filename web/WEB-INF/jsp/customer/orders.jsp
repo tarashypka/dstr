@@ -70,6 +70,30 @@
                 <c:out value="${price.value}"></c:out><br>
               </c:forEach>
             </td>
+            <c:choose>
+              <c:when test="${order.status.value eq -1}">
+                <td>
+                  <c:url value="/order/status" var="setStatusInProcessURL">
+                    <c:param name="id" value="${order.id}"/>
+                    <c:param name="status" value="IN_PROCESS"/>
+                  </c:url>
+                  <a href='<c:out value="${setStatusInProcessURL}" escapeXml="false"/>'>
+                    В процесі
+                  </a>
+                </td>
+              </c:when>
+              <c:when test="${order.status.value eq 0}">
+                <td>
+                  <c:url value="/order/status" var="setStatusRejectedURL">
+                    <c:param name="id" value="${order.id}"/>
+                    <c:param name="status" value="REJECTED"/>
+                  </c:url>
+                  <a href='<c:out value="${setStatusRejectedURL}" escapeXml="false"/>'>
+                    Відхилити
+                  </a>
+                </td>
+              </c:when>
+            </c:choose>
           </tr>
         </c:forEach>
       </table>

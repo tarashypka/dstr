@@ -31,18 +31,14 @@ public class CustomerOrdersServlet extends HttpServlet {
                 : customer.getEmail();
 
         if (email == null || email.equals("")) {
-            logger.error("Wrong customer's email");
             throw new ServletException("Wrong customer's email");
         }
 
-        MongoClient mongo = (MongoClient) req.getServletContext()
-                .getAttribute("MONGO_CLIENT");
-
+        MongoClient mongo = (MongoClient) req.getServletContext().getAttribute("MONGO_CLIENT");
         MongoOrderDAO orderDAO = new MongoOrderDAO(mongo);
 
         List<Order> orders = orderDAO.findCustomerOrders(email);
         req.setAttribute("orders", orders);
-        req.getRequestDispatcher("/WEB-INF/jsp/customer/orders.jsp")
-                .forward(req, resp);
+        req.getRequestDispatcher("/WEB-INF/jsp/customer/orders.jsp").forward(req, resp);
     }
 }

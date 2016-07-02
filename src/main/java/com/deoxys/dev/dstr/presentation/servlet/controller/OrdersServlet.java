@@ -21,16 +21,15 @@ import java.util.List;
 public class OrdersServlet extends HttpServlet {
     final static Logger logger = Logger.getLogger(OrdersServlet.class);
 
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
 
-        MongoClient mongo = (MongoClient) request.getServletContext()
-                .getAttribute("MONGO_CLIENT");
+        MongoClient mongo = (MongoClient) req.getServletContext().getAttribute("MONGO_CLIENT");
         MongoOrderDAO orderDAO = new MongoOrderDAO(mongo);
+
         List<Order> orders = orderDAO.findAllOrders();
 
-        request.getSession().setAttribute("orders", orders);
-        request.getRequestDispatcher("/WEB-INF/jsp/orders.jsp")
-                .forward(request, response);
+        req.setAttribute("orders", orders);
+        req.getRequestDispatcher("/WEB-INF/jsp/orders.jsp").forward(req, resp);
     }
 }

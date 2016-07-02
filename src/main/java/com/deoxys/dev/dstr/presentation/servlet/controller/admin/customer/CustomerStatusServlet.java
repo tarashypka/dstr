@@ -23,16 +23,16 @@ import java.util.List;
 public class CustomerStatusServlet extends HttpServlet {
     final static Logger logger = Logger.getLogger(CustomerStatusServlet.class);
 
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
 
-        String email = request.getParameter("email");
+        String email = req.getParameter("email");
 
         if (email == null || email.equals("")) {
             throw new ServletException("Wrong customer email");
         }
 
-        DataSource source = (DataSource) request.getServletContext()
+        DataSource source = (DataSource) req.getServletContext()
                 .getAttribute("POSTGRES_CONNECTION_POOL");
 
         try {
@@ -40,27 +40,14 @@ public class CustomerStatusServlet extends HttpServlet {
 
             if (customerDAO.changeCustomerStatus(email)) {
                 logger.info("Customer's with email=" + email + " status was changed");
-
-                // Update session
-                List<Customer> customers = (ArrayList)
-                        request.getSession().getAttribute("customers");
-
-                Customer customer = customers.get(customers.indexOf(new Customer(email)));
-                customers.remove(customer);
-                customer.setEnabled( ! customer.isEnabled());
-                customers.add(customer);
-
-                request.getSession().setAttribute("customers", customers);
             } else {
                 logger.error("Customer's with email=" + email + " status was not changed");
             }
             customerDAO.closeConnection();
         } catch (SQLException ex) {
-            ex.printStackTrace();
-            logger.info("Delete error: " + ex.getMessage());
+            logger.info("DB Connection/Delete error: " + ex.getMessage());
             throw new ServletException("DB Connection/Delete error: " + ex.getMessage());
         }
-        request.getRequestDispatcher("/WEB-INF/jsp/customers.jsp")
-                .forward(request, response);
+        resp.sendRedirect(req.getContextPath() + "/customers");
     }
 }

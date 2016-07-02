@@ -13,10 +13,10 @@ import java.io.IOException;
 
 @WebServlet(name = "Home", urlPatterns = "/home")
 public class HomeServlet extends HttpServlet {
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
 
-        String contextPath = request.getContextPath();
-        response.sendRedirect(contextPath.isEmpty() ? "/" : contextPath);
+        String contextPath = req.getContextPath();
+        resp.sendRedirect(contextPath.isEmpty() ? "/" : contextPath);
     }
 }

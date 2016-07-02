@@ -24,15 +24,15 @@ import java.util.List;
 public class ItemAddServlet extends HttpServlet {
     final static Logger logger = Logger.getLogger(ItemAddServlet.class);
 
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
 
-        String category = request.getParameter("category");
-        String priceStr = request.getParameter("price");
-        String currency = request.getParameter("currency");
-        String stockedStr = request.getParameter("status.stocked");
-        String reservedStr = request.getParameter("status.reserved");
-        String soldStr = request.getParameter("status.sold");
+        String category = req.getParameter("category");
+        String priceStr = req.getParameter("price");
+        String currency = req.getParameter("currency");
+        String stockedStr = req.getParameter("status.stocked");
+        String reservedStr = req.getParameter("status.reserved");
+        String soldStr = req.getParameter("status.sold");
 
         Item item = new Item();
         item.setCategory(category);
@@ -77,30 +77,27 @@ public class ItemAddServlet extends HttpServlet {
         item.setStatus(new ItemStatus(stocked, reserved, sold));
 
         if (errors.isEmpty()) {
-            MongoClient mongo = (MongoClient) request.getServletContext()
-                    .getAttribute("MONGO_CLIENT");
+            MongoClient mongo = (MongoClient) req.getServletContext().getAttribute("MONGO_CLIENT");
             MongoItemDAO itemDAO = new MongoItemDAO(mongo);
 
             if ((item = itemDAO.insertItem(item)) != null) {
-                logger.info("Новий товар " + item + " успішно додано");
+                logger.info("New item=" + item + " was successfully added");
                 Hazelcast.getHazelcastInstanceByName("HZ_CACHE").getList("ITEMS").add(item);
             } else {
-                logger.error("Новий товар " + item + " не додано");
+                logger.error("New item=" + item + " was not added");
             }
-            response.sendRedirect(request.getContextPath() + "/items");
+            resp.sendRedirect(req.getContextPath() + "/items");
         } else {
-            request.setAttribute("error", errors.get(0));
-            request.setAttribute("item", item);
-            request.getRequestDispatcher("/WEB-INF/jsp/itemadd.jsp")
-                    .forward(request, response);
+            req.setAttribute("error", errors.get(0));
+            req.setAttribute("item", item);
+            req.getRequestDispatcher("/WEB-INF/jsp/itemadd.jsp").forward(req, resp);
         }
     }
 
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
 
-        request.setAttribute("item", null);
-        request.getRequestDispatcher("/WEB-INF/jsp/itemadd.jsp")
-                .forward(request, response);
+        req.setAttribute("item", null);
+        req.getRequestDispatcher("/WEB-INF/jsp/itemadd.jsp").forward(req, resp);
     }
 }

@@ -21,13 +21,13 @@ import java.sql.SQLException;
 public class RegisterServlet extends HttpServlet {
     final static Logger logger = Logger.getLogger(LoginServlet.class);
 
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
 
-        String name = request.getParameter("name");
-        String surname = request.getParameter("surname");
-        String email = request.getParameter("email");
-        String password = request.getParameter("password");
+        String name = req.getParameter("name");
+        String surname = req.getParameter("surname");
+        String email = req.getParameter("email");
+        String password = req.getParameter("password");
 
         String error = null;
         Customer customer = new Customer();
@@ -44,42 +44,38 @@ public class RegisterServlet extends HttpServlet {
         else if (password == null || password.length() < 8)
             error = "Занадто короткий пароль";
         if (error != null) {
-            request.setAttribute("error", error);
-            request.setAttribute("customer", customer);
-            request.getRequestDispatcher("/register.jsp").forward(request, response);
+            req.setAttribute("error", error);
+            req.setAttribute("customer", customer);
+            req.getRequestDispatcher("/register.jsp").forward(req, resp);
         } else {
-            DataSource source = (DataSource) request.getServletContext()
+            DataSource source = (DataSource) req.getServletContext()
                     .getAttribute("POSTGRES_CONNECTION_POOL");
 
             try {
                 PostgresCustomerDAO customerDAO = new PostgresCustomerDAO(source);
                 if (customerDAO.insertCustomer(customer)) {
                     logger.info("New customer " + customer + " was created");
-                    response.sendRedirect(request.getContextPath() + "/login");
+                    resp.sendRedirect(req.getContextPath() + "/login");
                 } else {
                     logger.info("New customer " + customer + " wasn't created");
-                    request.setAttribute("errtype", "duplicate");
-                    request.getRequestDispatcher("/WEB-INF/jsp/register.jsp")
-                            .forward(request, response);
+                    req.setAttribute("errtype", "duplicate");
+                    req.getRequestDispatcher("/WEB-INF/jsp/register.jsp").forward(req, resp);
                 }
                 customerDAO.closeConnection();
             } catch (SQLException ex) {
-                logger.error("Register: " + ex.getMessage());
-                ex.printStackTrace();
-                throw new ServletException("DB Connection/Insert error: "
-                        + ex.getMessage());
+                logger.error("DB Connection/Insert error: " + ex.getMessage());
+                throw new ServletException("DB Connection/Insert error: " + ex.getMessage());
             }
         }
     }
 
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
 
-        if (request.getSession().getAttribute("customer") != null) {
-            String contextPath = request.getContextPath();
-            response.sendRedirect(contextPath.isEmpty() ? "/" : contextPath);
+        if (req.getSession().getAttribute("customer") != null) {
+            String contextPath = req.getContextPath();
+            resp.sendRedirect(contextPath.isEmpty() ? "/" : contextPath);
         }
-        request.getRequestDispatcher("/WEB-INF/jsp/register.jsp")
-                .forward(request, response);
+        req.getRequestDispatcher("/WEB-INF/jsp/register.jsp").forward(req, resp);
     }
 }

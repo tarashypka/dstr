@@ -23,32 +23,23 @@ import java.util.Map;
 public class ItemDeleteServlet extends HttpServlet {
     final static Logger logger = Logger.getLogger(ItemDeleteServlet.class);
 
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
 
-        String itemId = request.getParameter("id");
+        String itemId = req.getParameter("id");
 
         if (itemId == null || itemId.equals("")) {
             throw new ServletException("Wrong item id");
         }
 
-        MongoClient mongo = (MongoClient) request.getServletContext()
-                .getAttribute("MONGO_CLIENT");
+        MongoClient mongo = (MongoClient) req.getServletContext().getAttribute("MONGO_CLIENT");
         MongoItemDAO itemDAO = new MongoItemDAO(mongo);
 
         if (itemDAO.removeItem(new ObjectId(itemId))) {
-            logger.info("Товар з id=" + itemId + " успішно видалено");
-
-            // Update session
-            Map<Item, Integer> items = (HashMap)
-                    request.getSession().getAttribute("items");
-
-            items.remove(new Item(itemId));
-            request.getSession().setAttribute("items", items);
+            logger.info("Item with id=" + itemId + " was successfully deleted");
         } else {
-            logger.error("Товар з id=" + itemId + " не видалено");
+            logger.error("Item with id=" + itemId + " was not deleted");
         }
-        request.getRequestDispatcher("/WEB-INF/jsp/items.jsp")
-                .forward(request, response);
+        resp.sendRedirect(req.getContextPath() + "/items");
     }
 }

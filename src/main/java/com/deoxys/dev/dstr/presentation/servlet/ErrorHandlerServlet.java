@@ -17,48 +17,41 @@ import java.io.IOException;
 public class ErrorHandlerServlet extends HttpServlet {
     final static Logger logger = Logger.getLogger(ErrorHandlerServlet.class);
 
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
 
-        processError(request, response);
+        processError(req, resp);
     }
 
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
 
-        processError(request, response);
+        processError(req, resp);
     }
 
-    private void processError(HttpServletRequest request, HttpServletResponse response)
+    private void processError(HttpServletRequest req, HttpServletResponse resp)
             throws IOException, ServletException {
 
         // Analyze servlet error/exception
-        String servletName = (String) request
-                .getAttribute("javax.servlet.error.servlet_name");
-        String requestUri = (String) request
-                .getAttribute("javax.servlet.error.request_uri");
+        String servletName = (String) req.getAttribute("javax.servlet.error.servlet_name");
+        String requestUri = (String) req.getAttribute("javax.servlet.error.request_uri");
 
-        request.setAttribute("servletName",
-                servletName == null ? "Unknown" : servletName);
-        request.setAttribute("requestUri",
-                requestUri == null ? "Unknown" : requestUri);
+        req.setAttribute("servletName", servletName == null ? "Unknown" : servletName);
+        req.setAttribute("requestUri", requestUri == null ? "Unknown" : requestUri);
 
-        Integer statusCode = (Integer) request
-                .getAttribute("javax.servlet.error.status_code");
-        request.setAttribute("statusCode", statusCode);
+        Integer statusCode = (Integer) req.getAttribute("javax.servlet.error.status_code");
+        req.setAttribute("statusCode", statusCode);
         if (statusCode == 500) {
-            Throwable throwable = (Throwable) request
-                    .getAttribute("javax.servlet.error.exception");
+            Throwable throwable = (Throwable) req.getAttribute("javax.servlet.error.exception");
             String exName = throwable.getClass().getName();
             String exMsg = throwable.getMessage();
             exMsg = (exMsg == null) ? "Unknown" : exMsg;
-            request.setAttribute("exception", exName);
-            request.setAttribute("exceptionMsg", exMsg);
+            req.setAttribute("exception", exName);
+            req.setAttribute("exceptionMsg", exMsg);
             logger.error(exName + ": " + exMsg);
         } else {
             logger.error(statusCode);
         }
-        request.getRequestDispatcher("/WEB-INF/jsp/error.jsp")
-                .forward(request, response);
+        req.getRequestDispatcher("/WEB-INF/jsp/error.jsp").forward(req, resp);
     }
 }

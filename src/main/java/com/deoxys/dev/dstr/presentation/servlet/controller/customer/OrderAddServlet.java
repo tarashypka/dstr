@@ -26,57 +26,51 @@ import java.util.*;
 public class OrderAddServlet extends HttpServlet {
     final static Logger logger = Logger.getLogger(OrderAddServlet.class);
 
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
 
-        String action = request.getParameter("action");
+        String action = req.getParameter("action");
 
-        Map<Item, Integer> orderItems = (HashMap)
-                request.getSession().getAttribute("orderItems");
+        Map<Item, Integer> orderItems = (HashMap) req.getSession().getAttribute("orderItems");
         if (orderItems == null) {
             orderItems = new HashMap<>();
         }
 
-        Map<Currency, Double> receipt = (HashMap)
-                request.getSession().getAttribute("receipt");
+        Map<Currency, Double> receipt = (HashMap) req.getSession().getAttribute("receipt");
         if (receipt == null) {
             receipt = new HashMap<>();
         }
 
         if (action.equals("item")) {
-            String id = request.getParameter("id");
+            String id = req.getParameter("id");
             if (id == null || id.equals("")) {
                 throw new ServletException("Невірний id товару");
             }
 
-            String quantityStr = request.getParameter("quantity");
+            String quantityStr = req.getParameter("quantity");
             if (quantityStr == null || quantityStr.equals("")) {
-                request.setAttribute("error", "Скільки одиниць товару?");
-                request.getRequestDispatcher("/WEB-INF/jsp/orderadd.jsp")
-                        .forward(request, response);
+                req.setAttribute("error", "Скільки одиниць товару?");
+                req.getRequestDispatcher("/WEB-INF/jsp/orderadd.jsp").forward(req, resp);
             }
 
             int quantity = Integer.parseInt(quantityStr);
 
             // Check if there are enough items
-            MongoClient mongo = (MongoClient) request.getServletContext()
-                    .getAttribute("MONGO_CLIENT");
+            MongoClient mongo = (MongoClient) req.getServletContext().getAttribute("MONGO_CLIENT");
             MongoItemDAO itemDAO = new MongoItemDAO(mongo);
 
             Item item = itemDAO.findItem(new ObjectId(id));
             ItemStatus itemStatus = item.getStatus();
 
             if (itemStatus == null) {
-                request.setAttribute("error", "Товар не знайдено");
-                request.getRequestDispatcher("/WEB-INF/jsp/orderadd.jsp")
-                        .forward(request, response);
+                req.setAttribute("error", "Товар не знайдено");
+                req.getRequestDispatcher("/WEB-INF/jsp/orderadd.jsp").forward(req, resp);
             } else {
                 int stocked = itemStatus.getStocked();
 
                 if (quantity > stocked) {
-                    request.setAttribute("error", "Недостатньо товарів");
-                    request.getRequestDispatcher("/WEB-INF/jsp/orderadd.jsp")
-                            .forward(request, response);
+                    req.setAttribute("error", "Недостатньо товарів");
+                    req.getRequestDispatcher("/WEB-INF/jsp/orderadd.jsp").forward(req, resp);
                 }
 
                 Currency currency = item.getCurrency();
@@ -92,12 +86,11 @@ public class OrderAddServlet extends HttpServlet {
                     }
                     receipt.put(currency, totalPrice + currPrice);
                 } else receipt.put(currency, currPrice);
-                request.getSession().setAttribute("receipt", receipt);
+                req.getSession().setAttribute("receipt", receipt);
 
                 orderItems.put(item, quantity);
-                request.getSession().setAttribute("orderItems", orderItems);
-                request.getRequestDispatcher("/WEB-INF/jsp/orderadd.jsp")
-                        .forward(request, response);
+                req.getSession().setAttribute("orderItems", orderItems);
+                req.getRequestDispatcher("/WEB-INF/jsp/orderadd.jsp").forward(req, resp);
             }
         } else if (action.equals("order")) {
 
@@ -106,7 +99,7 @@ public class OrderAddServlet extends HttpServlet {
             order.setOrderNumber("NULL");
             order.setDate(new Date());
 
-            Customer customer = (Customer) request.getSession().getAttribute("customer");
+            Customer customer = (Customer) req.getSession().getAttribute("customer");
             order.setCustomer(customer);
 
             Map<Item, Integer> items = new HashMap<>();
@@ -116,39 +109,35 @@ public class OrderAddServlet extends HttpServlet {
             order.setReceipt(receipt);
             order.setStatus(Order.OrderStatus.IN_PROCESS);
 
-            MongoClient mongo = (MongoClient) request.getServletContext()
-                    .getAttribute("MONGO_CLIENT");
+            MongoClient mongo = (MongoClient) req.getServletContext().getAttribute("MONGO_CLIENT");
             MongoOrderDAO orderDAO = new MongoOrderDAO(mongo);
 
             if (orderDAO.insertOrder(order) != null) {
                 logger.info("New order " + order + " was successfully added");
 
                 // Delete order data from session
-                request.getSession().removeAttribute("receipt");
-                request.getSession().removeAttribute("orderItems");
+                req.getSession().removeAttribute("receipt");
+                req.getSession().removeAttribute("orderItems");
 
-                response.sendRedirect(request.getContextPath() + "/orders");
+                resp.sendRedirect(req.getContextPath() + "/orders");
             } else {
                 logger.info("New order " + order + " was not added");
-                request.getRequestDispatcher("/WEB-INF/jsp/orderadd.jsp")
-                        .forward(request, response);
+                req.getRequestDispatcher("/WEB-INF/jsp/orderadd.jsp").forward(req, resp);
             }
         }
     }
 
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
 
         // Update items list before making new order
         Map<Item, Integer> items = new HashMap<>();
 
-        MongoClient mongo = (MongoClient) request.getServletContext()
-                .getAttribute("MONGO_CLIENT");
+        MongoClient mongo = (MongoClient) req.getServletContext().getAttribute("MONGO_CLIENT");
         MongoItemDAO itemDAO = new MongoItemDAO(mongo);
         for (Item i : itemDAO.findAllItems()) items.put(i, null);
 
-        request.getSession().setAttribute("items", items);
-        request.getRequestDispatcher("/WEB-INF/jsp/orderadd.jsp")
-                .forward(request, response);
+        req.getSession().setAttribute("items", items);
+        req.getRequestDispatcher("/WEB-INF/jsp/orderadd.jsp").forward(req, resp);
     }
 }

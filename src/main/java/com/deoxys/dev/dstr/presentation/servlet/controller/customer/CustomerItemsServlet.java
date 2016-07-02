@@ -17,6 +17,7 @@ import java.util.Map;
 /**
  * Created by deoxys on 18.06.16.
  */
+
 @WebServlet(name = "CustomerItemsServlet", urlPatterns = "/customer/items")
 public class CustomerItemsServlet extends HttpServlet {
     final static Logger logger = Logger.getLogger(CustomerItemsServlet.class);
@@ -25,24 +26,18 @@ public class CustomerItemsServlet extends HttpServlet {
             throws ServletException, IOException {
 
         Customer customer = (Customer) req.getSession().getAttribute("customer");
-        String email = customer.isAdmin()
-                ? req.getParameter("email")
-                : customer.getEmail();
+        String email = customer.isAdmin() ? req.getParameter("email") : customer.getEmail();
 
         if (email == null || email.equals("")) {
-            logger.error("Wrong customer's email");
             throw new ServletException("Wrong customer email");
         }
 
-        MongoClient mongo = (MongoClient) req.getServletContext()
-                .getAttribute("MONGO_CLIENT");
-
+        MongoClient mongo = (MongoClient) req.getServletContext().getAttribute("MONGO_CLIENT");
         MongoOrderDAO orderDAO = new MongoOrderDAO(mongo);
 
         Map<Item, Integer> customerItems = orderDAO.findCustomerItems(email);
 
         req.setAttribute("items", customerItems);
-        req.getRequestDispatcher("/WEB-INF/jsp/customer/items.jsp")
-                .forward(req, resp);
+        req.getRequestDispatcher("/WEB-INF/jsp/customer/items.jsp").forward(req, resp);
     }
 }

@@ -24,20 +24,20 @@ import java.util.List;
 public class ItemEditServlet extends HttpServlet {
     final static Logger logger = Logger.getLogger(ItemAddServlet.class);
 
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
 
-        String itemId = request.getParameter("id");
+        String itemId = req.getParameter("id");
         if (itemId == null || itemId.equals("")) {
-            throw new ServletException("Невірний id товару");
+            throw new ServletException("Wrong item id");
         }
 
-        String category = request.getParameter("category");
-        String priceStr = request.getParameter("price");
-        String currency = request.getParameter("currency");
-        String stockedStr = request.getParameter("status.stocked");
-        String reservedStr = request.getParameter("status.reserved");
-        String soldStr = request.getParameter("status.sold");
+        String category = req.getParameter("category");
+        String priceStr = req.getParameter("price");
+        String currency = req.getParameter("currency");
+        String stockedStr = req.getParameter("status.stocked");
+        String reservedStr = req.getParameter("status.reserved");
+        String soldStr = req.getParameter("status.sold");
 
         Item item = new Item();
         item.setId(itemId);
@@ -82,37 +82,34 @@ public class ItemEditServlet extends HttpServlet {
         item.setStatus(new ItemStatus(stocked, reserved, sold));
 
         if (errors.isEmpty()) {
-            MongoClient mongo = (MongoClient) request.getServletContext()
+            MongoClient mongo = (MongoClient) req.getServletContext()
                     .getAttribute("MONGO_CLIENT");
             MongoItemDAO itemDAO = new MongoItemDAO(mongo);
 
             if (itemDAO.updateItem(item)) {
-                logger.info("Товар " + item + " успішно редаговано");
+                logger.info("Item=" + item + " was successfully updated");
             } else {
-                logger.error("Товар " + item + " не редаговано");
+                logger.error("Item=" + item + " was not updated");
             }
-            response.sendRedirect(request.getContextPath() + "/items");
+            resp.sendRedirect(req.getContextPath() + "/items");
         } else {
-            request.setAttribute("error", errors.get(0));
-            request.setAttribute("item", item);
-            request.getRequestDispatcher("/WEB-INF/jsp/itemedit.jsp")
-                    .forward(request, response);
+            req.setAttribute("error", errors.get(0));
+            req.setAttribute("item", item);
+            req.getRequestDispatcher("/WEB-INF/jsp/itemedit.jsp").forward(req, resp);
         }
     }
 
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
 
-        String itemId = request.getParameter("id");
+        String itemId = req.getParameter("id");
         if (itemId == null || itemId.equals("")) {
-            throw new ServletException("Невірний id товару");
+            throw new ServletException("Wrong item id");
         }
-        MongoClient mongo = (MongoClient) request.getServletContext()
-                .getAttribute("MONGO_CLIENT");
+        MongoClient mongo = (MongoClient) req.getServletContext().getAttribute("MONGO_CLIENT");
         MongoItemDAO itemDAO = new MongoItemDAO(mongo);
         Item item = itemDAO.findItem(new ObjectId(itemId));
-        request.setAttribute("item", item);
-        request.getRequestDispatcher("/WEB-INF/jsp/itemedit.jsp")
-                .forward(request, response);
+        req.setAttribute("item", item);
+        req.getRequestDispatcher("/WEB-INF/jsp/itemedit.jsp").forward(req, resp);
     }
 }

@@ -31,7 +31,7 @@ public class Order implements Serializable {
             this.value = value;
         }
 
-        public static OrderStatus orderStatusByValue(int value) {
+        public static OrderStatus getStatus(int value) {
             switch (value) {
                 case -1:
                     return OrderStatus.REJECTED;

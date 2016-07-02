@@ -16,11 +16,11 @@ import java.io.IOException;
 public class LogoutServlet extends HttpServlet {
     final static Logger logger = Logger.getLogger(LogoutServlet.class);
 
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
 
-        response.setContentType("text/html");
-        Cookie[] cookies = request.getCookies();
+        resp.setContentType("text/html");
+        Cookie[] cookies = req.getCookies();
         if (cookies != null) {
             for (Cookie cookie : cookies) {
                 if (cookie.getName().equals("JSESSIONID")) {
@@ -31,16 +31,15 @@ public class LogoutServlet extends HttpServlet {
         }
 
         // Invalidate the session
-        HttpSession session = request.getSession(false);
+        HttpSession session = req.getSession(false);
         Customer customer = (Customer) session.getAttribute("customer");
-        logger.info("Logout: invalidate session for customer="
-                + session.getAttribute("customer"));
+        logger.info("Logout: invalidate session for customer=" + customer);
         if (session != null) {
             session.invalidate();
             logger.info("Customer=" + customer + " logged out");
         } else {
             logger.info("Customer=" + customer + " has no session for logout");
         }
-        response.sendRedirect(request.getContextPath() + "/home");
+        resp.sendRedirect(req.getContextPath() + "/home");
     }
 }

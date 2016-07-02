@@ -21,17 +21,17 @@ import java.sql.SQLException;
 public class LoginServlet extends HttpServlet {
     final static Logger logger = Logger.getLogger(LoginServlet.class);
 
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
 
-        String email = request.getParameter("email");
-        String password = request.getParameter("password");
+        String email = req.getParameter("email");
+        String password = req.getParameter("password");
 
         Customer customer = new Customer();
         customer.setEmail(email);
         customer.setPassword(password);
 
-        DataSource source = (DataSource) request.getServletContext()
+        DataSource source = (DataSource) req.getServletContext()
                 .getAttribute("POSTGRES_CONNECTION_POOL");
 
         try {
@@ -40,40 +40,35 @@ public class LoginServlet extends HttpServlet {
             if (selectedCustomer != null) {
                 if (selectedCustomer.getPassword().equals(password)) {
                     customer.setRole(selectedCustomer.getRole());
-                    request.getSession().setAttribute("customer", selectedCustomer);
-                    response.sendRedirect(request.getContextPath() + "/home");
+                    req.getSession().setAttribute("customer", selectedCustomer);
+                    resp.sendRedirect(req.getContextPath() + "/home");
                     logger.info("Customer " + selectedCustomer + " logged in");
                 } else {
                     logger.info("Customer " + selectedCustomer + " didn't log in");
 
-                    request.setAttribute("email", email);
-                    request.setAttribute("error", "Пароль введено невірно");
-                    request.getRequestDispatcher("/WEB-INF/jsp/login.jsp")
-                            .forward(request, response);
+                    req.setAttribute("email", email);
+                    req.setAttribute("error", "Пароль введено невірно");
+                    req.getRequestDispatcher("/WEB-INF/jsp/login.jsp").forward(req, resp);
                 }
             } else {
                 logger.info("Customer " + customer + " not found");
-
-                request.setAttribute("error", "Електронну пошту введено невірно");
-                request.getRequestDispatcher("/WEB-INF/jsp/login.jsp")
-                        .forward(request, response);
+                req.setAttribute("error", "Електронну пошту введено невірно");
+                req.getRequestDispatcher("/WEB-INF/jsp/login.jsp").forward(req, resp);
             }
             customerDAO.closeConnection();
         } catch (SQLException ex) {
-            ex.printStackTrace();
-            logger.error("Login error: " + ex.getMessage());
+            logger.error("DB Connection/Select error: " + ex.getMessage());
             throw new ServletException("DB Connection/Select error: " + ex.getMessage());
         }
     }
 
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
 
-        if (request.getSession().getAttribute("customer") != null) {
-            String contextPath = request.getContextPath();
-            response.sendRedirect(contextPath.isEmpty() ? "/" : contextPath);
+        if (req.getSession().getAttribute("customer") != null) {
+            String contextPath = req.getContextPath();
+            resp.sendRedirect(contextPath.isEmpty() ? "/" : contextPath);
         }
-        request.getRequestDispatcher("/WEB-INF/jsp/login.jsp")
-                .forward(request, response);
+        req.getRequestDispatcher("/WEB-INF/jsp/login.jsp").forward(req, resp);
     }
 }
