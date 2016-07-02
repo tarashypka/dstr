@@ -48,10 +48,10 @@
             <td>
               <c:forEach items="${order.items}" var="item">
                 <c:url value="/item" var="itemURL">
-                  <c:param name="id" value="${item.key}"></c:param>
+                  <c:param name="id" value="${item.key.id}"></c:param>
                 </c:url>
                 <a href='<c:out value="${itemURL}" escapeXml="false"></c:out>'>
-                  <c:out value="${item.key}"></c:out><br>
+                  <c:out value="${item.key.id}"></c:out><br>
                 </a>
               </c:forEach>
             </td>

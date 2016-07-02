@@ -41,8 +41,7 @@ public class CustomerOrdersServlet extends HttpServlet {
         MongoOrderDAO orderDAO = new MongoOrderDAO(mongo);
 
         List<Order> orders = orderDAO.findCustomerOrders(email);
-
-        req.getSession().setAttribute("orders", orders);
+        req.setAttribute("orders", orders);
         req.getRequestDispatcher("/WEB-INF/jsp/customer/orders.jsp")
                 .forward(req, resp);
     }
