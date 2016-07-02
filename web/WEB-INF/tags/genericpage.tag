@@ -38,11 +38,12 @@
             </form>
         </c:when>
         <c:otherwise>
-            <c:url value="/orders" var="ordersURL"/>
             <c:url value="/logout" var="logoutURL"/>
 
             <c:choose>
                 <c:when test="${sessionScope.customer.role eq 'customer'}">
+                    <c:url value="/customer/items" var="itemsURL"/>
+                    <c:url value="/customer/orders" var="ordersURL"/>
                     <c:url value="/order/add" var="addOrderURL"/>
 
                     <form action='<c:out value="${itemsURL}"/>' method="get">
@@ -58,6 +59,8 @@
                     </form>
                 </c:when>
                 <c:when test="${sessionScope.customer.role eq 'admin'}">
+                    <c:url value="/items" var="itemsURL"/>
+                    <c:url value="/orders" var="ordersURL"/>
                     <c:url value="/customers" var="customersURL"/>
                     <c:url value="/item/add" var="addItemURL"/>
 

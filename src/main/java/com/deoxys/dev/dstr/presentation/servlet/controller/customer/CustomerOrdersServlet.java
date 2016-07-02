@@ -18,33 +18,32 @@ import java.util.List;
  * Created by deoxys on 19.06.16.
  */
 
-@WebServlet(name = "CustomerOrdersServlet")
+@WebServlet(name = "CustomerOrdersServlet", urlPatterns = "/customer/orders")
 public class CustomerOrdersServlet extends HttpServlet {
     final static Logger logger = Logger.getLogger(CustomerOrdersServlet.class);
 
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
 
-        Customer customer = (Customer) request.getSession().getAttribute("customer");
-
+        Customer customer = (Customer) req.getSession().getAttribute("customer");
         String email = customer.isAdmin()
-                ? customer.getEmail()
-                : request.getParameter("email");
+                ? req.getParameter("email")
+                : customer.getEmail();
 
         if (email == null || email.equals("")) {
             logger.error("Wrong customer's email");
             throw new ServletException("Wrong customer's email");
         }
 
-        MongoClient mongo = (MongoClient) request.getServletContext()
+        MongoClient mongo = (MongoClient) req.getServletContext()
                 .getAttribute("MONGO_CLIENT");
 
         MongoOrderDAO orderDAO = new MongoOrderDAO(mongo);
 
         List<Order> orders = orderDAO.findCustomerOrders(email);
 
-        request.getSession().setAttribute("orders", orders);
-        request.getRequestDispatcher("/WEB-INF/jsp/orders.jsp")
-                .forward(request, response);
+        req.getSession().setAttribute("orders", orders);
+        req.getRequestDispatcher("/WEB-INF/jsp/customer/orders.jsp")
+                .forward(req, resp);
     }
 }

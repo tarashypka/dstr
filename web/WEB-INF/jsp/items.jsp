@@ -23,10 +23,6 @@
           <th>Категорія</th>
           <th>Ціна</th>
           <th>Валюта</th>
-          <c:if test="${sessionScope.customer.role eq 'customer'}">
-            <th>Кількість</th>
-            <th>Загальна вартість</th>
-          </c:if>
           <th>Залишилось</th>
           <th>Зарезервовано</th>
           <th>Продано</th>
@@ -44,10 +40,6 @@
             <td><c:out value="${item.category}"/></td>
             <td><c:out value="${item.price}"/></td>
             <td><c:out value="${item.currency}"/></td>
-            <c:if test="${sessionScope.customer.role eq 'customer'}">
-              <td><c:out value="${item.value}"/></td>
-              <td><c:out value="${item.value * item.key.price}"/></td>
-            </c:if>
             <td><c:out value="${item.status.stocked}"/></td>
             <td><c:out value="${item.status.reserved}"/></td>
             <td><c:out value="${item.status.sold}"/></td>

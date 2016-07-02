@@ -1,5 +1,6 @@
 package com.deoxys.dev.dstr.presentation.servlet.controller.customer;
 
+import com.deoxys.dev.dstr.domain.Customer;
 import com.deoxys.dev.dstr.persistence.dao.MongoOrderDAO;
 import com.deoxys.dev.dstr.domain.Item;
 import com.mongodb.MongoClient;
@@ -20,23 +21,28 @@ import java.util.Map;
 public class CustomerItemsServlet extends HttpServlet {
     final static Logger logger = Logger.getLogger(CustomerItemsServlet.class);
 
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
 
-        String email = request.getParameter("email");
+        Customer customer = (Customer) req.getSession().getAttribute("customer");
+        String email = customer.isAdmin()
+                ? req.getParameter("email")
+                : customer.getEmail();
 
         if (email == null || email.equals("")) {
+            logger.error("Wrong customer's email");
             throw new ServletException("Wrong customer email");
         }
 
-        MongoClient mongo = (MongoClient) request.getServletContext()
+        MongoClient mongo = (MongoClient) req.getServletContext()
                 .getAttribute("MONGO_CLIENT");
+
         MongoOrderDAO orderDAO = new MongoOrderDAO(mongo);
 
         Map<Item, Integer> customerItems = orderDAO.findCustomerItems(email);
 
-        request.setAttribute("items", customerItems);
-        request.getRequestDispatcher("/WEB-INF/jsp/customer/items.jsp")
-                .forward(request, response);
+        req.setAttribute("items", customerItems);
+        req.getRequestDispatcher("/WEB-INF/jsp/customer/items.jsp")
+                .forward(req, resp);
     }
 }

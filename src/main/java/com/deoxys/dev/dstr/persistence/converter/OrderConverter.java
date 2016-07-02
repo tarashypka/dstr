@@ -92,7 +92,7 @@ public class OrderConverter {
         order.setReceipt(receipt);
 
         int status = (Integer) doc.get("status");
-        order.setStatus(Order.OrderStatus.orderStatusbyValue(status));
+        order.setStatus(Order.OrderStatus.orderStatusByValue(status));
 
         return order;
     }
