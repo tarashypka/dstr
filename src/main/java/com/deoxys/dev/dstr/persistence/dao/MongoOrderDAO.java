@@ -1,8 +1,8 @@
 package com.deoxys.dev.dstr.persistence.dao;
 
 import com.deoxys.dev.dstr.persistence.converter.OrderConverter;
-import com.deoxys.dev.dstr.domain.Item;
-import com.deoxys.dev.dstr.domain.Order;
+import com.deoxys.dev.dstr.domain.model.Item;
+import com.deoxys.dev.dstr.domain.model.Order;
 import com.mongodb.*;
 import org.bson.types.ObjectId;
 

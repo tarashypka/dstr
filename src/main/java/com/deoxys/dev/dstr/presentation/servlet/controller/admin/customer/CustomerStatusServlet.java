@@ -1,7 +1,6 @@
 package com.deoxys.dev.dstr.presentation.servlet.controller.admin.customer;
 
 import com.deoxys.dev.dstr.persistence.dao.PostgresCustomerDAO;
-import com.deoxys.dev.dstr.domain.Customer;
 import org.apache.log4j.Logger;
 
 import javax.servlet.ServletException;
@@ -12,8 +11,6 @@ import javax.servlet.http.HttpServletResponse;
 import javax.sql.DataSource;
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by deoxys on 28.05.16.

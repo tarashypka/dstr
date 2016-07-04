@@ -1,4 +1,4 @@
-package com.deoxys.dev.dstr.domain;
+package com.deoxys.dev.dstr.domain.model;
 
 import java.io.Serializable;
 import java.util.Currency;

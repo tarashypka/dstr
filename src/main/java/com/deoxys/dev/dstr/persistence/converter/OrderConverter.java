@@ -1,8 +1,8 @@
 package com.deoxys.dev.dstr.persistence.converter;
 
-import com.deoxys.dev.dstr.domain.Customer;
-import com.deoxys.dev.dstr.domain.Item;
-import com.deoxys.dev.dstr.domain.Order;
+import com.deoxys.dev.dstr.domain.model.Customer;
+import com.deoxys.dev.dstr.domain.model.Item;
+import com.deoxys.dev.dstr.domain.model.Order;
 import com.mongodb.BasicDBList;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;

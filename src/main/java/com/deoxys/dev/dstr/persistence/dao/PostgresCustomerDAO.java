@@ -1,6 +1,6 @@
 package com.deoxys.dev.dstr.persistence.dao;
 
-import com.deoxys.dev.dstr.domain.Customer;
+import com.deoxys.dev.dstr.domain.model.Customer;
 
 import javax.sql.DataSource;
 import java.sql.*;

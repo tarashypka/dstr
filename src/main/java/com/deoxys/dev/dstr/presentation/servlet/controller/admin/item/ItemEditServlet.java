@@ -1,8 +1,8 @@
 package com.deoxys.dev.dstr.presentation.servlet.controller.admin.item;
 
 import com.deoxys.dev.dstr.persistence.dao.MongoItemDAO;
-import com.deoxys.dev.dstr.domain.Item;
-import com.deoxys.dev.dstr.domain.ItemStatus;
+import com.deoxys.dev.dstr.domain.model.Item;
+import com.deoxys.dev.dstr.domain.model.ItemStatus;
 import com.mongodb.MongoClient;
 import org.apache.log4j.Logger;
 import org.bson.types.ObjectId;

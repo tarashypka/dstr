@@ -1,8 +1,8 @@
 package com.deoxys.dev.dstr.presentation.servlet.controller.customer;
 
-import com.deoxys.dev.dstr.domain.Customer;
+import com.deoxys.dev.dstr.domain.model.Customer;
 import com.deoxys.dev.dstr.persistence.dao.MongoOrderDAO;
-import com.deoxys.dev.dstr.domain.Item;
+import com.deoxys.dev.dstr.domain.model.Item;
 import com.mongodb.MongoClient;
 import org.apache.log4j.Logger;
 

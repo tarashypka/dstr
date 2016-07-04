@@ -1,7 +1,7 @@
 package com.deoxys.dev.dstr.persistence.converter;
 
-import com.deoxys.dev.dstr.domain.Item;
-import com.deoxys.dev.dstr.domain.ItemStatus;
+import com.deoxys.dev.dstr.domain.model.Item;
+import com.deoxys.dev.dstr.domain.model.ItemStatus;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 import org.bson.types.ObjectId;

@@ -2,7 +2,7 @@ package com.deoxys.dev.dstr.presentation.servlet.controller;
 
 import com.mongodb.MongoClient;
 import com.deoxys.dev.dstr.persistence.dao.MongoItemDAO;
-import com.deoxys.dev.dstr.domain.Item;
+import com.deoxys.dev.dstr.domain.model.Item;
 import org.bson.types.ObjectId;
 
 import javax.servlet.ServletException;

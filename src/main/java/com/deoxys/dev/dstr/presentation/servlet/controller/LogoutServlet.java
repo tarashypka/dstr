@@ -1,6 +1,6 @@
 package com.deoxys.dev.dstr.presentation.servlet.controller;
 
-import com.deoxys.dev.dstr.domain.Customer;
+import com.deoxys.dev.dstr.domain.model.Customer;
 import org.apache.log4j.Logger;
 
 import javax.servlet.ServletException;

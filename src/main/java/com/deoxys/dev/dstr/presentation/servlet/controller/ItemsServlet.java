@@ -1,6 +1,6 @@
 package com.deoxys.dev.dstr.presentation.servlet.controller;
 
-import com.deoxys.dev.dstr.domain.Item;
+import com.deoxys.dev.dstr.domain.model.Item;
 import com.deoxys.dev.dstr.persistence.dao.MongoItemDAO;
 import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;

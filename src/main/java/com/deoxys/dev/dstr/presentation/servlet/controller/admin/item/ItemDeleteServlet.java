@@ -1,6 +1,5 @@
 package com.deoxys.dev.dstr.presentation.servlet.controller.admin.item;
 
-import com.deoxys.dev.dstr.domain.Item;
 import com.mongodb.MongoClient;
 import com.deoxys.dev.dstr.persistence.dao.MongoItemDAO;
 import org.apache.log4j.Logger;
@@ -12,8 +11,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Created by deoxys on 28.05.16.
