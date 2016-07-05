@@ -1,7 +1,7 @@
 package com.deoxys.dev.dstr.presentation.servlet.controller;
 
-import com.deoxys.dev.dstr.persistence.dao.MongoItemDAO;
-import com.deoxys.dev.dstr.persistence.dao.MongoOrderDAO;
+import com.deoxys.dev.dstr.persistence.dao.MongoItemDao;
+import com.deoxys.dev.dstr.persistence.dao.MongoOrderDao;
 import com.deoxys.dev.dstr.domain.model.Customer;
 import com.deoxys.dev.dstr.domain.model.Item;
 import com.deoxys.dev.dstr.domain.model.Order;
@@ -38,8 +38,8 @@ public class OrderStatusServlet extends HttpServlet {
         MongoClient mongo = (MongoClient) req.getServletContext()
                 .getAttribute("MONGO_CLIENT");
 
-        MongoOrderDAO orderDAO = new MongoOrderDAO(mongo);
-        MongoItemDAO itemDAO = new MongoItemDAO(mongo);
+        MongoOrderDao orderDAO = new MongoOrderDao(mongo);
+        MongoItemDao itemDAO = new MongoItemDao(mongo);
 
         ObjectId _orderId = new ObjectId(orderId);
         Order.OrderStatus oldStatus = orderDAO.findOrderStatus(_orderId);

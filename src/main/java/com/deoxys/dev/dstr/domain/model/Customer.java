@@ -9,14 +9,15 @@ import java.util.Map;
  */
 
 public class Customer implements Serializable {
-    private String name;
-    private String surname;
     private String email;
     private String password;
+    private String name;
+    private String surname;
     private String role;
+    private boolean enabled;
+
     List<Order> orders;
     Map<Item, Integer> items;
-    private boolean enabled;
 
     public Customer() { }
 
@@ -24,15 +25,41 @@ public class Customer implements Serializable {
         this.email = email;
     }
 
-    public Customer(String name, String surname, String email, String password,
-                    String role, boolean enabled) {
+    public Customer(String email, String password, String name, String surname) {
 
-        this.name = name;
-        this.surname = surname;
         this.email = email;
         this.password = password;
+        this.name = name;
+        this.surname = surname;
+        this.role = "customer";
+        this.enabled = true;
+    }
+
+    public Customer(String email, String password, String name, String surname,
+                    String role, boolean enabled) {
+
+        this.email = email;
+        this.password = password;
+        this.name = name;
+        this.surname = surname;
         this.role = role;
         this.enabled = enabled;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     public String getName() {
@@ -49,22 +76,6 @@ public class Customer implements Serializable {
 
     public void setSurname(String surname) {
         this.surname = surname;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
     }
 
     public String getRole() {
@@ -109,10 +120,10 @@ public class Customer implements Serializable {
 
     @Override
     public String toString() {
-        return  "{ name='" + name + '\'' +
-                ", surname='" + surname + '\'' +
-                ", email='" + email + '\'' +
+        return  "{ email='" + email + '\'' +
                 ", password='" + password + '\'' +
+                ", name='" + name + '\'' +
+                ", surname='" + surname + '\'' +
                 ", role='" + role + '\'' +
                 ", enabled=" + enabled + " }";
     }

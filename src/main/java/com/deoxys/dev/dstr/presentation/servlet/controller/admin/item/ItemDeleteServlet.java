@@ -1,7 +1,7 @@
 package com.deoxys.dev.dstr.presentation.servlet.controller.admin.item;
 
 import com.mongodb.MongoClient;
-import com.deoxys.dev.dstr.persistence.dao.MongoItemDAO;
+import com.deoxys.dev.dstr.persistence.dao.MongoItemDao;
 import org.apache.log4j.Logger;
 import org.bson.types.ObjectId;
 
@@ -30,7 +30,7 @@ public class ItemDeleteServlet extends HttpServlet {
         }
 
         MongoClient mongo = (MongoClient) req.getServletContext().getAttribute("MONGO_CLIENT");
-        MongoItemDAO itemDAO = new MongoItemDAO(mongo);
+        MongoItemDao itemDAO = new MongoItemDao(mongo);
 
         if (itemDAO.removeItem(new ObjectId(itemId))) {
             logger.info("Item with id=" + itemId + " was successfully deleted");

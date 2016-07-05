@@ -11,12 +11,16 @@ import java.util.List;
  * Created by deoxys on 27.05.16.
  */
 
-public class PostgresCustomerDAO {
+public class PostgresCustomerDao {
     private static final String COLL = "customers";
     private Connection postgresConn;
 
-    public PostgresCustomerDAO(DataSource source) throws SQLException {
-        this.postgresConn = source.getConnection();
+    public PostgresCustomerDao(DataSource source) {
+        try {
+            this.postgresConn = source.getConnection();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
     }
 
     public void closeConnection() throws SQLException {
@@ -30,13 +34,13 @@ public class PostgresCustomerDAO {
         ResultSet rs = stmt.executeQuery();
 
         if (rs.next()) {
-            String name = rs.getString("name");
-            String surname = rs.getString("surname");
-            String password = rs.getString("password");
-            String role = rs.getString("role");
-            boolean enabled = rs.getBoolean("enabled");
-
-            return new Customer(name, surname, email, password, role, enabled);
+            return new Customer(
+                    rs.getString("email"),
+                    rs.getString("password"),
+                    rs.getString("name"),
+                    rs.getString("surname"),
+                    rs.getString("role"),
+                    rs.getBoolean("enabled"));
         }
         return null;
     }
@@ -48,38 +52,37 @@ public class PostgresCustomerDAO {
 
         List<Customer> customers = new ArrayList<>();
         while (rs.next()) {
-            String name = rs.getString("name");
-            String surname = rs.getString("surname");
-            String email = rs.getString("email");
-            String password = rs.getString("password");
-            String role = rs.getString("role");
-            boolean enabled = rs.getBoolean("enabled");
-            customers.add(new Customer(name, surname, email, password, role, enabled));
+            customers.add(new Customer(
+                    rs.getString("email"),
+                    rs.getString("password"),
+                    rs.getString("name"),
+                    rs.getString("surname"),
+                    rs.getString("role"),
+                    rs.getBoolean("enabled")));
         }
         return customers;
     }
 
     public boolean insertCustomer(Customer customer) throws SQLException {
         String query = "INSERT INTO " + COLL +
-                " (name, surname, email, password, role) VALUES (?, ?, ?, ?, ?) ;";
+                " (email, password, name, surname) VALUES (?, ?, ?, ?) ;";
         PreparedStatement stmt = postgresConn.prepareStatement(query);
-        stmt.setString(1, customer.getName());
-        stmt.setString(2, customer.getSurname());
-        stmt.setString(3, customer.getEmail());
-        stmt.setString(4, customer.getPassword());
-        stmt.setString(5, "customer");
+        stmt.setString(1, customer.getEmail());
+        stmt.setString(2, customer.getPassword());
+        stmt.setString(3, customer.getName());
+        stmt.setString(4, customer.getSurname());
 
         return stmt.executeUpdate() == 1;
     }
 
     public boolean updateCustomer(Customer customer) throws SQLException {
         String query = "UPDATE " + COLL +
-                " SET (name, surname, email, password) = (?, ?, ?, ?) ;";
+                " SET (email, password, name, surname) = (?, ?, ?, ?) ;";
         PreparedStatement stmt = postgresConn.prepareStatement(query);
-        stmt.setString(1, customer.getName());
-        stmt.setString(2, customer.getSurname());
-        stmt.setString(3, customer.getEmail());
-        stmt.setString(4, customer.getPassword());
+        stmt.setString(1, customer.getEmail());
+        stmt.setString(2, customer.getPassword());
+        stmt.setString(3, customer.getName());
+        stmt.setString(4, customer.getSurname());
 
         return stmt.executeUpdate() == 1;
     }
@@ -93,13 +96,10 @@ public class PostgresCustomerDAO {
         if ( ! rs.next()) {
             return false;
         }
-        boolean enabled = rs.getBoolean("enabled");
-
         query = "UPDATE " + COLL + " SET enabled = ? WHERE email = ? ;";
         stmt = postgresConn.prepareStatement(query);
-        stmt.setBoolean(1, ! enabled);
+        stmt.setBoolean(1, ! rs.getBoolean("enabled"));
         stmt.setString(2, email);
-
         return stmt.executeUpdate() == 1;
     }
 
@@ -107,7 +107,13 @@ public class PostgresCustomerDAO {
         String query = "DELETE FROM " + COLL + " WHERE email = ? ;";
         PreparedStatement stmt = postgresConn.prepareStatement(query);
         stmt.setString(1, email);
-
         return stmt.executeUpdate() == 1;
+    }
+
+    public long count() throws SQLException {
+        String query = "SELECT COUNT(*) FROM customers ;";
+        Statement stmt = postgresConn.createStatement();
+        ResultSet rs = stmt.executeQuery(query);
+        return rs.next() ? rs.getLong("count") : -1;
     }
 }

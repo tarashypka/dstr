@@ -54,7 +54,7 @@ template1=# CREATE DATABASE dstr;
 template1=# CREATE USER dstrdbadmin WITH PASSWORD '1234';
 template1=# GRANT ALL PRIVILEGES ON DATABASE dstr to dstrdbadmin;
 template1=# \q
-$ psql -d dstr -U dstrdbadmin -W
+$ psql -d dstr -U dstrdbadmin -h thinkpad -p 5432 -W
 template1=# INSERT INTO customers (name, surname, email, password, role)
 			VALUES ('admin', 'admin', 'dstrdbadmin', '1234', 'admin');
 ```

@@ -1,7 +1,7 @@
 package com.deoxys.dev.dstr.presentation.servlet.controller;
 
-import com.deoxys.dev.dstr.persistence.dao.PostgresCustomerDAO;
-import com.deoxys.dev.dstr.persistence.dao.MongoOrderDAO;
+import com.deoxys.dev.dstr.persistence.dao.PostgresCustomerDao;
+import com.deoxys.dev.dstr.persistence.dao.MongoOrderDao;
 import com.deoxys.dev.dstr.domain.model.Customer;
 import com.mongodb.MongoClient;
 import org.apache.log4j.Logger;
@@ -36,13 +36,13 @@ public class CustomerServlet extends HttpServlet {
                 req.getServletContext().getAttribute("POSTGRES_CONNECTION_POOL");
 
         try {
-            PostgresCustomerDAO customerDAO = new PostgresCustomerDAO(source);
+            PostgresCustomerDao customerDAO = new PostgresCustomerDao(source);
             Customer customer = customerDAO.selectCustomer(email);
             customerDAO.closeConnection();
             if (customer != null) {
                 MongoClient mongo = (MongoClient) req.getServletContext()
                         .getAttribute("MONGO_CLIENT");
-                MongoOrderDAO orderDAO = new MongoOrderDAO(mongo);
+                MongoOrderDao orderDAO = new MongoOrderDao(mongo);
 
                 customer.setOrders(orderDAO.findCustomerOrders(customer.getEmail()));
                 customer.setItems(orderDAO.findCustomerItems(customer.getEmail()));

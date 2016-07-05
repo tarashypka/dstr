@@ -14,13 +14,13 @@ import java.util.Map;
  * Created by deoxys on 27.05.16.
  */
 
-public class MongoItemDAO {
+public class MongoItemDao {
     private DBCollection collection;
 
     private final static String MONGO_DB = "dstr";
     private final static String MONGO_COLL = "items";
 
-    public MongoItemDAO(MongoClient mongoClient) {
+    public MongoItemDao(MongoClient mongoClient) {
         DB db = mongoClient.getDB(MONGO_DB);
         db.setReadPreference(ReadPreference.secondaryPreferred());
         this.collection = db.getCollection(MONGO_COLL);

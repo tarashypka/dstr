@@ -1,7 +1,7 @@
 package com.deoxys.dev.dstr.presentation.servlet.controller;
 
 import com.deoxys.dev.dstr.domain.model.Item;
-import com.deoxys.dev.dstr.persistence.dao.MongoItemDAO;
+import com.deoxys.dev.dstr.persistence.dao.MongoItemDao;
 import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;
 import com.mongodb.MongoClient;
@@ -46,7 +46,7 @@ public class ItemsServlet extends HttpServlet {
         if (items.size() == 0) {
             // Fetch all items to HZ_CACHE
             MongoClient mongo = (MongoClient) req.getServletContext().getAttribute("MONGO_CLIENT");
-            MongoItemDAO itemDAO = new MongoItemDAO(mongo);
+            MongoItemDao itemDAO = new MongoItemDao(mongo);
 
             items.addAll(itemDAO.findAllItems());
         }

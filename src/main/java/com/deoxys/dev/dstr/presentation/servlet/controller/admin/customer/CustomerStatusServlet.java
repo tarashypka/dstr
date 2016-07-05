@@ -1,6 +1,6 @@
 package com.deoxys.dev.dstr.presentation.servlet.controller.admin.customer;
 
-import com.deoxys.dev.dstr.persistence.dao.PostgresCustomerDAO;
+import com.deoxys.dev.dstr.persistence.dao.PostgresCustomerDao;
 import org.apache.log4j.Logger;
 
 import javax.servlet.ServletException;
@@ -33,7 +33,7 @@ public class CustomerStatusServlet extends HttpServlet {
                 .getAttribute("POSTGRES_CONNECTION_POOL");
 
         try {
-            PostgresCustomerDAO customerDAO = new PostgresCustomerDAO(source);
+            PostgresCustomerDao customerDAO = new PostgresCustomerDao(source);
 
             if (customerDAO.changeCustomerStatus(email)) {
                 logger.info("Customer's with email=" + email + " status was changed");
