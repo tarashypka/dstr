@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<replica>
+    <dbName>testdstr</dbName>
+    <user>testdstrDbAdmin</user>
+    <password>1234</password>
+    <shards>
+        <shard>
+            <host>localhost</host>
+            <port>27017</port>
+        </shard>
+        <shard>
+            <host>localhost</host>
+            <port>27018</port>
+        </shard>
+        <shard>
+            <host>localhost</host>
+            <port>27019</port>
+        </shard>
+    </shards>
+</replica>

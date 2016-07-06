@@ -29,10 +29,9 @@ public class PostgresTestDataSource {
         File conf = new File(confPath);
 
         DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
-        DocumentBuilder dBuilder = null;
         Document doc = null;
         try {
-            dBuilder = dbFactory.newDocumentBuilder();
+            DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
             doc = dBuilder.parse(conf);
         } catch (ParserConfigurationException | SAXException | IOException ex) {
             ex.printStackTrace();
@@ -42,18 +41,18 @@ public class PostgresTestDataSource {
         Element e = (Element) doc.getElementsByTagName("schema").item(0);
 
         Map<String, String> schema = new HashMap<>();
-        schema.put("server", e.getElementsByTagName("server").item(0).getTextContent());
+        schema.put("host", e.getElementsByTagName("host").item(0).getTextContent());
         schema.put("port", e.getElementsByTagName("port").item(0).getTextContent());
-        schema.put("name", e.getElementsByTagName("name").item(0).getTextContent());
+        schema.put("db", e.getElementsByTagName("dbName").item(0).getTextContent());
         schema.put("user", e.getElementsByTagName("user").item(0).getTextContent());
         schema.put("password", e.getElementsByTagName("password").item(0).getTextContent());
         schema.put("maxConn", e.getElementsByTagName("maxConn").item(0).getTextContent());
 
         Jdbc3PoolingDataSource source = new Jdbc3PoolingDataSource();
         source.setDataSourceName("Postgres DataSource for Tests");
-        source.setServerName(schema.get("server"));
+        source.setServerName(schema.get("host"));
         source.setPortNumber(Integer.parseInt(schema.get("port")));
-        source.setDatabaseName(schema.get("name"));
+        source.setDatabaseName(schema.get("db"));
         source.setUser(schema.get("user"));
         source.setPassword(schema.get("password"));
         source.setMaxConnections(Integer.parseInt(schema.get("maxConn")));

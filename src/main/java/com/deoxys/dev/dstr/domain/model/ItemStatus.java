@@ -61,4 +61,26 @@ public class ItemStatus implements Serializable {
                 ", reserved=" + reserved +
                 ", sold=" + sold + " }";
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        ItemStatus that = (ItemStatus) o;
+
+        if (reserved != that.reserved) return false;
+        if (sold != that.sold) return false;
+        if (stocked != that.stocked) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = stocked;
+        result = 31 * result + reserved;
+        result = 31 * result + sold;
+        return result;
+    }
 }

@@ -47,17 +47,25 @@ host    all             all             mongosvr2/24       trust
 host    all             all             mongosvr3/24       trust
 ```
 
-#### Create required schema, user and table
+#### Create required schemas, users and tables
 ```
 $ sudo -u postgres psql -d template1
 template1=# CREATE DATABASE dstr;
+template1=# CREATE DATABASE testdstr;
 template1=# CREATE USER dstrdbadmin WITH PASSWORD '1234';
+template1=# CREATE USER testdstrdbadmin WITH PASSWORD '1234';
 template1=# GRANT ALL PRIVILEGES ON DATABASE dstr to dstrdbadmin;
+template1=# GRANT ALL PRIVILEGES ON DATABASE testdstr to testdstrdbadmin;
 template1=# \q
-$ psql -d dstr -U dstrdbadmin -h thinkpad -p 5432 -W
-template1=# INSERT INTO customers (name, surname, email, password, role)
-			VALUES ('admin', 'admin', 'dstrdbadmin', '1234', 'admin');
+$ psql -d dstr -U dstrdbadmin -a -f conf/postgres/customers-create.sql
+$ psql -d dstr -U dstrdbadmin -a -f conf/postgres/admin-create.sql
+$ psql -d testdstr -U testdstrdbadmin -a -f conf/postgres/customers-create.sql
 ```
+To use schemas manually user can connect with:
+```
+$ psql -d dstr -U dstrdbadmin -h thinkpad -p 5432 -W
+```
+
 
 ### MongoDB configuration
 

@@ -64,10 +64,6 @@ public class MongoItemDao {
     public Item findItem(ObjectId _itemId) {
         DBObject query = new BasicDBObject("_id", _itemId);
         DBObject itemDoc = this.collection.findOne(query);
-
-        if (itemDoc == null) {
-            return null;
-        }
         return ItemConverter.toItem(itemDoc);
     }
 
@@ -243,5 +239,9 @@ public class MongoItemDao {
             }
         }
         return true;
+    }
+
+    public long count() {
+        return this.collection.count();
     }
 }

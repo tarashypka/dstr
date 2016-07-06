@@ -41,6 +41,11 @@ public class ItemConverter {
     }
 
     public static Item toItem(DBObject doc) {
+
+        if (doc == null) {
+            return null;
+        }
+
         Item item = new Item();
 
         item.setId(doc.get("_id").toString());

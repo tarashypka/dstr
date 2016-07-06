@@ -18,6 +18,13 @@ public class Item implements Serializable {
         this.id = id;
     }
 
+    public Item(String category, double price, Currency currency, ItemStatus status) {
+        this.category = category;
+        this.price = price;
+        this.currency = currency;
+        this.status = status;
+    }
+
     public String getId() {
         return id;
     }

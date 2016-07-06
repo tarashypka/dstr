@@ -66,7 +66,7 @@ public final class PostgresCustomerDaoInsertCustomerTest {
     }
 
     @AfterClass
-    public void tearDownClass() throws SQLException {
+    public static void tearDownClass() throws SQLException {
         customerDAO.closeConnection();
     }
 }

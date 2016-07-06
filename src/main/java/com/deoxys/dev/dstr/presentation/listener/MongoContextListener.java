@@ -37,20 +37,11 @@ public class MongoContextListener implements ServletContextListener {
         List<MongoCredential> auths = new ArrayList<>();
         String db = ctx.getInitParameter("MONGO_DB");
         String user = ctx.getInitParameter("MONGO_USER");
-        String pswd = ctx.getInitParameter("MONGO_PASSWORD");
-        auths.add(MongoCredential.createCredential(user, db, pswd.toCharArray()));
+        String password = ctx.getInitParameter("MONGO_PASSWORD");
+        auths.add(MongoCredential.createCredential(user, db, password.toCharArray()));
 
         MongoClient mongo = new MongoClient(seeds, auths);
-        mongo.setReadPreference(ReadPreference.secondary());
-
         ctx.setAttribute("MONGO_CLIENT", mongo);
-
-        // Expand MongoClient beyond Servlets via JNDI
-        try {
-            new InitialContext().rebind("MONGO_CLIENT", mongo);
-        } catch (NamingException ex) {
-            ex.printStackTrace();
-        }
         logger.info("MongoClient: initialized successfully");
     }
 

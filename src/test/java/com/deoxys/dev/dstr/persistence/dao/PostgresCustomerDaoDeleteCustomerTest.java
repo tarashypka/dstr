@@ -40,9 +40,8 @@ public final class PostgresCustomerDaoDeleteCustomerTest extends PostgresTestDat
         assertEquals(nCustomersNew, nCustomersOld - 1);
     }
 
-
     @AfterClass
-    public void tearDownClass() throws SQLException {
+    public static void tearDownClass() throws SQLException {
         customerDAO.closeConnection();
     }
 }

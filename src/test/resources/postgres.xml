@@ -2,10 +2,10 @@
 
 <schemas>
     <schema>
-        <server>localhost</server>
+        <host>localhost</host>
         <port>5432</port>
-        <name>testdstr</name>
-        <user>dstrdbadmin</user>
+        <dbName>testdstr</dbName>
+        <user>testdstrdbadmin</user>
         <password>1234</password>
         <maxConn>20</maxConn>
     </schema>
