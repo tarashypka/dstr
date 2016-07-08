@@ -12,7 +12,7 @@ import static org.junit.Assert.*;
 
 public final class PostgresCustomerDaoInsertCustomerTest {
 
-    private static PostgresCustomerDao customerDAO;
+    private static PostgresCustomerDAO customerDAO;
     private Customer mike = new Customer("mike@gmail.com", "1234", "Mike", "Mort");
 
     @Rule
@@ -20,7 +20,7 @@ public final class PostgresCustomerDaoInsertCustomerTest {
 
     @BeforeClass
     public static void setUpClass() {
-        customerDAO = new PostgresCustomerDao(PostgresTestDataSource.getDataSource());
+        customerDAO = new PostgresCustomerDAO(PostgresTestDataSource.getDataSource());
     }
 
     @Test

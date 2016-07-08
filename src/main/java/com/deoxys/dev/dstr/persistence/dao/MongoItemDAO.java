@@ -14,13 +14,13 @@ import java.util.Map;
  * Created by deoxys on 27.05.16.
  */
 
-public class MongoItemDao {
+public class MongoItemDAO {
     private DBCollection collection;
 
     private final static String MONGO_DB = "dstr";
     private final static String MONGO_COLL = "items";
 
-    public MongoItemDao(MongoClient mongoClient) {
+    public MongoItemDAO(MongoClient mongoClient) {
         DB db = mongoClient.getDB(MONGO_DB);
         db.setReadPreference(ReadPreference.secondaryPreferred());
         this.collection = db.getCollection(MONGO_COLL);
@@ -243,5 +243,35 @@ public class MongoItemDao {
 
     public long count() {
         return this.collection.count();
+    }
+
+    public boolean takeFromSold(Item item, int amount) {
+
+        return false;
+    }
+
+    public boolean addToSold(Item item, int amount) {
+
+        return false;
+    }
+
+    public boolean takeFromStock(Item item, int amount) {
+
+        return false;
+    }
+
+    public boolean addToStock(Item item, int amount) {
+
+        return false;
+    }
+
+    public boolean takeFromReserve(Item item, int amount) {
+
+        return false;
+    }
+
+    public boolean addToReserve(Item item, int amount) {
+
+        return false;
     }
 }

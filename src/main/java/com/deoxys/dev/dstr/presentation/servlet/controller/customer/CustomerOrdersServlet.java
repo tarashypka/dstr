@@ -2,7 +2,7 @@ package com.deoxys.dev.dstr.presentation.servlet.controller.customer;
 
 import com.deoxys.dev.dstr.domain.model.Customer;
 import com.deoxys.dev.dstr.domain.model.Order;
-import com.deoxys.dev.dstr.persistence.dao.MongoOrderDao;
+import com.deoxys.dev.dstr.persistence.dao.MongoOrderDAO;
 import com.mongodb.MongoClient;
 import org.apache.log4j.Logger;
 
@@ -35,7 +35,7 @@ public class CustomerOrdersServlet extends HttpServlet {
         }
 
         MongoClient mongo = (MongoClient) req.getServletContext().getAttribute("MONGO_CLIENT");
-        MongoOrderDao orderDAO = new MongoOrderDao(mongo);
+        MongoOrderDAO orderDAO = new MongoOrderDAO(mongo);
 
         List<Order> orders = orderDAO.findCustomerOrders(email);
         req.setAttribute("orders", orders);

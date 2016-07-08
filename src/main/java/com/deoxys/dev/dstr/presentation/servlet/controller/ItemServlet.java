@@ -1,7 +1,7 @@
 package com.deoxys.dev.dstr.presentation.servlet.controller;
 
 import com.mongodb.MongoClient;
-import com.deoxys.dev.dstr.persistence.dao.MongoItemDao;
+import com.deoxys.dev.dstr.persistence.dao.MongoItemDAO;
 import com.deoxys.dev.dstr.domain.model.Item;
 import org.bson.types.ObjectId;
 
@@ -29,7 +29,7 @@ public class ItemServlet extends HttpServlet {
         ObjectId _itemId = new ObjectId(itemId);
 
         MongoClient mongo = (MongoClient) req.getServletContext().getAttribute("MONGO_CLIENT");
-        MongoItemDao itemDAO = new MongoItemDao(mongo);
+        MongoItemDAO itemDAO = new MongoItemDAO(mongo);
 
         Item item = itemDAO.findItem(_itemId);
 

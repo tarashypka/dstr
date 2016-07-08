@@ -1,6 +1,6 @@
 package com.deoxys.dev.dstr.presentation.servlet.controller.admin.item;
 
-import com.deoxys.dev.dstr.persistence.dao.MongoItemDao;
+import com.deoxys.dev.dstr.persistence.dao.MongoItemDAO;
 import com.deoxys.dev.dstr.domain.model.Item;
 import com.deoxys.dev.dstr.domain.model.ItemStatus;
 import com.mongodb.MongoClient;
@@ -84,7 +84,7 @@ public class ItemEditServlet extends HttpServlet {
         if (errors.isEmpty()) {
             MongoClient mongo = (MongoClient) req.getServletContext()
                     .getAttribute("MONGO_CLIENT");
-            MongoItemDao itemDAO = new MongoItemDao(mongo);
+            MongoItemDAO itemDAO = new MongoItemDAO(mongo);
 
             if (itemDAO.updateItem(item)) {
                 logger.info("Item=" + item + " was successfully updated");
@@ -107,7 +107,7 @@ public class ItemEditServlet extends HttpServlet {
             throw new ServletException("Wrong item id");
         }
         MongoClient mongo = (MongoClient) req.getServletContext().getAttribute("MONGO_CLIENT");
-        MongoItemDao itemDAO = new MongoItemDao(mongo);
+        MongoItemDAO itemDAO = new MongoItemDAO(mongo);
         Item item = itemDAO.findItem(new ObjectId(itemId));
         req.setAttribute("item", item);
         req.getRequestDispatcher("/WEB-INF/jsp/itemedit.jsp").forward(req, resp);

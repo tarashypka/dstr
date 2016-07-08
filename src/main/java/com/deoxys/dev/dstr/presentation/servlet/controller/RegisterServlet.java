@@ -1,6 +1,6 @@
 package com.deoxys.dev.dstr.presentation.servlet.controller;
 
-import com.deoxys.dev.dstr.persistence.dao.PostgresCustomerDao;
+import com.deoxys.dev.dstr.persistence.dao.PostgresCustomerDAO;
 import com.deoxys.dev.dstr.domain.model.Customer;
 import org.apache.log4j.Logger;
 
@@ -52,7 +52,7 @@ public class RegisterServlet extends HttpServlet {
                     .getAttribute("POSTGRES_CONNECTION_POOL");
 
             try {
-                PostgresCustomerDao customerDAO = new PostgresCustomerDao(source);
+                PostgresCustomerDAO customerDAO = new PostgresCustomerDAO(source);
                 if (customerDAO.insertCustomer(customer)) {
                     logger.info("New customer " + customer + " was created");
                     resp.sendRedirect(req.getContextPath() + "/login");

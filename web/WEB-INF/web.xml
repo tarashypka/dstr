@@ -3,9 +3,26 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd"
          version="3.1">
+
     <display-name>dstr</display-name>
 
     <distributable/>
+
+    <!-- JNDI configuration for Postgres -->
+    <resource-ref>
+        <description>Postgres DataSource</description>
+        <res-ref-name>jdbc/postgres</res-ref-name>
+        <res-type>javax.sql.DataSource</res-type>
+        <res-auth>Container</res-auth>
+    </resource-ref>
+
+    <!-- JNDI configuration for Mongo -->
+    <resource-ref>
+        <description>Mongo JNDI configuration</description>
+        <res-ref-name>mongo</res-ref-name>
+        <res-type>com.mongodb.MongoClient</res-type>
+        <res-auth>Container</res-auth>
+    </resource-ref>
 
     <!-- Files to load on home -->
     <welcome-file-list>

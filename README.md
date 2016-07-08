@@ -3,6 +3,26 @@
 
 ### Description
 
+Online store.
+
+Main entities: Customer, Order, Item.
+
+Admin can add Items, change Order status (Rejected, In process, Processed), ban Customer.
+Customer can make, reject Order.
+
+System is supposed to manage large amount of data (to be scalable).
+
+Polyglot persistence:
+Customers (relational data) are stored in PostgreSQL.
+Orders and Items (non-relational data) are stored in MongoDB.
+
+MongoDB is pre-configured with replica of 3 shards.
+SlaveOk is configured, so Customer can read (but not write) data only with 1 shard alive.
+
+Tomcat is pre-configured with Load Balancer redirecting to 1 of 3 instances.
+Customer session is saved in distributed in-memory cache (Hazelcast).
+Sticky session & session replication against loss of user's sensitive data.
+
 
 ### Software and Tools used
 
@@ -18,6 +38,16 @@ Apache Maven v3.3.9
 Intellij IDEA Ultimate v14.0.2
 Ubuntu v16.04
 ```
+
+### Tomcat configuration
+
+Configure server, users, JNDI resources in `conf/tomcat/` files.
+Replace local tomcat configuration files with those in `conf/tomcat/`.
+
+To load into Mongo and Postgres connection pools Tomcat Container via JNDI,
+Tomcat should be pre-configured with `-XX:MaxPermSize=128M` property before start.
+
+
 ### PostgreSQL configuration
 
 #### Configure postgres connection settings in web.xml

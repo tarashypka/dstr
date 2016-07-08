@@ -15,13 +15,13 @@ import static org.junit.Assert.assertTrue;
 
 public class MongoItemDaoInsertItemTest {
 
-    private static MongoItemDao itemDao;
+    private static MongoItemDAO itemDao;
     private Item watch = new Item("watch", 300,
             Currency.getInstance("USD"), new ItemStatus(10, 10, 10));
 
     @BeforeClass
     public static void setUpClass() {
-        itemDao = new MongoItemDao(MongoTestClient.getMongo());
+        itemDao = new MongoItemDAO(MongoTestClient.getMongo());
     }
 
     @Test

@@ -3,7 +3,7 @@ package com.deoxys.dev.dstr.presentation.servlet.controller.admin.item;
 import com.deoxys.dev.dstr.domain.model.ItemStatus;
 import com.hazelcast.core.Hazelcast;
 import com.mongodb.MongoClient;
-import com.deoxys.dev.dstr.persistence.dao.MongoItemDao;
+import com.deoxys.dev.dstr.persistence.dao.MongoItemDAO;
 import com.deoxys.dev.dstr.domain.model.Item;
 import org.apache.log4j.Logger;
 
@@ -78,7 +78,7 @@ public class ItemAddServlet extends HttpServlet {
 
         if (errors.isEmpty()) {
             MongoClient mongo = (MongoClient) req.getServletContext().getAttribute("MONGO_CLIENT");
-            MongoItemDao itemDAO = new MongoItemDao(mongo);
+            MongoItemDAO itemDAO = new MongoItemDAO(mongo);
 
             if ((item = itemDAO.insertItem(item)) != null) {
                 logger.info("New item=" + item + " was successfully added");

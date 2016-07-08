@@ -2,7 +2,7 @@ package com.deoxys.dev.dstr.presentation.servlet.controller;
 
 import com.deoxys.dev.dstr.domain.model.Order;
 import com.mongodb.MongoClient;
-import com.deoxys.dev.dstr.persistence.dao.MongoOrderDao;
+import com.deoxys.dev.dstr.persistence.dao.MongoOrderDAO;
 import org.apache.log4j.Logger;
 
 import javax.servlet.ServletException;
@@ -25,7 +25,7 @@ public class OrdersServlet extends HttpServlet {
             throws ServletException, IOException {
 
         MongoClient mongo = (MongoClient) req.getServletContext().getAttribute("MONGO_CLIENT");
-        MongoOrderDao orderDAO = new MongoOrderDao(mongo);
+        MongoOrderDAO orderDAO = new MongoOrderDAO(mongo);
 
         List<Order> orders = orderDAO.findAllOrders();
 

@@ -11,11 +11,11 @@ import java.util.List;
  * Created by deoxys on 27.05.16.
  */
 
-public class PostgresCustomerDao {
+public class PostgresCustomerDAO {
     private static final String COLL = "customers";
     private Connection postgresConn;
 
-    public PostgresCustomerDao(DataSource source) {
+    public PostgresCustomerDAO(DataSource source) {
         try {
             this.postgresConn = source.getConnection();
         } catch (SQLException ex) {

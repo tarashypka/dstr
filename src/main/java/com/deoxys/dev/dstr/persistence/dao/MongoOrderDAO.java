@@ -20,14 +20,14 @@ import java.util.*;
    so second (deprecated) was used.
  */
 
-public class MongoOrderDao {
+public class MongoOrderDAO {
     private MongoClient client;
     private DBCollection collection;
 
     public final static String MONGO_DB = "dstr";
     public final static String MONGO_COLL = "orders";
 
-    public MongoOrderDao(MongoClient mongoClient) {
+    public MongoOrderDAO(MongoClient mongoClient) {
         client = mongoClient;
         DB db = client.getDB(MONGO_DB);
         db.setReadPreference(ReadPreference.secondaryPreferred());
@@ -35,7 +35,7 @@ public class MongoOrderDao {
     }
 
     public Order insertOrder(Order order) {
-        MongoItemDao itemDAO = new MongoItemDao(client);
+        MongoItemDAO itemDAO = new MongoItemDAO(client);
 
         // Verify if there are enough items
         // Another order with required items could have been made,
@@ -173,7 +173,7 @@ public class MongoOrderDao {
         query.put("status", Order.OrderStatus.PROCESSED.getValue());
         DBCursor cursor = this.collection.find(query);
 
-        MongoItemDao itemDAO = new MongoItemDao(client);
+        MongoItemDAO itemDAO = new MongoItemDAO(client);
 
         while (cursor.hasNext()) {
             DBObject orderDoc = cursor.next();

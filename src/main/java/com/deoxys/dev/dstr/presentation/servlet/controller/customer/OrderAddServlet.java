@@ -1,7 +1,7 @@
 package com.deoxys.dev.dstr.presentation.servlet.controller.customer;
 
-import com.deoxys.dev.dstr.persistence.dao.MongoItemDao;
-import com.deoxys.dev.dstr.persistence.dao.MongoOrderDao;
+import com.deoxys.dev.dstr.persistence.dao.MongoItemDAO;
+import com.deoxys.dev.dstr.persistence.dao.MongoOrderDAO;
 import com.deoxys.dev.dstr.domain.model.Customer;
 import com.deoxys.dev.dstr.domain.model.Item;
 import com.deoxys.dev.dstr.domain.model.ItemStatus;
@@ -57,7 +57,7 @@ public class OrderAddServlet extends HttpServlet {
 
             // Check if there are enough items
             MongoClient mongo = (MongoClient) req.getServletContext().getAttribute("MONGO_CLIENT");
-            MongoItemDao itemDAO = new MongoItemDao(mongo);
+            MongoItemDAO itemDAO = new MongoItemDAO(mongo);
 
             Item item = itemDAO.findItem(new ObjectId(id));
             ItemStatus itemStatus = item.getStatus();
@@ -110,7 +110,7 @@ public class OrderAddServlet extends HttpServlet {
             order.setStatus(Order.OrderStatus.IN_PROCESS);
 
             MongoClient mongo = (MongoClient) req.getServletContext().getAttribute("MONGO_CLIENT");
-            MongoOrderDao orderDAO = new MongoOrderDao(mongo);
+            MongoOrderDAO orderDAO = new MongoOrderDAO(mongo);
 
             if (orderDAO.insertOrder(order) != null) {
                 logger.info("New order " + order + " was successfully added");
@@ -134,7 +134,7 @@ public class OrderAddServlet extends HttpServlet {
         Map<Item, Integer> items = new HashMap<>();
 
         MongoClient mongo = (MongoClient) req.getServletContext().getAttribute("MONGO_CLIENT");
-        MongoItemDao itemDAO = new MongoItemDao(mongo);
+        MongoItemDAO itemDAO = new MongoItemDAO(mongo);
         for (Item i : itemDAO.findAllItems()) items.put(i, null);
 
         req.getSession().setAttribute("items", items);

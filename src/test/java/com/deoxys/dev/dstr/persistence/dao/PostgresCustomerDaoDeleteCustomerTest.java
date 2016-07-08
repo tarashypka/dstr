@@ -12,12 +12,12 @@ import static org.junit.Assert.*;
 
 public final class PostgresCustomerDaoDeleteCustomerTest extends PostgresTestDataSource {
 
-    private static PostgresCustomerDao customerDAO;
+    private static PostgresCustomerDAO customerDAO;
     private Customer mike = new Customer("mike@gmail.com", "1234", "Mike", "Mort");
 
     @BeforeClass
     public static void setUpClass() {
-        customerDAO = new PostgresCustomerDao(PostgresTestDataSource.getDataSource());
+        customerDAO = new PostgresCustomerDAO(PostgresTestDataSource.getDataSource());
     }
 
     @Before
