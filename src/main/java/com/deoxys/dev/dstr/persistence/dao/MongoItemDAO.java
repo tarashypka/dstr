@@ -2,6 +2,7 @@ package com.deoxys.dev.dstr.persistence.dao;
 
 import com.deoxys.dev.dstr.domain.model.Item;
 import com.deoxys.dev.dstr.domain.model.ItemStatus;
+import com.deoxys.dev.dstr.domain.model.Order;
 import com.mongodb.*;
 import com.deoxys.dev.dstr.persistence.converter.ItemConverter;
 import org.bson.types.ObjectId;
@@ -54,8 +55,7 @@ public class MongoItemDAO {
         statusDoc.put("reserved", status.getReserved());
         statusDoc.put("sold", status.getSold());
 
-        // If without $set operator,
-        // than order document will be not updated, but replaced
+        // Without $set operator, order document will be not updated, but replaced
         DBObject update = new BasicDBObject("status", statusDoc);
         DBObject set = new BasicDBObject("$set", update);
         return this.collection.update(query, set).wasAcknowledged();

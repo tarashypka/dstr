@@ -10,14 +10,13 @@ import java.util.*;
 
 /**
  * Created by deoxys on 27.05.16.
- */
-
-/* Mongo 3.2 Java Driver proposes at least two approaches
-    to complete basic collection queries:
-    1. Using newly implemented (after 2.10.0) classes MongoClient, MongoCollection, Document, ...
-    2. Using standard classes Mongo, DBCollection, DBObject, ...
-   First approach does not support queries with projections yet,
-   so second (deprecated) was used.
+ *
+ * Mongo 3.2 Java Driver proposes at least two approaches
+ * to complete basic collection queries:
+ * 1. Using newly implemented (after 2.10.0) classes MongoClient, MongoCollection, Document, ...
+ * 2. Using standard classes Mongo, DBCollection, DBObject, ...
+ * First approach does not support queries with projections yet,
+ * so second (deprecated) was used.
  */
 
 public class MongoOrderDAO {
@@ -37,12 +36,15 @@ public class MongoOrderDAO {
     public Order insertOrder(Order order) {
         MongoItemDAO itemDAO = new MongoItemDAO(client);
 
-        // Verify if there are enough items
-        // Another order with required items could have been made,
-        // before this order was acknowledged by customer
-        // This could be reimplemented according to magazine's politics:
-        // Sometimes it's better to have items in reserve
-        // and boost performance by avoiding additional issues covered here
+        /**
+         * Verify if there are enough items.
+         * Another order with required items could have been made,
+         * before this order was acknowledged by customer.
+         *
+         * This could be reimplemented according to business politics:
+         * Sometimes it's better to have items in reserve
+         * and boost performance by avoiding additional issues covered here.
+         */
         if ( ! itemDAO.enoughItems(order.getItems())) {
             return null;
         }
@@ -84,9 +86,11 @@ public class MongoOrderDAO {
 
         DBObject orderDoc = OrderConverter.toDocument(order);
 
-        // It's important that nOrders and ordered items documents
-        // are always updated before, so whenever new document was created,
-        // nOrders and ordered items statuses will be also changed
+        /**
+         * It's important that nOrders and ordered items documents
+         * are always updated before, so whenever new document was created,
+         * nOrders and ordered items statuses will be also changed.
+         */
         if (this.collection.insert(orderDoc).wasAcknowledged()) {
             order.setId(orderDoc.get("_id").toString());
             return order;
@@ -124,8 +128,7 @@ public class MongoOrderDAO {
             return false;
         }
 
-        // If without $set operator,
-        // than order document will be not updated, but replaced
+        // Without $set operator, order document will be not updated, but replaced
         DBObject query = new BasicDBObject("_id", _orderId);
         DBObject update = new BasicDBObject("status", newStatus.getValue());
         DBObject set = new BasicDBObject("$set", update);
@@ -197,5 +200,9 @@ public class MongoOrderDAO {
         cursor.close();
 
         return customerItems;
+    }
+
+    public long count() {
+        return this.collection.count();
     }
 }

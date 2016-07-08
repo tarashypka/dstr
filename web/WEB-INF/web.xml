@@ -164,6 +164,7 @@
                 /items
                 /error
                 /favicon.ico
+                /controller
             </param-value>
         </init-param>
         <init-param>
