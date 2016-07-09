@@ -1,7 +1,8 @@
 package com.deoxys.dev.dstr.presentation.servlet.controller;
 
-import com.deoxys.dev.dstr.persistence.dao.PostgresCustomerDAO;
-import com.deoxys.dev.dstr.persistence.dao.MongoOrderDAO;
+import com.deoxys.dev.dstr.persistence.dao.CustomerDAO;
+import com.deoxys.dev.dstr.persistence.dao.ItemDAO;
+import com.deoxys.dev.dstr.persistence.dao.OrderDAO;
 import com.deoxys.dev.dstr.domain.model.Customer;
 import com.mongodb.MongoClient;
 import org.apache.log4j.Logger;
@@ -26,32 +27,33 @@ public class CustomerServlet extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
 
-        String email = req.getParameter("email");
+        long id = Long.parseLong(req.getParameter("id"));
 
-        if (email == null || email.equals("")) {
-            throw new ServletException("Wrong customer email");
+        if (id < 0) {
+            throw new ServletException("Wrong customer id");
         }
 
         DataSource source = (DataSource)
                 req.getServletContext().getAttribute("POSTGRES_CONNECTION_POOL");
 
         try {
-            PostgresCustomerDAO customerDAO = new PostgresCustomerDAO(source);
-            Customer customer = customerDAO.selectCustomer(email);
+            CustomerDAO customerDAO = new CustomerDAO(source);
+            Customer customer = customerDAO.get(id);
             customerDAO.closeConnection();
             if (customer != null) {
                 MongoClient mongo = (MongoClient) req.getServletContext()
                         .getAttribute("MONGO_CLIENT");
-                MongoOrderDAO orderDAO = new MongoOrderDAO(mongo);
+                OrderDAO orderDAO = new OrderDAO(mongo);
+                ItemDAO itemDAO = new ItemDAO(mongo);
 
-                customer.setOrders(orderDAO.findCustomerOrders(customer.getEmail()));
-                customer.setItems(orderDAO.findCustomerItems(customer.getEmail()));
+                customer.setOrders(orderDAO.getAllForCustomer(id));
+                customer.setItems(itemDAO.getAllForCustomer(id));
 
                 req.setAttribute("customer", customer);
                 req.getRequestDispatcher("/WEB-INF/jsp/customer.jsp").forward(req, resp);
             } else {
-                logger.info("Customer with email " + email + " not found");
-                throw new ServletException("Customer with email " + email + " not found");
+                logger.info("Customer with id=" + id + " not found");
+                throw new ServletException("Customer with id=" + id + " not found");
             }
         } catch (SQLException ex) {
             logger.error("DB Connection/Select error: " + ex.getMessage());

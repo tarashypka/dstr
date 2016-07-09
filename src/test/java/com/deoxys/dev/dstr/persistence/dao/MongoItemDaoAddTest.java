@@ -2,7 +2,6 @@ package com.deoxys.dev.dstr.persistence.dao;
 
 import com.deoxys.dev.dstr.domain.model.Item;
 import com.deoxys.dev.dstr.domain.model.ItemStatus;
-import org.bson.types.ObjectId;
 import org.junit.After;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -13,29 +12,29 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-public class MongoItemDaoInsertItemTest {
+public class MongoItemDaoAddTest {
 
-    private static MongoItemDAO itemDao;
+    private static ItemDAO itemDao;
     private Item watch = new Item("watch", 300,
             Currency.getInstance("USD"), new ItemStatus(10, 10, 10));
 
     @BeforeClass
     public static void setUpClass() {
-        itemDao = new MongoItemDAO(MongoTestClient.getMongo());
+        itemDao = new ItemDAO(MongoTestClient.getMongo());
     }
 
     @Test
     public void testInsertWatch_onlyWatchWasInserted() {
         long nItemsOld = itemDao.count();
-        assertNotNull(itemDao.insertItem(watch));
+        assertNotNull(itemDao.add(watch));
         long nItemsNew = itemDao.count();
         assertEquals(nItemsNew, nItemsOld + 1);
     }
 
     @Test
     public void testInsertWatch_properWatchWasInserted() {
-        assertNotNull(itemDao.insertItem(watch));
-        Item shouldBeWatch = itemDao.findItem(new ObjectId(watch.getId()));
+        assertNotNull(itemDao.add(watch));
+        Item shouldBeWatch = itemDao.get(watch.getId());
         assertNotNull(shouldBeWatch);
 
         /**
@@ -51,6 +50,6 @@ public class MongoItemDaoInsertItemTest {
 
     @After
     public void tearDown() {
-        assertTrue(itemDao.removeItem(new ObjectId(watch.getId())));
+        assertTrue(itemDao.delete(watch.getId()));
     }
 }

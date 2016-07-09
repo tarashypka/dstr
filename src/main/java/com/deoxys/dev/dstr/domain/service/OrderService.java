@@ -1,7 +1,7 @@
 package com.deoxys.dev.dstr.domain.service;
 
 import com.deoxys.dev.dstr.domain.model.Order;
-import com.deoxys.dev.dstr.persistence.dao.MongoOrderDAO;
+import com.deoxys.dev.dstr.persistence.dao.OrderDAO;
 import org.apache.log4j.Logger;
 
 /**
@@ -9,20 +9,20 @@ import org.apache.log4j.Logger;
  */
 
 public class OrderService extends MongoService {
-
-    private MongoOrderDAO orderDao;
     Logger logger = Logger.getLogger(OrderService.class);
+
+    private OrderDAO orderDao;
 
     public OrderService() {
         super();
-        this.orderDao = new MongoOrderDAO(super.mongo);
+        this.orderDao = new OrderDAO(super.mongo);
     }
 
     public Order makeOrder(Order order) {
         ItemService itemService = new ItemService();
         itemService.takeOrderItemsFromStock(order.getItems());
         itemService.addOrderItemsToReserve(order.getItems());
-        orderDao.insertOrder(order);
+        orderDao.add(order);
         logger.info("New order with id=" + order.getId() + " was inserted");
         return order;
     }
@@ -57,7 +57,7 @@ public class OrderService extends MongoService {
             default:
                 return false;
         }
-        // orderDao.updateOrderStatus(order.getId(), newStatus)
+        // orderDao.updateStatus(order.getId(), newStatus)
         return true;
     }
 

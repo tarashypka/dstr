@@ -1,6 +1,6 @@
 package com.deoxys.dev.dstr.presentation.servlet.controller.admin.item;
 
-import com.deoxys.dev.dstr.persistence.dao.MongoItemDAO;
+import com.deoxys.dev.dstr.persistence.dao.ItemDAO;
 import com.deoxys.dev.dstr.domain.model.Item;
 import com.deoxys.dev.dstr.domain.model.ItemStatus;
 import com.mongodb.MongoClient;
@@ -27,8 +27,8 @@ public class ItemEditServlet extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
 
-        String itemId = req.getParameter("id");
-        if (itemId == null || itemId.equals("")) {
+        String id = req.getParameter("id");
+        if (id == null || id.equals("")) {
             throw new ServletException("Wrong item id");
         }
 
@@ -40,7 +40,7 @@ public class ItemEditServlet extends HttpServlet {
         String soldStr = req.getParameter("status.sold");
 
         Item item = new Item();
-        item.setId(itemId);
+        item.setId(id);
         item.setCategory(category);
 
         List<String> errors = new ArrayList<>();
@@ -84,9 +84,9 @@ public class ItemEditServlet extends HttpServlet {
         if (errors.isEmpty()) {
             MongoClient mongo = (MongoClient) req.getServletContext()
                     .getAttribute("MONGO_CLIENT");
-            MongoItemDAO itemDAO = new MongoItemDAO(mongo);
+            ItemDAO itemDAO = new ItemDAO(mongo);
 
-            if (itemDAO.updateItem(item)) {
+            if (itemDAO.update(item)) {
                 logger.info("Item=" + item + " was successfully updated");
             } else {
                 logger.error("Item=" + item + " was not updated");
@@ -102,13 +102,13 @@ public class ItemEditServlet extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
 
-        String itemId = req.getParameter("id");
-        if (itemId == null || itemId.equals("")) {
+        String id = req.getParameter("id");
+        if (id == null || id.equals("")) {
             throw new ServletException("Wrong item id");
         }
         MongoClient mongo = (MongoClient) req.getServletContext().getAttribute("MONGO_CLIENT");
-        MongoItemDAO itemDAO = new MongoItemDAO(mongo);
-        Item item = itemDAO.findItem(new ObjectId(itemId));
+        ItemDAO itemDAO = new ItemDAO(mongo);
+        Item item = itemDAO.get(id);
         req.setAttribute("item", item);
         req.getRequestDispatcher("/WEB-INF/jsp/itemedit.jsp").forward(req, resp);
     }

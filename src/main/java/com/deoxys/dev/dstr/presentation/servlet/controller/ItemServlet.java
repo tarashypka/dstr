@@ -1,7 +1,7 @@
 package com.deoxys.dev.dstr.presentation.servlet.controller;
 
 import com.mongodb.MongoClient;
-import com.deoxys.dev.dstr.persistence.dao.MongoItemDAO;
+import com.deoxys.dev.dstr.persistence.dao.ItemDAO;
 import com.deoxys.dev.dstr.domain.model.Item;
 import org.bson.types.ObjectId;
 
@@ -21,17 +21,15 @@ public class ItemServlet extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
 
-        String itemId = req.getParameter("id");
-        if (itemId == null || itemId.equals("")) {
+        String id = req.getParameter("id");
+        if (id == null || id.equals("")) {
             throw new ServletException("Wrong item id");
         }
 
-        ObjectId _itemId = new ObjectId(itemId);
-
         MongoClient mongo = (MongoClient) req.getServletContext().getAttribute("MONGO_CLIENT");
-        MongoItemDAO itemDAO = new MongoItemDAO(mongo);
+        ItemDAO itemDAO = new ItemDAO(mongo);
 
-        Item item = itemDAO.findItem(_itemId);
+        Item item = itemDAO.get(id);
 
         req.setAttribute("item", item);
         req.getRequestDispatcher("/WEB-INF/jsp/item.jsp").forward(req, resp);

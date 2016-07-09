@@ -8,25 +8,23 @@ import com.mongodb.DBObject;
  * Created by deoxys on 27.05.16.
  */
 
-public class CustomerConverter {
+public class CustomerConverter extends MongoConverter<Customer> {
 
-    public static DBObject toDocument(Customer customer) {
+    @Override
+    public DBObject toDocument(Customer customer) {
         DBObject doc = new BasicDBObject();
-
         doc.put("email", customer.getEmail());
         doc.put("name", customer.getName());
         doc.put("surname", customer.getSurname());
-
         return doc;
     }
 
-    public static Customer toCustomer(DBObject doc) {
+    @Override
+    public Customer toObject(DBObject doc) {
         Customer customer = new Customer();
-
         customer.setEmail((String )doc.get("email"));
         customer.setName((String) doc.get("name"));
         customer.setSurname((String) doc.get("surname"));
-
         return customer;
     }
 }

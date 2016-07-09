@@ -1,6 +1,6 @@
 package com.deoxys.dev.dstr.presentation.servlet.controller.admin.customer;
 
-import com.deoxys.dev.dstr.persistence.dao.PostgresCustomerDAO;
+import com.deoxys.dev.dstr.persistence.dao.CustomerDAO;
 import org.apache.log4j.Logger;
 
 import javax.servlet.ServletException;
@@ -23,22 +23,22 @@ public class CustomerStatusServlet extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
 
-        String email = req.getParameter("email");
+        long id = Long.parseLong(req.getParameter("id"));
 
-        if (email == null || email.equals("")) {
-            throw new ServletException("Wrong customer email");
+        if (id < 0) {
+            throw new ServletException("Wrong customer id");
         }
 
         DataSource source = (DataSource) req.getServletContext()
                 .getAttribute("POSTGRES_CONNECTION_POOL");
 
         try {
-            PostgresCustomerDAO customerDAO = new PostgresCustomerDAO(source);
+            CustomerDAO customerDAO = new CustomerDAO(source);
 
-            if (customerDAO.changeCustomerStatus(email)) {
-                logger.info("Customer's with email=" + email + " status was changed");
+            if (customerDAO.updateStatus(id)) {
+                logger.info("Customer's with id=" + id + " status was changed");
             } else {
-                logger.error("Customer's with email=" + email + " status was not changed");
+                logger.error("Customer's with id=" + id + " status was not changed");
             }
             customerDAO.closeConnection();
         } catch (SQLException ex) {

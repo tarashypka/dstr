@@ -1,14 +1,13 @@
 package com.deoxys.dev.dstr.presentation.servlet.controller.customer;
 
-import com.deoxys.dev.dstr.persistence.dao.MongoItemDAO;
-import com.deoxys.dev.dstr.persistence.dao.MongoOrderDAO;
+import com.deoxys.dev.dstr.persistence.dao.ItemDAO;
+import com.deoxys.dev.dstr.persistence.dao.OrderDAO;
 import com.deoxys.dev.dstr.domain.model.Customer;
 import com.deoxys.dev.dstr.domain.model.Item;
 import com.deoxys.dev.dstr.domain.model.ItemStatus;
 import com.deoxys.dev.dstr.domain.model.Order;
 import com.mongodb.MongoClient;
 import org.apache.log4j.Logger;
-import org.bson.types.ObjectId;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -57,9 +56,9 @@ public class OrderAddServlet extends HttpServlet {
 
             // Check if there are enough items
             MongoClient mongo = (MongoClient) req.getServletContext().getAttribute("MONGO_CLIENT");
-            MongoItemDAO itemDAO = new MongoItemDAO(mongo);
+            ItemDAO itemDAO = new ItemDAO(mongo);
 
-            Item item = itemDAO.findItem(new ObjectId(id));
+            Item item = itemDAO.get(id);
             ItemStatus itemStatus = item.getStatus();
 
             if (itemStatus == null) {
@@ -110,9 +109,9 @@ public class OrderAddServlet extends HttpServlet {
             order.setStatus(Order.OrderStatus.IN_PROCESS);
 
             MongoClient mongo = (MongoClient) req.getServletContext().getAttribute("MONGO_CLIENT");
-            MongoOrderDAO orderDAO = new MongoOrderDAO(mongo);
+            OrderDAO orderDAO = new OrderDAO(mongo);
 
-            if (orderDAO.insertOrder(order) != null) {
+            if (orderDAO.add(order)) {
                 logger.info("New order " + order + " was successfully added");
 
                 // Delete order data from session
@@ -132,11 +131,9 @@ public class OrderAddServlet extends HttpServlet {
 
         // Update items list before making new order
         Map<Item, Integer> items = new HashMap<>();
-
         MongoClient mongo = (MongoClient) req.getServletContext().getAttribute("MONGO_CLIENT");
-        MongoItemDAO itemDAO = new MongoItemDAO(mongo);
-        for (Item i : itemDAO.findAllItems()) items.put(i, null);
-
+        ItemDAO itemDAO = new ItemDAO(mongo);
+        for (Item i : itemDAO.getAll()) items.put(i, null);
         req.getSession().setAttribute("items", items);
         req.getRequestDispatcher("/WEB-INF/jsp/orderadd.jsp").forward(req, resp);
     }

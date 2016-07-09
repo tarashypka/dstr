@@ -1,7 +1,8 @@
 package com.deoxys.dev.dstr.domain.service;
 
 import com.deoxys.dev.dstr.domain.model.Item;
-import com.deoxys.dev.dstr.persistence.dao.MongoItemDAO;
+import com.deoxys.dev.dstr.persistence.dao.ItemDAO;
+import org.apache.log4j.Logger;
 
 import java.util.Map;
 
@@ -10,12 +11,13 @@ import java.util.Map;
  */
 
 public class ItemService extends MongoService {
+    Logger logger = Logger.getLogger(ItemService.class);
 
-    private MongoItemDAO itemDao;
+    private ItemDAO itemDao;
 
     public ItemService() {
         super();
-        itemDao = new MongoItemDAO(super.mongo);
+        itemDao = new ItemDAO(super.mongo);
     }
 
     public long count() {
@@ -35,7 +37,7 @@ public class ItemService extends MongoService {
     public boolean takeOrderItemsFromSold(Map<Item, Integer> orderItems) {
 
         for (Item item : orderItems.keySet()) {
-            if (itemDao.takeFromSold(item, orderItems.get(item))) {
+            if ( ! itemDao.changeSoldStatus(item, - orderItems.get(item))) {
                 return false;
             }
         }
@@ -55,7 +57,7 @@ public class ItemService extends MongoService {
     public boolean addOrderItemsToSold(Map<Item, Integer> orderItems) {
 
         for (Item item : orderItems.keySet()) {
-            if (itemDao.addToSold(item, orderItems.get(item))) {
+            if ( ! itemDao.changeSoldStatus(item, + orderItems.get(item))) {
                 return false;
             }
         }
@@ -75,7 +77,7 @@ public class ItemService extends MongoService {
     public boolean takeOrderItemsFromStock(Map<Item, Integer> orderItems) {
 
         for (Item item : orderItems.keySet()) {
-            if (itemDao.takeFromStock(item, orderItems.get(item))) {
+            if ( ! itemDao.changeStockedStatus(item, - orderItems.get(item))) {
                 return false;
             }
         }
@@ -95,7 +97,7 @@ public class ItemService extends MongoService {
     public boolean addOrderItemsToStock(Map<Item, Integer> orderItems) {
 
         for (Item item : orderItems.keySet()) {
-            if (itemDao.addToStock(item, orderItems.get(item))) {
+            if ( ! itemDao.changeStockedStatus(item, + orderItems.get(item))) {
                 return false;
             }
         }
@@ -115,7 +117,7 @@ public class ItemService extends MongoService {
     public boolean takeOrderItemsFromReserve(Map<Item, Integer> orderItems) {
 
         for (Item item : orderItems.keySet()) {
-            if (itemDao.takeFromReserve(item, orderItems.get(item))) {
+            if ( ! itemDao.changedReservedStatus(item, - orderItems.get(item))) {
                 return false;
             }
         }
@@ -135,7 +137,7 @@ public class ItemService extends MongoService {
     public boolean addOrderItemsToReserve(Map<Item, Integer> orderItems) {
 
         for (Item item : orderItems.keySet()) {
-            if (itemDao.addToReserve(item, orderItems.get(item))) {
+            if ( ! itemDao.changedReservedStatus(item, + orderItems.get(item))) {
                 return false;
             }
         }

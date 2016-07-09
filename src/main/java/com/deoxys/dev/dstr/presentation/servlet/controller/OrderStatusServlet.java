@@ -1,13 +1,11 @@
 package com.deoxys.dev.dstr.presentation.servlet.controller;
 
-import com.deoxys.dev.dstr.persistence.dao.MongoItemDAO;
-import com.deoxys.dev.dstr.persistence.dao.MongoOrderDAO;
+import com.deoxys.dev.dstr.persistence.dao.ItemDAO;
+import com.deoxys.dev.dstr.persistence.dao.OrderDAO;
 import com.deoxys.dev.dstr.domain.model.Customer;
-import com.deoxys.dev.dstr.domain.model.Item;
 import com.deoxys.dev.dstr.domain.model.Order;
 import com.mongodb.MongoClient;
 import org.apache.log4j.Logger;
-import org.bson.types.ObjectId;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -15,7 +13,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.*;
 
 /**
  * Created by deoxys on 01.06.16.
@@ -28,21 +25,20 @@ public class OrderStatusServlet extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
 
-        String orderId = req.getParameter("id");
+        String id = req.getParameter("id");
         String newStatusName = req.getParameter("status");
 
-        if (orderId == null || orderId.equals("")) {
+        if (id == null || id.equals("")) {
             throw new ServletException("Wrong order id");
         }
 
         MongoClient mongo = (MongoClient) req.getServletContext()
                 .getAttribute("MONGO_CLIENT");
 
-        MongoOrderDAO orderDAO = new MongoOrderDAO(mongo);
-        MongoItemDAO itemDAO = new MongoItemDAO(mongo);
+        OrderDAO orderDAO = new OrderDAO(mongo);
+        ItemDAO itemDAO = new ItemDAO(mongo);
 
-        ObjectId _orderId = new ObjectId(orderId);
-        Order.OrderStatus oldStatus = orderDAO.findOrderStatus(_orderId);
+        Order.OrderStatus oldStatus = orderDAO.getStatus(id);
         Order.OrderStatus newStatus = Order.OrderStatus.valueOf(newStatusName);
 
         Customer customer = (Customer) req.getSession().getAttribute("customer");
@@ -66,54 +62,18 @@ public class OrderStatusServlet extends HttpServlet {
             }
         }
 
-        if (orderDAO.updateOrderStatus(_orderId, newStatus)) {
-            logger.info("Order's with id=" + orderId + " status was changed: "
+        if (orderDAO.updateStatus(id, newStatus)) {
+            logger.info("Order's with id=" + id + " status was changed: "
                     + oldStatus.name() + " -> " + newStatus.name());
 
-            Order order = orderDAO.findOrder(_orderId);
-
-            // Update order items statuses
-            Map<Item, Integer> orderItems = order.getItems();
-
-            boolean succeed = false;
-            switch (oldStatus) {
-                case REJECTED:
-                    switch (newStatus) {
-                        case IN_PROCESS:
-                            succeed = itemDAO.moveStockedToReserved(orderItems);
-                            break;
-                        case PROCESSED:
-                            succeed = itemDAO.moveStockedToSold(orderItems);
-                            break;
-                    }
-                    break;
-                case IN_PROCESS:
-                    switch (newStatus) {
-                        case REJECTED:
-                            succeed = itemDAO.moveReservedtoStocked(orderItems);
-                            break;
-                        case PROCESSED:
-                            succeed = itemDAO.moveReservedToSold(orderItems);
-                            break;
-                    }
-                    break;
-                case PROCESSED:
-                    switch (newStatus) {
-                        case REJECTED:
-                            succeed = itemDAO.moveSoldToStocked(orderItems);
-                            break;
-                        case IN_PROCESS:
-                            succeed = itemDAO.moveSoldtoReserved(orderItems);
-                            break;
-                    }
-                    break;
-            }
+            // Should be reimplemented according to services
+            boolean succeed = true;
             logger.error((succeed
                     ? "Couldn't change status for one of items "
                     : "Successfully changed status for items ")
-                    + "in order with id=" + orderId);
+                    + "in order with id=" + id);
         } else {
-            logger.error("Order's with id=" + orderId + " status was not changed");
+            logger.error("Order's with id=" + id + " status was not changed");
         }
 
         if (customer.isAdmin()) {

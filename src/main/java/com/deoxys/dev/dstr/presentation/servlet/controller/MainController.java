@@ -23,7 +23,6 @@ public class MainController extends HttpServlet {
     private static OrderService orderService = new OrderService();
     private static ItemService itemService = new ItemService();
 
-
     protected void doPost(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
 

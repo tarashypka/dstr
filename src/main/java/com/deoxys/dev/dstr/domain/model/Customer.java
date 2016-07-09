@@ -9,6 +9,7 @@ import java.util.Map;
  */
 
 public class Customer implements Serializable {
+    private long id;
     private String email;
     private String password;
     private String name;
@@ -31,8 +32,6 @@ public class Customer implements Serializable {
         this.password = password;
         this.name = name;
         this.surname = surname;
-        this.role = "customer";
-        this.enabled = true;
     }
 
     public Customer(String email, String password, String name, String surname,
@@ -44,6 +43,14 @@ public class Customer implements Serializable {
         this.surname = surname;
         this.role = role;
         this.enabled = enabled;
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
     }
 
     public String getEmail() {

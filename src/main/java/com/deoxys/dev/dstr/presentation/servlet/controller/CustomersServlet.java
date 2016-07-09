@@ -1,6 +1,6 @@
 package com.deoxys.dev.dstr.presentation.servlet.controller;
 
-import com.deoxys.dev.dstr.persistence.dao.PostgresCustomerDAO;
+import com.deoxys.dev.dstr.persistence.dao.CustomerDAO;
 import com.deoxys.dev.dstr.domain.model.Customer;
 import org.apache.log4j.Logger;
 
@@ -32,8 +32,8 @@ public class CustomersServlet extends HttpServlet {
         List<Customer> customers = new ArrayList<>();
 
         try {
-            PostgresCustomerDAO customerDAO = new PostgresCustomerDAO(source);
-            customers.addAll(customerDAO.selectAllCustomers());
+            CustomerDAO customerDAO = new CustomerDAO(source);
+            customers.addAll(customerDAO.getAll());
         } catch (SQLException ex) {
             logger.error("DB Connection/Select error:" + ex.getMessage());
             throw new ServletException("DB Connection/Select error:" + ex.getMessage());
