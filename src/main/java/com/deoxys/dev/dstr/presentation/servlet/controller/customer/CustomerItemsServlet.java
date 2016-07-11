@@ -35,7 +35,7 @@ public class CustomerItemsServlet extends HttpServlet {
         }
         MongoClient mongo = (MongoClient) req.getServletContext().getAttribute("MONGO_CLIENT");
         ItemDAO itemDAO = new ItemDAO(mongo);
-        Map<Item, Integer> customerItems = itemDAO.getAllForCustomer(id);
+        Map<Item, Integer> customerItems = itemDAO.getAllForCustomer(customer.getEmail());
         req.setAttribute("items", customerItems);
         req.getRequestDispatcher("/WEB-INF/jsp/customer/items.jsp").forward(req, resp);
     }

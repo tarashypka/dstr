@@ -190,6 +190,7 @@
                 /order/add
                 /order/edit
                 /order/delete
+                /controller/customer
             </param-value>
         </init-param>
         <init-param>

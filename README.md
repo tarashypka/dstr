@@ -44,8 +44,8 @@ Ubuntu v16.04
 Configure server, users, JNDI resources in `conf/tomcat/` files.
 Replace local tomcat configuration files with those in `conf/tomcat/`.
 
-To load into Mongo and Postgres connection pools Tomcat Container via JNDI,
-Tomcat should be pre-configured with `-XX:MaxPermSize=128M` property before start.
+To load Mongo and Postgres connection pools into Tomcat Container via JNDI,
+Tomcat should be pre-configured before start with `-XX:MaxPermSize=128M` property.
 
 
 ### PostgreSQL configuration

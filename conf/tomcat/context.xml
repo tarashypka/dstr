@@ -3,15 +3,15 @@
 <Context>
 
 	<!-- JNDI configuration for Postgres -->
-	<Resource name="jdbc/dstr" auth="Container"
-			  type="javax.sql.DataSource" driverClassName="org.postgresql.Driver"
+	<Resource name="jdbc/postgres" auth="Container"
+			  driverClassName="org.postgresql.Driver"
+			  type="javax.sql.DataSource"
 			  url="jdbc:postgresql://localhost:5432/dstr"
-			  username="dstrdbadmin"
-			  password="1234" maxTotal="20" maxIdle="10" maxWaitMillis="-1"/>
+			  username="dstrdbadmin" password="1234"
+			  maxTotal="20" maxIdle="10" maxWaitMillis="-1"/>
 
 	<!-- JNDI configuration for Mongo -->
-	<Resource name="mongo"
-			  auth="Container"
+	<Resource name="mongo" auth="Container"
 			  factory="com.deoxys.dev.dstr.persistence.CustomMongoJndiFactory"
 			  type="com.mongodb.MongoClient"
 			  host="localhost" port="27017" dbName="dstr"

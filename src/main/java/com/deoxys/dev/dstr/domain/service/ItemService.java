@@ -1,9 +1,16 @@
 package com.deoxys.dev.dstr.domain.service;
 
+import com.deoxys.dev.dstr.domain.converter.CustomerReader;
+import com.deoxys.dev.dstr.domain.model.Customer;
 import com.deoxys.dev.dstr.domain.model.Item;
+import com.deoxys.dev.dstr.domain.model.Order;
 import com.deoxys.dev.dstr.persistence.dao.ItemDAO;
 import org.apache.log4j.Logger;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -17,11 +24,27 @@ public class ItemService extends MongoService {
 
     public ItemService() {
         super();
-        itemDao = new ItemDAO(super.mongo);
+        itemDao = new ItemDAO(mongo);
     }
 
     public long count() {
         return itemDao.count();
+    }
+
+    public void loadItems(HttpServletRequest req, HttpServletResponse resp) {
+        HttpSession ses = req.getSession();
+        ses.setAttribute("items", itemDao.getAll());
+    }
+
+    public void loadCustomerItems(HttpServletRequest req, HttpServletResponse resp) {
+        System.out.println("Loading items");
+        CustomerReader customerReader = new CustomerReader();
+        System.out.println("Loading items");
+        Customer customer = customerReader.read(req.getSession());
+        System.out.println("Loading items");
+        Map<Item, Integer> items = itemDao.getAllForCustomer(customer.getEmail());
+        System.out.println("Found" + items.size() + " items");
+        req.setAttribute("items", items);
     }
 
     /**

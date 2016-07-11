@@ -10,7 +10,7 @@ import javax.naming.InitialContext;
  * Service that uses Mongo Connection Pool
  */
 
-public abstract class MongoService {
+public abstract class MongoService  {
 
     public MongoClient mongo;
 

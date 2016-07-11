@@ -17,6 +17,7 @@ public abstract class PostgresService {
         try {
             InitialContext ctx = new InitialContext();
             dataSource = (DataSource) ctx.lookup("java:/comp/env/jdbc/postgres");
+            System.out.println("DS=" + dataSource);
         } catch (Exception ex) {
             ex.printStackTrace();
         }

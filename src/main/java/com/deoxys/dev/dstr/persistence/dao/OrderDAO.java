@@ -47,9 +47,9 @@ public class OrderDAO extends MongoDAO<Order> {
         return false;
     }
 
-    public List<Order> getAllForCustomer(long id) {
+    public List<Order> getAllForCustomer(String email) {
         List<Order> orders = new ArrayList<>();
-        DBObject query = new BasicDBObject("customer.id", id);
+        DBObject query = new BasicDBObject("customer.email", email);
         DBCursor cursor = collection.find(query);
         while (cursor.hasNext()) {
             DBObject doc = cursor.next();

@@ -42,19 +42,18 @@
 
             <c:choose>
                 <c:when test="${sessionScope.customer.role eq 'customer'}">
-                    <c:url value="/customer/items" var="itemsURL"/>
-                    <c:url value="/customer/orders" var="ordersURL"/>
-                    <c:url value="/order/add" var="addOrderURL"/>
+                    <c:url value="/controller/customer" var="controllerURL"/>
 
-                    <form action='<c:out value="${itemsURL}"/>' method="get">
+                    <form action="${controllerURL}" method="get">
+                        <input type="hidden" name="action" value="showItems">
                         <input type="submit" value="Куплені товари">
                     </form>
-
-                    <form action='<c:out value="${ordersURL}"/>' method="get">
+                    <form action="${controllerURL}" method="get">
+                        <input type="hidden" name="action" value="showOrders">
                         <input type="submit" value="Мої замовлення">
                     </form>
-
-                    <form action='<c:out value="${addOrderURL}"/>' method="get">
+                    <form action="${controllerURL}" method="get">
+                        <input type="hidden" name="action" value="makeOrder">
                         <input type="submit" value="Нове замовлення">
                     </form>
                 </c:when>

@@ -22,6 +22,7 @@
   </jsp:attribute>
 
   <jsp:body>
+    <c:url value="/controller/customer" var="controllerURL"/>
     <c:if test="${sessionScope.orderItems ne null}">
       <table id="order">
         <tr>
@@ -39,9 +40,8 @@
           </tr>
         </c:forEach>
         <tr>
-          <c:url value="/order/add" var="orderAddURL"/>
-            <form action='<c:out value="${orderAddURL}"></c:out>' method="post">
-              <input type="hidden" name="action" value="order">
+            <form action="${controllerURL}" method="post">
+              <input type="hidden" name="action" value="makeOrder">
               <td><input type="submit" value="Зробити замовлення"></td>
             </form>
           <td>
@@ -64,9 +64,6 @@
           <th>Залишилось</th>
         </tr>
         <c:forEach items="${sessionScope.items}" var="item">
-          <c:url value="/item" var="itemURL">
-            <c:param name="id" value="${item.key.id}"/>
-          </c:url>
           <tr>
             <td>
               <a href='<c:out value="${itemURL}"/>'>
@@ -77,15 +74,13 @@
             <td><c:out value="${item.key.price}"/></td>
             <td><c:out value="${item.key.currency}"/></td>
             <td><c:out value="${item.key.status.stocked}"/></td>
-              <c:url value="/order/add" var="orderAddURL"/>
-              <form action='<c:out value="${orderAddURL}"/>' method="post">
-                <input type="hidden" name="action" value="item">
-                <input type="hidden" name="id" value='<c:out value="${item.key.id}"/>'>
+              <form action='<c:out value="${controllerURL}"/>' method="post">
+                <input type="hidden" name="action" value="addOrderItem">
+                <input type="hidden" name="id" value="${item.key.id}"/>
                 <td><input type="number" name="quantity"
                            value="${item.value}" placeholder="Кількість"></td>
                 <td><input type="submit" value="Додати товар"></td>
               </form>
-            </td>
           </tr>
         </c:forEach>
       </table>

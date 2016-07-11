@@ -46,8 +46,8 @@ public class CustomerServlet extends HttpServlet {
                 OrderDAO orderDAO = new OrderDAO(mongo);
                 ItemDAO itemDAO = new ItemDAO(mongo);
 
-                customer.setOrders(orderDAO.getAllForCustomer(id));
-                customer.setItems(itemDAO.getAllForCustomer(id));
+                customer.setOrders(orderDAO.getAllForCustomer(customer.getEmail()));
+                customer.setItems(itemDAO.getAllForCustomer(customer.getEmail()));
 
                 req.setAttribute("customer", customer);
                 req.getRequestDispatcher("/WEB-INF/jsp/customer.jsp").forward(req, resp);

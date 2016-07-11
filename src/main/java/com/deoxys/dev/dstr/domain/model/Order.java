@@ -89,12 +89,23 @@ public class Order implements Serializable {
         this.items = items;
     }
 
+    public void addItem(Item item, int amount) {
+        items.put(item, amount);
+    }
+
     public Map<Currency, Double> getReceipt() {
         return receipt;
     }
 
     public void setReceipt(Map<Currency, Double> receipt) {
         this.receipt = receipt;
+    }
+
+    public void updateReceipt(Item item, int quantity) {
+        Currency currency = item.getCurrency();
+        Double curr = receipt.get(currency);
+        Double price = item.getPrice();
+        receipt.put(currency, quantity * price + (curr != null ? curr : 0));
     }
 
     public OrderStatus getStatus() {

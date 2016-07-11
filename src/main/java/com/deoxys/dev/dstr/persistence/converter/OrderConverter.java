@@ -15,7 +15,7 @@ import java.util.*;
  * Created by deoxys on 27.05.16.
  */
 
-public class OrderConverter extends MongoConverter<Order> {
+public class OrderConverter implements MongoConverter<Order> {
 
     private static final String COLLECTION = "orders";
 

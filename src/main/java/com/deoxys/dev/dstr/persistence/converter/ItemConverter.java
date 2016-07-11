@@ -13,7 +13,7 @@ import java.util.Map;
  * Created by deoxys on 27.05.16.
  */
 
-public class ItemConverter extends MongoConverter<Item> {
+public class ItemConverter implements MongoConverter<Item> {
 
     @Override
     public Item toObject(DBObject doc) {

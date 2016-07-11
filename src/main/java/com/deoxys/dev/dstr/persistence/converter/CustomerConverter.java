@@ -8,7 +8,7 @@ import com.mongodb.DBObject;
  * Created by deoxys on 27.05.16.
  */
 
-public class CustomerConverter extends MongoConverter<Customer> {
+public class CustomerConverter implements MongoConverter<Customer> {
 
     @Override
     public DBObject toDocument(Customer customer) {

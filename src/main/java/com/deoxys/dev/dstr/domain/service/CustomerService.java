@@ -10,10 +10,10 @@ import org.apache.log4j.Logger;
 public class CustomerService extends PostgresService {
     Logger logger = Logger.getLogger(CustomerService.class);
 
-    private CustomerDAO customerDao;
+    private CustomerDAO dao;
 
     public CustomerService() {
         super();
-        customerDao = new CustomerDAO(super.dataSource);
+        dao = new CustomerDAO(dataSource);
     }
 }
