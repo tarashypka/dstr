@@ -10,7 +10,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.io.PrintWriter;
 
 /**
  * Created by deoxys on 01.07.16.
@@ -23,20 +22,23 @@ public class MainController extends HttpServlet {
     private static OrderService orderService = new OrderService();
     private static ItemService itemService = new ItemService();
 
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp)
-            throws ServletException, IOException {
-
-    }
-
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
 
-        long nItems = itemService.count();
-        long nOrders = orderService.count();
+        String action = req.getParameter("action");
 
-        PrintWriter writer = resp.getWriter();
-        writer.write("There are "
-                + nItems + " items and "
-                + nOrders + " orders in database");
+        if (action == null) throw new ServletException("Wrong operation");
+
+        if (action.equals("showItem")) {
+            itemService.loadItem(req, resp);
+            req.getRequestDispatcher("/WEB-INF/jsp/item.jsp").forward(req, resp);
+        }
+    }
+
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp)
+            throws ServletException, IOException {
+
+        System.out.println("In Controller");
+
     }
 }

@@ -5,8 +5,8 @@
 <%--
   Created by IntelliJ IDEA.
   User: deoxys
-  Date: 02.06.16
-  Time: 3:08
+  Date: 17.05.16
+  Time: 21:31
   To change this template use File | Settings | File Templates.
 --%>
 
@@ -22,8 +22,9 @@
   </jsp:attribute>
 
   <jsp:body>
-    <c:url value="/controller/customer" var="controllerURL"/>
-    <c:if test="${sessionScope.orderItems ne null}">
+    <c:url var="customerControllerURL" value="/controller/customer"/>
+    <c:set var="order" value="${sessionScope.order}"/>
+    <c:if test="${order ne null and order.items ne null}">
       <table id="order">
         <tr>
           <th>ID</th>
@@ -31,7 +32,7 @@
           <th>Вартість</th>
           <th>Валюта</th>
         </tr>
-        <c:forEach items="${sessionScope.orderItems}" var="item">
+        <c:forEach items="${order.items}" var="item">
           <tr>
             <td><c:out value="${item.key.id}"/></td>
             <td><c:out value="${item.value}"/></td>
@@ -40,12 +41,12 @@
           </tr>
         </c:forEach>
         <tr>
-            <form action="${controllerURL}" method="post">
-              <input type="hidden" name="action" value="makeOrder">
-              <td><input type="submit" value="Зробити замовлення"></td>
-            </form>
+          <form action="${customerControllerURL}" method="post">
+            <input type="hidden" name="action" value="makeOrder">
+            <td><input type="submit" value="Зробити замовлення"></td>
+          </form>
           <td>
-            <c:forEach items="${sessionScope.receipt}" var="price">
+            <c:forEach items="${order.receipt}" var="price">
               <c:out value="${price.value}"/>
               <c:out value="${price.key}"/><br>
             </c:forEach>
@@ -64,23 +65,24 @@
           <th>Залишилось</th>
         </tr>
         <c:forEach items="${sessionScope.items}" var="item">
+          <c:url value="/controller" var="controllerURL">
+            <c:param name="action" value="showItem"/>
+            <c:param name="itemId" value="${item.id}"/>
+          </c:url>
           <tr>
             <td>
-              <a href='<c:out value="${itemURL}"/>'>
-                <c:out value="${item.key.id}"/>
-              </a>
+              <a href="${controllerURL}"><c:out value="${item.id}"/></a>
             </td>
-            <td><c:out value="${item.key.category}"/></td>
-            <td><c:out value="${item.key.price}"/></td>
-            <td><c:out value="${item.key.currency}"/></td>
-            <td><c:out value="${item.key.status.stocked}"/></td>
-              <form action='<c:out value="${controllerURL}"/>' method="post">
-                <input type="hidden" name="action" value="addOrderItem">
-                <input type="hidden" name="id" value="${item.key.id}"/>
-                <td><input type="number" name="quantity"
-                           value="${item.value}" placeholder="Кількість"></td>
-                <td><input type="submit" value="Додати товар"></td>
-              </form>
+            <td><c:out value="${item.category}"/></td>
+            <td><c:out value="${item.price}"/></td>
+            <td><c:out value="${item.currency}"/></td>
+            <td><c:out value="${item.status.stocked}"/></td>
+            <form action="${customerControllerURL}" method="post">
+              <input type="hidden" name="action" value="addOrderItem">
+              <input type="hidden" name="id" value="${item.id}"/>
+              <td><input type="number" name="quantity" placeholder="Кількість"></td>
+              <td><input type="submit" value="Додати товар"></td>
+            </form>
           </tr>
         </c:forEach>
       </table>

@@ -139,6 +139,7 @@
     </context-param>
 
     <!-- Handle 404 errors and exceptions with predefined Servlet -->
+    <!--
     <error-page>
         <error-code>404</error-code>
         <location>/error</location>
@@ -151,6 +152,7 @@
         <exception-type>java.lang.Throwable</exception-type>
         <location>/error</location>
     </error-page>
+    -->
 
     <!-- Filter all incoming requests to validate the session -->
     <filter>

@@ -95,7 +95,7 @@ public class OrderAddServlet extends HttpServlet {
 
             Order order = new Order();
 
-            order.setOrderNumber("NULL");
+            order.setOrderNumber(0);
             order.setDate(new Date());
 
             Customer customer = (Customer) req.getSession().getAttribute("customer");

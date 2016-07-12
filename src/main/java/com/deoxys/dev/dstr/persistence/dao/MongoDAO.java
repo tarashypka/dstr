@@ -36,6 +36,7 @@ public abstract class MongoDAO<T> {
     private final String MONGO_DB = "dstr";
 
     public MongoDAO(MongoClient client, String collName, MongoConverter<T> converter) {
+        this.client = client;
         db = client.getDB(MONGO_DB);
         collection = db.getCollection(collName);
         this.converter = converter;
@@ -56,13 +57,26 @@ public abstract class MongoDAO<T> {
 
     public List<T> getAll() {
         List<T> objects = new ArrayList<>();
-        DBCursor cursor = collection.find();
+
+        // Exclude sequences
+        DBObject exists = new BasicDBObject("$exists", false);
+        DBObject query = new BasicDBObject("seq", exists);
+        DBCursor cursor = collection.find(query);
+
         while (cursor.hasNext()) {
             DBObject doc = cursor.next();
             objects.add(converter.toObject(doc));
         }
         cursor.close();
         return objects;
+    }
+
+    public long getNextSequence(String fieldName) {
+        DBObject query = new BasicDBObject("_id", fieldName);
+        DBObject seq = new BasicDBObject("seq", 1);
+        DBObject update = new BasicDBObject("$inc", seq);
+        DBObject obj = collection.findAndModify(query, update);
+        return (long) obj.get("seq");
     }
 
     public boolean update(T obj) {

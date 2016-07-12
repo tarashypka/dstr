@@ -9,7 +9,7 @@ import java.util.*;
 
 public class Order implements Serializable {
     private String id;
-    private String orderNumber;
+    private long orderNumber;
     private Date date;
     private Customer customer;
     private Map<Item, Integer> items;
@@ -57,11 +57,11 @@ public class Order implements Serializable {
         this.id = id;
     }
 
-    public String getOrderNumber() {
+    public long getOrderNumber() {
         return orderNumber;
     }
 
-    public void setOrderNumber(String orderNumber) {
+    public void setOrderNumber(long orderNumber) {
         this.orderNumber = orderNumber;
     }
 
@@ -101,11 +101,17 @@ public class Order implements Serializable {
         this.receipt = receipt;
     }
 
-    public void updateReceipt(Item item, int quantity) {
+    public void updateReceipt(Order order, Item item, int quantity) {
+        Map<Item, Integer> items = order.getItems();
         Currency currency = item.getCurrency();
-        Double curr = receipt.get(currency);
+        Double oldTotal = receipt.get(currency);
         Double price = item.getPrice();
-        receipt.put(currency, quantity * price + (curr != null ? curr : 0));
+        Double newTotal = quantity * price + (oldTotal == null ? 0 : oldTotal);
+
+        // If item was already in receipt
+        if (items.containsKey(item)) newTotal -= price * items.get(item);
+
+        receipt.put(currency, newTotal);
     }
 
     public OrderStatus getStatus() {

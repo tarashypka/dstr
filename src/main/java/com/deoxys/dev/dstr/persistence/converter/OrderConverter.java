@@ -17,13 +17,11 @@ import java.util.*;
 
 public class OrderConverter implements MongoConverter<Order> {
 
-    private static final String COLLECTION = "orders";
-
     @Override
     public Order toObject(DBObject doc) {
         Order order = new Order();
         order.setId(doc.get("_id").toString());
-        order.setOrderNumber((String) doc.get("orderNumber"));
+        order.setOrderNumber((Long) doc.get("orderNumber"));
         order.setDate((Date) doc.get("date"));
 
         DBObject customerDoc = (DBObject) doc.get("customer");
@@ -74,7 +72,7 @@ public class OrderConverter implements MongoConverter<Order> {
         Map<Item, Integer> orderItems = order.getItems();
         for (Item item : orderItems.keySet()) {
             ObjectId _itemId = new ObjectId(item.getId());
-            DBRef dbRef = new DBRef(COLLECTION, _itemId);
+            DBRef dbRef = new DBRef("items", _itemId);
             DBObject orderItemsDoc = new BasicDBObject();
             orderItemsDoc.put("id", dbRef);
             orderItemsDoc.put("quantity", orderItems.get(item));

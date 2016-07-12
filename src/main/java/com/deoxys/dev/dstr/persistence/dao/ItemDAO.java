@@ -34,13 +34,11 @@ public class ItemDAO extends MongoDAO<Item> {
 
     public Map<Item, Integer> getAllForCustomer(String email) {
         Map<Item, Integer> items = new HashMap<>();
-
         OrderDAO orderDAO = new OrderDAO(client);
         DBObject query = new BasicDBObject("customer.email", email);
         query.put("status", Order.OrderStatus.PROCESSED.getValue());
         DBCursor cursor = orderDAO.collection.find(query);
         while (cursor.hasNext()) {
-            System.out.println("in while");
             DBObject orderDoc = cursor.next();
             BasicDBList orderItemsDbl = (BasicDBList) orderDoc.get("items");
             for (Object itemObj : orderItemsDbl) {

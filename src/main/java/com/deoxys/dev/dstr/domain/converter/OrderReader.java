@@ -1,8 +1,10 @@
 package com.deoxys.dev.dstr.domain.converter;
 
+import com.deoxys.dev.dstr.domain.model.Item;
 import com.deoxys.dev.dstr.domain.model.Order;
 
 import javax.servlet.http.HttpSession;
+import java.util.Currency;
 import java.util.HashMap;
 
 /**
@@ -17,11 +19,14 @@ public class OrderReader implements HttpSessionReader<Order> {
      */
     @Override
     public Order read(HttpSession ses) {
-        Order order = new Order();
-        CustomerReader customerReader = new CustomerReader();
-        order.setCustomer(customerReader.read(ses));
-        order.setItems((HashMap) ses.getAttribute("orderItems"));
-        order.setReceipt((HashMap) ses.getAttribute("receipt"));
+        Order order = (Order) ses.getAttribute("order");
+        if (order == null) {
+            order = new Order();
+            CustomerReader customerReader = new CustomerReader();
+            order.setCustomer(customerReader.read(ses));
+            order.setItems(new HashMap<Item, Integer>());
+            order.setReceipt(new HashMap<Currency, Double>());
+        }
         return order;
     }
 }

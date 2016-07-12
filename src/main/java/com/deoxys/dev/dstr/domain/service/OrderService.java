@@ -12,6 +12,7 @@ import org.apache.log4j.Logger;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -48,7 +49,7 @@ public class OrderService extends MongoService {
          */
         Item item = itemDao.get(itemId);
         if (item.stocked() >= quantity) {
-            order.updateReceipt(item, quantity);
+            order.updateReceipt(order, item, quantity);
             order.addItem(item, quantity);
             ses.setAttribute("order", order);
         } else {
@@ -57,8 +58,9 @@ public class OrderService extends MongoService {
     }
 
     public void makeOrder(HttpServletRequest req, HttpServletResponse resp) {
+        HttpSession ses = req.getSession();
         OrderReader orderReader = new OrderReader();
-        Order order = orderReader.read(req.getSession());
+        Order order = orderReader.read(ses);
 
         /**
          * Since another Customer could have been ordered any Item
@@ -67,7 +69,11 @@ public class OrderService extends MongoService {
          * Decision to be made is whether to verify if that's true.
          */
         if (itemDao.enoughItems(order.getItems())) {
+            order.setOrderNumber(orderDao.getNextSequence("orderNumber"));
+            order.setDate(new Date());
+            order.setStatus(Order.OrderStatus.IN_PROCESS);
             orderDao.add(order);
+            ses.removeAttribute("order");
             logger.info("New order=" + order + " has been made");
         } else {
             /**
