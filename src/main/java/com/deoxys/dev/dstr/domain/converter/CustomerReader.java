@@ -12,9 +12,20 @@ import javax.servlet.http.HttpSession;
 public class CustomerReader
 implements HttpRequestReader<Customer>, HttpSessionReader<Customer> {
 
+    /**
+     * Read Customer from request.
+     *
+     * It could be Customer trying to log in,
+     * or Customer trying to register.
+     */
     @Override
     public Customer read(HttpServletRequest req) {
-        return null;
+        Customer customer = new Customer();
+        customer.setEmail(req.getParameter("email"));
+        customer.setPassword(req.getParameter("password"));
+        customer.setName(req.getParameter("name"));
+        customer.setSurname(req.getParameter("surname"));
+        return customer;
     }
 
     /**

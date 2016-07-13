@@ -32,13 +32,14 @@ public class LogoutServlet extends HttpServlet {
 
         // Invalidate the session
         HttpSession session = req.getSession(false);
-        Customer customer = (Customer) session.getAttribute("customer");
-        logger.info("Logout: invalidate session for customer=" + customer);
+
         if (session != null) {
+            Customer customer = (Customer) req.getSession().getAttribute("customer");
+            logger.info("Logout: invalidate session for customer=" + customer);
             session.invalidate();
             logger.info("Customer=" + customer + " logged out");
         } else {
-            logger.info("Customer=" + customer + " has no session for logout");
+            logger.info("Session not found");
         }
         resp.sendRedirect(req.getContextPath() + "/home");
     }

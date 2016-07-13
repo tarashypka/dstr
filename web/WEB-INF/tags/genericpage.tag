@@ -16,7 +16,7 @@
     <!-- header -->
     <c:url value="/home" var="homeURL"/>
     <a href="${homeURL}">Customers&Orders</a>
-    <c:url value="/controller" var="controller"/>
+    <c:url var="controller" value="/controller"/>
     <form action="${controller}" method="get">
         <input type="hidden" name="action" value="showItems">
         <input type="submit" value="Усі товари">
@@ -35,23 +35,8 @@
         </c:when>
         <c:otherwise>
             <c:choose>
-                <c:when test="${sessionScope.customer.role eq 'customer'}">
-                    <c:url value="/controller/customer" var="customerController"/>
-                    <form action="${customerController}" method="get">
-                        <input type="hidden" name="action" value="showItems">
-                        <input type="submit" value="Куплені товари">
-                    </form>
-                    <form action="${customerController}" method="get">
-                        <input type="hidden" name="action" value="showOrders">
-                        <input type="submit" value="Мої замовлення">
-                    </form>
-                    <form action="${customerController}" method="get">
-                        <input type="hidden" name="action" value="newOrder">
-                        <input type="submit" value="Нове замовлення">
-                    </form>
-                </c:when>
-                <c:otherwise>
-                    <c:url value="/controller/admin" var="adminController"/>
+                <c:when test="${sessionScope.customer.role eq 'admin'}">
+                    <c:url var="adminController" value="/controller/admin"/>
                     <form action="${adminController}" method="get">
                         <input type="hidden" name="action" value="showOrders">
                         <input type="submit" value="Усі замовлення">
@@ -63,6 +48,21 @@
                     <form action="${adminController}" method="get">
                         <input type="hidden" name="action" value="newItem">
                         <input type="submit" value="Додати товар">
+                    </form>
+                </c:when>
+                <c:otherwise>
+                    <c:url var="customerController" value="/controller/customer"/>
+                    <form action="${customerController}" method="get">
+                        <input type="hidden" name="action" value="showItems">
+                        <input type="submit" value="Куплені товари">
+                    </form>
+                    <form action="${customerController}" method="get">
+                        <input type="hidden" name="action" value="showOrders">
+                        <input type="submit" value="Мої замовлення">
+                    </form>
+                    <form action="${customerController}" method="get">
+                        <input type="hidden" name="action" value="newOrder">
+                        <input type="submit" value="Нове замовлення">
                     </form>
                 </c:otherwise>
             </c:choose>

@@ -76,7 +76,7 @@ public class MainController extends HttpServlet {
         switch (action) {
             case "login":
                 customerService.login(req);
-                if (req.getParameter("error") == null) {
+                if (req.getAttribute("error") == null) {
                     resp.sendRedirect(req.getContextPath() + HOME_LINK);
                 } else req.getRequestDispatcher(LOGIN_JSP).forward(req, resp);
                 break;
@@ -88,7 +88,9 @@ public class MainController extends HttpServlet {
                 break;
             case "logout":
                 customerService.logout(req);
-                resp.sendRedirect(req.getContextPath() + HOME_LINK);
+                if (req.getParameter("error") == null) {
+                    resp.sendRedirect(req.getContextPath() + HOME_LINK);
+                } else resp.sendRedirect(req.getHeader("referer"));
                 break;
             default:
                 throw new ServletException("Wrong action");

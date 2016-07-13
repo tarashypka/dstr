@@ -154,17 +154,12 @@
     </error-page>
     -->
 
-    <!-- Filter all incoming requests to validate the session -->
-    <filter>
-        <filter-name>AuthenticationFilter</filter-name>
-        <filter-class>com.deoxys.dev.dstr.presentation.filter.AuthorizationFilter</filter-class>
-    </filter>
-    <filter-mapping>
-        <filter-name>AuthenticationFilter</filter-name>
-        <url-pattern>/*</url-pattern>
-    </filter-mapping>
+    <!--
+    Set custom encoding for all incoming requests
 
-    <!-- Set custom encoding for all incoming requests -->
+    It's important that EncodingFilter is called before other filters
+    that can change request body. Otherwise, it will not encode properly.
+    -->
     <filter>
         <filter-name>EncodingFilter</filter-name>
         <filter-class>com.deoxys.dev.dstr.presentation.filter.EncodingFilter</filter-class>
@@ -175,6 +170,16 @@
     </filter>
     <filter-mapping>
         <filter-name>EncodingFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
+    <!-- Filter all incoming requests to validate the session -->
+    <filter>
+        <filter-name>AuthenticationFilter</filter-name>
+        <filter-class>com.deoxys.dev.dstr.presentation.filter.AuthorizationFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>AuthenticationFilter</filter-name>
         <url-pattern>/*</url-pattern>
     </filter-mapping>
 </web-app>

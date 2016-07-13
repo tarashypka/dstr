@@ -22,13 +22,13 @@
   </jsp:attribute>
 
   <jsp:body>
-    <c:url value="/login" var="loginURL"></c:url>
-
-    <form action='<c:out value="${loginURL}"></c:out>' method="post">
-      <input type="text" value="${requestScope.email}"
-             placeholder="Електронна пошта" name="email"><br>
-      <input type="password"
-             placeholder="Пароль" name="password"><br>
+    <c:url var="controller" value="/controller"/>
+    <form action="${controller}" method="post">
+      <input type="hidden" name="action" value="login">
+      <input type="text" name="email"
+             placeholder="Електронна пошта?"><br>
+      <input type="password" name="password"
+             placeholder="Пароль?"><br>
       <input type="submit" value="Увійти в систему">
     </form>
   </jsp:body>

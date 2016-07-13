@@ -94,6 +94,7 @@ public class AuthorizationFilter implements Filter {
 
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
             throws ServletException, IOException {
+
         HttpServletRequest req = (HttpServletRequest) request;
         HttpServletResponse resp = (HttpServletResponse) response;
         String uri = req.getRequestURI();
@@ -109,16 +110,34 @@ public class AuthorizationFilter implements Filter {
             if (customer == null) {
                 req.getRequestDispatcher(LOGIN_LINK).forward(req, resp);
             } else throw new ServletException("Unauthorized access");
-        } else chain.doFilter(request, response);
+        } else chain.doFilter(req, resp);
     }
 
+
+
     private boolean allowed(Customer customer, String uri, String action) {
-        logger.info("Requested Resource::" + uri);
-        logger.info("Requested Action::" + action);
+        if (isResource(uri)) return allowedResource(customer, uri);
         return allowedUri(customer, uri) && allowedAction(customer, action);
     }
 
+    private boolean isResource(String uri) {
+        return uri.startsWith("/resources");
+    }
+
+    /**
+     *      /resources          public resources
+     *      /resources/admin    admin resources
+     *      /resources/customer customer resources
+     **/
+    private boolean allowedResource(Customer customer, String resource) {
+        logger.info("Requested Resource::" + resource);
+        resource = resource.split("/resources", 2)[1];
+        if (customer.isAdmin()) return resource.startsWith("/admin");
+        return ! customer.isCustomer() || resource.startsWith("/customer");
+    }
+
     private boolean allowedUri(Customer customer, String uri) {
+        logger.info("Requested URI::" + uri);
         if (uri.equals("/") || uri.equals("home")) return true;
         if (uri.equals(MAIN_CONTROLLER)) return true;
         if (customer == null) return false;
@@ -128,6 +147,7 @@ public class AuthorizationFilter implements Filter {
     }
 
     private boolean allowedAction(Customer customer, String action) {
+        logger.info("Requested Action::" + action);
         if (action == null || publicActions.contains(action)) return true;
         if (customer == null) return notAuthActions.contains(action);
         if (authActions.contains(action)) return true;

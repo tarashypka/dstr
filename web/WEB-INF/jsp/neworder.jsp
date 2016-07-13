@@ -22,7 +22,7 @@
   </jsp:attribute>
 
   <jsp:body>
-    <c:url var="customerControllerURL" value="/controller/customer"/>
+    <c:url var="customerController" value="/controller/customer"/>
     <c:set var="order" value="${sessionScope.order}"/>
     <c:if test="${order ne null and order.items ne null}">
       <table id="order">
@@ -41,7 +41,7 @@
           </tr>
         </c:forEach>
         <tr>
-          <form action="${customerControllerURL}" method="post">
+          <form action="${customerController}" method="post">
             <input type="hidden" name="action" value="makeOrder">
             <td><input type="submit" value="Зробити замовлення"></td>
           </form>
@@ -65,19 +65,19 @@
           <th>Залишилось</th>
         </tr>
         <c:forEach items="${sessionScope.items}" var="item">
-          <c:url value="/controller" var="controller">
+          <c:url var="controller" value="/controller">
             <c:param name="action" value="showItem"/>
-            <c:param name="itemId" value="${item.id}"/>
+            <c:param name="id" value="${item.id}"/>
           </c:url>
           <tr>
             <td>
               <a href="${controller}"><c:out value="${item.id}"/></a>
             </td>
-            <td><c:out value="${item.category}"/></td>
-            <td><c:out value="${item.price}"/></td>
-            <td><c:out value="${item.currency}"/></td>
-            <td><c:out value="${item.status.stocked}"/></td>
-            <form action="${customerControllerURL}" method="post">
+            <td><c:out value="${item.category}">Category?</c:out></td>
+            <td><c:out value="${item.price}">Price?</c:out></td>
+            <td><c:out value="${item.currency}">Currency?</c:out></td>
+            <td><c:out value="${item.status.stocked}">How much in stock?</c:out></td>
+            <form action="${customerController}" method="post">
               <input type="hidden" name="action" value="addOrderItem">
               <input type="hidden" name="id" value="${item.id}"/>
               <td><input type="number" name="quantity" placeholder="Кількість"></td>
