@@ -39,7 +39,6 @@ public class CustomerServlet extends HttpServlet {
         try {
             CustomerDAO customerDAO = new CustomerDAO(source);
             Customer customer = customerDAO.get(id);
-            customerDAO.closeConnection();
             if (customer != null) {
                 MongoClient mongo = (MongoClient) req.getServletContext()
                         .getAttribute("MONGO_CLIENT");

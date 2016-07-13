@@ -55,7 +55,6 @@ public class LoginServlet extends HttpServlet {
                 req.setAttribute("error", "Електронну пошту введено невірно");
                 req.getRequestDispatcher("/WEB-INF/jsp/login.jsp").forward(req, resp);
             }
-            customerDAO.closeConnection();
         } catch (SQLException ex) {
             logger.error("DB Connection/Select error: " + ex.getMessage());
             throw new ServletException("DB Connection/Select error: " + ex.getMessage());

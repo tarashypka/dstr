@@ -18,14 +18,14 @@ import java.util.List;
  * Created by deoxys on 07.07.16.
  */
 
-public class OrderService extends MongoService {
+public class OrderService extends MongoService<Order> {
     Logger logger = Logger.getLogger(OrderService.class);
 
     private OrderDAO orderDao;
     private ItemDAO itemDao;
 
     public OrderService() {
-        super();
+        super(new OrderReader());
         orderDao = new OrderDAO(mongo);
         itemDao = new ItemDAO(mongo);
     }
@@ -50,8 +50,7 @@ public class OrderService extends MongoService {
 
     public void addItemToOrder(HttpServletRequest req) {
         HttpSession ses = req.getSession();
-        OrderReader orderReader = new OrderReader();
-        Order order = orderReader.read(ses);
+        Order order = sessionReader.read(ses);
         String itemId = req.getParameter("id");
         int quantity = Integer.parseInt(req.getParameter("quantity"));
 
@@ -72,8 +71,7 @@ public class OrderService extends MongoService {
 
     public void makeOrder(HttpServletRequest req) {
         HttpSession ses = req.getSession();
-        OrderReader orderReader = new OrderReader();
-        Order order = orderReader.read(ses);
+        Order order = sessionReader.read(ses);
 
         /**
          * Since another Customer could have been ordered any Item

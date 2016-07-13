@@ -1,5 +1,7 @@
 package com.deoxys.dev.dstr.domain.service;
 
+import com.deoxys.dev.dstr.domain.converter.HttpRequestReader;
+import com.deoxys.dev.dstr.domain.converter.HttpSessionReader;
 import com.mongodb.MongoClient;
 
 import javax.naming.InitialContext;
@@ -10,11 +12,13 @@ import javax.naming.InitialContext;
  * Service that uses Mongo Connection Pool
  */
 
-public abstract class MongoService  {
+public abstract class MongoService<T> {
 
     public MongoClient mongo;
+    protected HttpRequestReader<T> requestReader;
+    protected HttpSessionReader<T> sessionReader;
 
-    public MongoService() {
+    public <T extends HttpRequestReader & HttpSessionReader> MongoService(T reader) {
         try {
             InitialContext ctx = new InitialContext();
             if (ctx == null) {
@@ -27,5 +31,7 @@ public abstract class MongoService  {
         } catch (Exception ex) {
             ex.printStackTrace();
         }
+        requestReader = reader;
+        sessionReader = reader;
     }
 }

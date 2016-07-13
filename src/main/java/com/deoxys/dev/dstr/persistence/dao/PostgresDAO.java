@@ -10,14 +10,10 @@ import java.util.List;
 
 public abstract class PostgresDAO<T> {
 
-    protected Connection connection;
+    DataSource dataSource;
 
     public PostgresDAO(DataSource ds) {
-        try {
-            connection = ds.getConnection();
-        } catch (SQLException ex) {
-            ex.printStackTrace();
-        }
+        dataSource = ds;
     }
 
     public abstract T get(long id) throws SQLException;
@@ -26,8 +22,4 @@ public abstract class PostgresDAO<T> {
     public abstract boolean update(T obj) throws SQLException;
     public abstract boolean delete(long id) throws SQLException;
     public abstract long count() throws SQLException;
-
-    public void closeConnection() throws SQLException {
-        connection.close();
-    }
 }

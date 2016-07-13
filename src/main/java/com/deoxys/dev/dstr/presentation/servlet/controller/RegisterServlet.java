@@ -61,7 +61,6 @@ public class RegisterServlet extends HttpServlet {
                     req.setAttribute("errtype", "duplicate");
                     req.getRequestDispatcher("/WEB-INF/jsp/register.jsp").forward(req, resp);
                 }
-                customerDAO.closeConnection();
             } catch (SQLException ex) {
                 logger.error("DB Connection/Insert error: " + ex.getMessage());
                 throw new ServletException("DB Connection/Insert error: " + ex.getMessage());

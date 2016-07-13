@@ -40,7 +40,6 @@ public class CustomerStatusServlet extends HttpServlet {
             } else {
                 logger.error("Customer's with id=" + id + " status was not changed");
             }
-            customerDAO.closeConnection();
         } catch (SQLException ex) {
             logger.info("DB Connection/Delete error: " + ex.getMessage());
             throw new ServletException("DB Connection/Delete error: " + ex.getMessage());

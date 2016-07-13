@@ -1,6 +1,7 @@
 package com.deoxys.dev.dstr.domain.service;
 
 import com.deoxys.dev.dstr.domain.converter.CustomerReader;
+import com.deoxys.dev.dstr.domain.converter.ItemReader;
 import com.deoxys.dev.dstr.domain.model.Customer;
 import com.deoxys.dev.dstr.domain.model.Item;
 import com.deoxys.dev.dstr.persistence.dao.ItemDAO;
@@ -14,13 +15,13 @@ import java.util.Map;
  * Created by deoxys on 07.07.16.
  */
 
-public class ItemService extends MongoService {
+public class ItemService extends MongoService<Item> {
     Logger logger = Logger.getLogger(ItemService.class);
 
     private ItemDAO itemDao;
 
     public ItemService() {
-        super();
+        super(new ItemReader());
         itemDao = new ItemDAO(mongo);
     }
 

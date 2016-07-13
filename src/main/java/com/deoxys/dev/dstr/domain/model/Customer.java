@@ -69,6 +69,10 @@ public class Customer implements Serializable {
         this.password = password;
     }
 
+    public boolean validPassword(String password) {
+        return this.password.equals(password);
+    }
+
     public String getName() {
         return name;
     }

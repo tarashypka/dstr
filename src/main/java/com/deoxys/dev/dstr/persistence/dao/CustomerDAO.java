@@ -76,113 +76,138 @@ public class CustomerDAO extends PostgresDAO<Customer> {
 
     @Override
     public Customer get(long id) throws SQLException {
-        PreparedStatement stmt = connection.prepareStatement(SELECT_CUSTOMER_BY_ID);
-        stmt.setLong(1, id);
-        ResultSet rs = stmt.executeQuery();
+        try (Connection conn = dataSource.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(SELECT_CUSTOMER_BY_ID)) {
 
-        if (rs.next()) {
-            return new Customer(
-                    rs.getString("email"),
-                    rs.getString("password"),
-                    rs.getString("name"),
-                    rs.getString("surname"),
-                    rs.getString("role"),
-                    rs.getBoolean("enabled"));
+            stmt.setLong(1, id);
+            try (ResultSet rs = stmt.executeQuery()) {
+                return rs.next()
+                        ? new Customer(
+                                rs.getString("email"),
+                                rs.getString("password"),
+                                rs.getString("name"),
+                                rs.getString("surname"),
+                                rs.getString("role"),
+                                rs.getBoolean("enabled"))
+                        : null;
+            }
         }
-        return null;
     }
 
     public Customer get(String email) throws SQLException {
-        PreparedStatement stmt = connection.prepareStatement(SELECT_CUSTOMER_BY_EMAIL);
-        stmt.setString(1, email);
-        ResultSet rs = stmt.executeQuery();
+        try (Connection conn = dataSource.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(SELECT_CUSTOMER_BY_EMAIL)) {
 
-        if (rs.next()) {
-            return new Customer(
-                    rs.getString("email"),
-                    rs.getString("password"),
-                    rs.getString("name"),
-                    rs.getString("surname"),
-                    rs.getString("role"),
-                    rs.getBoolean("enabled"));
+            stmt.setString(1, email);
+            try (ResultSet rs = stmt.executeQuery()) {
+                return rs.next()
+                        ? new Customer(
+                                rs.getString("email"),
+                                rs.getString("password"),
+                                rs.getString("name"),
+                                rs.getString("surname"),
+                                rs.getString("role"),
+                                rs.getBoolean("enabled"))
+                        : null;
+            }
         }
-        return null;
     }
 
     @Override
     public List<Customer> getAll() throws SQLException {
-        Statement stmt = connection.createStatement();
-        ResultSet rs = stmt.executeQuery(SELECT_ALL_CUSTOMERS);
-
         List<Customer> customers = new ArrayList<>();
-        while (rs.next()) {
-            customers.add(new Customer(
-                    rs.getString("email"),
-                    rs.getString("password"),
-                    rs.getString("name"),
-                    rs.getString("surname"),
-                    rs.getString("role"),
-                    rs.getBoolean("enabled")));
+        try (Connection conn = dataSource.getConnection();
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(SELECT_ALL_CUSTOMERS)) {
+
+            while (rs.next())
+                customers.add(new Customer(
+                        rs.getString("email"),
+                        rs.getString("password"),
+                        rs.getString("name"),
+                        rs.getString("surname"),
+                        rs.getString("role"),
+                        rs.getBoolean("enabled")));
         }
         return customers;
     }
 
     @Override
     public boolean add(Customer customer) throws SQLException {
-        PreparedStatement stmt = connection.prepareStatement(INSERT_CUSTOMER);
-        stmt.setString(1, customer.getEmail());
-        stmt.setString(2, customer.getPassword());
-        stmt.setString(3, customer.getName());
-        stmt.setString(4, customer.getSurname());
-        if (stmt.executeUpdate() != 1) return false;
-        long id = getId(customer);
-        if (id < 0) return false;
-        customer.setId(id);
-        return true;
+        try (Connection conn = dataSource.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(INSERT_CUSTOMER)) {
+
+            stmt.setString(1, customer.getEmail());
+            stmt.setString(2, customer.getPassword());
+            stmt.setString(3, customer.getName());
+            stmt.setString(4, customer.getSurname());
+            if (stmt.executeUpdate() != 1) return false;
+            long id = getId(customer);
+            if (id < 0) return false;
+            customer.setId(id);
+            return true;
+        }
     }
 
     @Override
     public boolean update(Customer customer) throws SQLException {
-        PreparedStatement stmt = connection.prepareStatement(UPDATE_CUSTOMER_BY_ID);
-        stmt.setString(1, customer.getEmail());
-        stmt.setString(2, customer.getPassword());
-        stmt.setString(3, customer.getName());
-        stmt.setString(4, customer.getSurname());
-        stmt.setString(5, customer.getEmail());
-        return stmt.executeUpdate() == 1;
+        try (Connection conn = dataSource.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(UPDATE_CUSTOMER_BY_ID)) {
+
+            stmt.setString(1, customer.getEmail());
+            stmt.setString(2, customer.getPassword());
+            stmt.setString(3, customer.getName());
+            stmt.setString(4, customer.getSurname());
+            stmt.setString(5, customer.getEmail());
+            return stmt.executeUpdate() == 1;
+        }
     }
 
     @Override
     public boolean delete(long id) throws SQLException {
-        PreparedStatement stmt = connection.prepareStatement(DELETE_CUSTOMER_BY_ID);
-        stmt.setLong(1, id);
-        return stmt.executeUpdate() == 1;
+        try (Connection conn = dataSource.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(DELETE_CUSTOMER_BY_ID)) {
+
+            stmt.setLong(1, id);
+            return stmt.executeUpdate() == 1;
+        }
     }
 
     @Override
     public long count() throws SQLException {
-        Statement stmt = connection.createStatement();
-        ResultSet rs = stmt.executeQuery(COUNT_CUSTOMERS);
-        return rs.next() ? rs.getLong("count") : -1;
+        try (Connection conn = dataSource.getConnection();
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(COUNT_CUSTOMERS)) {
+
+            return rs.next() ? rs.getLong("count") : -1;
+        }
     }
 
     private long getId(Customer customer) throws SQLException {
-        PreparedStatement stmt = connection.prepareStatement(SELECT_ID_BY_EMAIL);
-        stmt.setString(1, customer.getEmail());
-        ResultSet rs = stmt.executeQuery();
-        if ( ! rs.next()) return -1;
-        return rs.getLong("id");
+        try (Connection conn = dataSource.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(SELECT_ID_BY_EMAIL)) {
+
+            stmt.setString(1, customer.getEmail());
+            try (ResultSet rs = stmt.executeQuery()) {
+                return rs.next() ? rs.getLong("id") : -1;
+            }
+        }
     }
 
     public boolean updateStatus(long id) throws SQLException {
-        PreparedStatement stmt = connection.prepareStatement(SELECT_STATUS_BY_ID);
-        stmt.setLong(1, id);
-        ResultSet rs = stmt.executeQuery();
-        if ( ! rs.next()) return false;
-        stmt = connection.prepareStatement(UPDATE_STATUS_BY_ID);
-        stmt.setString(1, COLLECTION);
-        stmt.setBoolean(2, ! rs.getBoolean("enabled"));
-        stmt.setLong(3, id);
-        return stmt.executeUpdate() == 1;
+        try (Connection conn = dataSource.getConnection();
+             PreparedStatement stmt1 = conn.prepareStatement(SELECT_STATUS_BY_ID)) {
+
+            stmt1.setLong(1, id);
+            try (ResultSet rs = stmt1.executeQuery();
+                 PreparedStatement stmt2 = conn.prepareStatement(UPDATE_STATUS_BY_ID)) {
+
+                if ( ! rs.next()) return false;
+                stmt2.setString(1, COLLECTION);
+                stmt2.setBoolean(2, ! rs.getBoolean("enabled"));
+                stmt2.setLong(3, id);
+                return stmt2.executeUpdate() == 1;
+            }
+        }
     }
 }

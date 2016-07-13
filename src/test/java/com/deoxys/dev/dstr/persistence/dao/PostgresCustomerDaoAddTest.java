@@ -62,9 +62,4 @@ public final class PostgresCustomerDaoAddTest {
     public void tearDown() throws SQLException {
         assertTrue(customerDAO.delete(mike.getId()));
     }
-
-    @AfterClass
-    public static void tearDownClass() throws SQLException {
-        customerDAO.closeConnection();
-    }
 }

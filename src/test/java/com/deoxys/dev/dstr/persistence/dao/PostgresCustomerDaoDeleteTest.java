@@ -39,9 +39,4 @@ public final class PostgresCustomerDaoDeleteTest extends PostgresTestDataSource 
         long nCustomersNew = customerDAO.count();
         assertEquals(nCustomersNew, nCustomersOld - 1);
     }
-
-    @AfterClass
-    public static void tearDownClass() throws SQLException {
-        customerDAO.closeConnection();
-    }
 }
