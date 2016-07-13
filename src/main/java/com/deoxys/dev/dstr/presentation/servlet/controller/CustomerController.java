@@ -23,14 +23,18 @@ public class CustomerController extends HttpServlet {
     private static ItemService itemService = new ItemService();
 
     private static String
-            CUSTOMER_ITEMS_LINK,
-            CUSTOMER_ORDERS_LINK,
-            CUSTOMER_NEW_ORDER_LINK;
+            CUSTOMER_JSP,
+            CUSTOMER_ITEMS_JSP,
+            CUSTOMER_ORDER_JSP,
+            CUSTOMER_ORDERS_JSP,
+            NEW_ORDER_JSP;
 
     static {
-        CUSTOMER_ITEMS_LINK = "/WEB-INF/jsp/customer/items.jsp";
-        CUSTOMER_ORDERS_LINK = "/WEB-INF/jsp/customer/orders.jsp";
-        CUSTOMER_NEW_ORDER_LINK = "/WEB-INF/jsp/orderadd.jsp";
+        CUSTOMER_JSP = "/WEB-INF/jsp/customer.jsp";
+        CUSTOMER_ITEMS_JSP = "/WEB-INF/jsp/customer/items.jsp";
+        CUSTOMER_ORDER_JSP = "/WEB-INF/jsp/customer/order.jsp";
+        CUSTOMER_ORDERS_JSP = "/WEB-INF/jsp/customer/orders.jsp";
+        NEW_ORDER_JSP = "/WEB-INF/jsp/neworder.jsp";
     }
 
     @Override
@@ -38,22 +42,31 @@ public class CustomerController extends HttpServlet {
             throws ServletException, IOException {
 
         String action = req.getParameter("action");
-
         if (action == null) throw new ServletException("Wrong operation");
 
-        if (action.equals("showItems")) {
-            itemService.loadCustomerItems(req, resp);
-            req.getRequestDispatcher(CUSTOMER_ITEMS_LINK).forward(req, resp);
+        switch (action) {
+            case "showCustomer":
+                customerService.loadCustomer(req);
+                req.getRequestDispatcher(CUSTOMER_JSP).forward(req, resp);
+                break;
+            case "showItems":
+                itemService.loadCustomerItems(req);
+                req.getRequestDispatcher(CUSTOMER_ITEMS_JSP).forward(req, resp);
+                break;
+            case "showOrder":
+                orderService.loadCustomerOrder(req);
+                req.getRequestDispatcher(CUSTOMER_ORDER_JSP).forward(req, resp);
+                break;
+            case "showOrders":
+                orderService.loadCustomerOrders(req);
+                req.getRequestDispatcher(CUSTOMER_ORDERS_JSP).forward(req, resp);
+                break;
+            case "newOrder":
+                itemService.loadItems(req);
+                req.getRequestDispatcher(NEW_ORDER_JSP).forward(req, resp);
+            default:
+                throw new ServletException("Wrong action");
         }
-        else if (action.equals("showOrders")) {
-            orderService.loadCustomerOrders(req, resp);
-            req.getRequestDispatcher(CUSTOMER_ORDERS_LINK).forward(req, resp);
-        }
-        else if (action.equals("makeOrder")) {
-            itemService.loadItems(req, resp);
-            req.getRequestDispatcher(CUSTOMER_NEW_ORDER_LINK).forward(req, resp);
-        }
-        else throw new ServletException("Wrong action");
     }
 
     @Override
@@ -61,22 +74,27 @@ public class CustomerController extends HttpServlet {
             throws ServletException, IOException {
 
         String action = req.getParameter("action");
-
         if (action == null) throw new ServletException("Wrong operation");
 
-        if (action.equals("addOrderItem")) {
-            orderService.addItemToOrder(req, resp);
-            req.getRequestDispatcher(CUSTOMER_NEW_ORDER_LINK).forward(req, resp);
-        } else if (action.equals("makeOrder")) {
-            orderService.makeOrder(req, resp);
-            orderService.loadCustomerOrders(req, resp);
-            req.getRequestDispatcher(CUSTOMER_ORDERS_LINK).forward(req, resp);
+        switch (action) {
+            case "addOrderItem":
+                orderService.addItemToOrder(req);
+                req.getRequestDispatcher(NEW_ORDER_JSP).forward(req, resp);
+                break;
+            case "newOrder":
+                orderService.makeOrder(req);
+                if (req.getParameter("error") == null) {
+                    orderService.loadCustomerOrders(req);
+                    req.getRequestDispatcher(CUSTOMER_ORDERS_JSP).forward(req, resp);
+                } else req.getRequestDispatcher(NEW_ORDER_JSP).forward(req, resp);
+                break;
+            case "changeOrderStatus":
+                orderService.swapOrderStatus(req);
+                orderService.loadCustomerOrders(req);
+                req.getRequestDispatcher(CUSTOMER_ORDERS_JSP).forward(req, resp);
+                break;
+            default:
+                throw new ServletException("Wrong action");
         }
-        else if (action.equals("changeOrderStatus")) {
-            orderService.changeOrderStatus(req, resp);
-            orderService.loadCustomerOrders(req, resp);
-            req.getRequestDispatcher(CUSTOMER_ORDERS_LINK).forward(req, resp);
-        }
-        else throw new ServletException("Wrong action");
     }
 }

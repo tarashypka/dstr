@@ -130,7 +130,7 @@ public class ItemDAO extends MongoDAO<Item> {
      *      positive: item should be added to reserve
      *      negative: item should be removed from reserve
      */
-    public boolean changedReservedStatus(Item item, int amount) {
+    public boolean changeReservedStatus(Item item, int amount) {
         DBObject query = new BasicDBObject("_id", new ObjectId(item.getId()));
         int newReservedVal = item.reserved() + amount;
         DBObject update = new BasicDBObject("status.reserved", newReservedVal);

@@ -157,62 +157,7 @@
     <!-- Filter all incoming requests to validate the session -->
     <filter>
         <filter-name>AuthenticationFilter</filter-name>
-        <filter-class>com.deoxys.dev.dstr.presentation.filter.AuthenticationFilter</filter-class>
-        <init-param>
-            <param-name>public</param-name>
-            <param-value>
-                /home
-                /item
-                /items
-                /error
-                /favicon.ico
-                /controller
-            </param-value>
-        </init-param>
-        <init-param>
-            <param-name>authFalse</param-name>
-            <param-value>
-                /login
-                /register
-            </param-value>
-        </init-param>
-        <init-param>
-            <param-name>authTrue</param-name>
-            <param-value>
-                /logout
-                /customer/items
-                /customer/orders
-                /order
-                /order/status
-            </param-value>
-        </init-param>
-        <init-param>
-            <param-name>customerPrivate</param-name>
-            <param-value>
-                /order/add
-                /order/edit
-                /order/delete
-                /controller/customer
-            </param-value>
-        </init-param>
-        <init-param>
-            <param-name>adminPrivate</param-name>
-            <param-value>
-                /item/add
-                /item/edit
-                /item/delete
-                /orders
-                /customer
-                /customer/status
-                /customers
-            </param-value>
-        </init-param>
-        <init-param>
-            <param-name>publicResources</param-name>
-            <param-value>
-                /resources
-            </param-value>
-        </init-param>
+        <filter-class>com.deoxys.dev.dstr.presentation.filter.AuthorizationFilter</filter-class>
     </filter>
     <filter-mapping>
         <filter-name>AuthenticationFilter</filter-name>

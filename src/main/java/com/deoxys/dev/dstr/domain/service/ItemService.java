@@ -7,7 +7,6 @@ import com.deoxys.dev.dstr.persistence.dao.ItemDAO;
 import org.apache.log4j.Logger;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.util.Map;
 
@@ -29,17 +28,24 @@ public class ItemService extends MongoService {
         return itemDao.count();
     }
 
-    public void loadItem(HttpServletRequest req, HttpServletResponse resp) {
+    public void loadItem(HttpServletRequest req) {
         String itemId = req.getParameter("itemId");
         req.setAttribute("item",itemDao.get(itemId));
     }
 
-    public void loadItems(HttpServletRequest req, HttpServletResponse resp) {
+    public void loadItems(HttpServletRequest req) {
         HttpSession ses = req.getSession();
         ses.setAttribute("items", itemDao.getAll());
     }
 
-    public void loadCustomerItems(HttpServletRequest req, HttpServletResponse resp) {
+    public void addItem(HttpServletRequest req) {
+    }
+
+    public void editItem(HttpServletRequest req) {
+
+    }
+
+    public void loadCustomerItems(HttpServletRequest req) {
         CustomerReader customerReader = new CustomerReader();
         Customer customer = customerReader.read(req.getSession());
         Map<Item, Integer> items = itemDao.getAllForCustomer(customer.getEmail());
@@ -139,7 +145,7 @@ public class ItemService extends MongoService {
     public boolean takeOrderItemsFromReserve(Map<Item, Integer> orderItems) {
 
         for (Item item : orderItems.keySet()) {
-            if ( ! itemDao.changedReservedStatus(item, - orderItems.get(item))) {
+            if ( ! itemDao.changeReservedStatus(item, -orderItems.get(item))) {
                 return false;
             }
         }
@@ -159,7 +165,7 @@ public class ItemService extends MongoService {
     public boolean addOrderItemsToReserve(Map<Item, Integer> orderItems) {
 
         for (Item item : orderItems.keySet()) {
-            if ( ! itemDao.changedReservedStatus(item, + orderItems.get(item))) {
+            if ( ! itemDao.changeReservedStatus(item, +orderItems.get(item))) {
                 return false;
             }
         }

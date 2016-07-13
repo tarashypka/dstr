@@ -65,13 +65,13 @@
           <th>Залишилось</th>
         </tr>
         <c:forEach items="${sessionScope.items}" var="item">
-          <c:url value="/controller" var="controllerURL">
+          <c:url value="/controller" var="controller">
             <c:param name="action" value="showItem"/>
             <c:param name="itemId" value="${item.id}"/>
           </c:url>
           <tr>
             <td>
-              <a href="${controllerURL}"><c:out value="${item.id}"/></a>
+              <a href="${controller}"><c:out value="${item.id}"/></a>
             </td>
             <td><c:out value="${item.category}"/></td>
             <td><c:out value="${item.price}"/></td>

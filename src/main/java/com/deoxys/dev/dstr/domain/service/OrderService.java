@@ -10,7 +10,6 @@ import com.deoxys.dev.dstr.persistence.dao.OrderDAO;
 import org.apache.log4j.Logger;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.util.Date;
 import java.util.List;
@@ -35,7 +34,21 @@ public class OrderService extends MongoService {
         return orderDao.count();
     }
 
-    public void addItemToOrder(HttpServletRequest req, HttpServletResponse resp) {
+    public void loadOrders(HttpServletRequest req) {
+    }
+
+    public void loadCustomerOrder(HttpServletRequest req) {
+
+    }
+
+    public void loadCustomerOrders(HttpServletRequest req) {
+        CustomerReader customerReader = new CustomerReader();
+        Customer customer = customerReader.read(req.getSession());
+        List<Order> orders = orderDao.getAllForCustomer(customer.getEmail());
+        req.setAttribute("orders", orders);
+    }
+
+    public void addItemToOrder(HttpServletRequest req) {
         HttpSession ses = req.getSession();
         OrderReader orderReader = new OrderReader();
         Order order = orderReader.read(ses);
@@ -57,7 +70,7 @@ public class OrderService extends MongoService {
         }
     }
 
-    public void makeOrder(HttpServletRequest req, HttpServletResponse resp) {
+    public void makeOrder(HttpServletRequest req) {
         HttpSession ses = req.getSession();
         OrderReader orderReader = new OrderReader();
         Order order = orderReader.read(ses);
@@ -84,14 +97,10 @@ public class OrderService extends MongoService {
         }
     }
 
-    public void loadCustomerOrders(HttpServletRequest req, HttpServletResponse resp) {
-        CustomerReader customerReader = new CustomerReader();
-        Customer customer = customerReader.read(req.getSession());
-        List<Order> orders = orderDao.getAllForCustomer(customer.getEmail());
-        req.setAttribute("orders", orders);
+    public void swapOrderStatus(HttpServletRequest req) {
     }
 
-    public void changeOrderStatus(HttpServletRequest req, HttpServletResponse resp) {
+    public void changeOrderStatus(HttpServletRequest req) {
         String orderId = req.getParameter("orderId");
         String status = req.getParameter("orderNewStatus");
         Order.OrderStatus newStatus = Order.OrderStatus.valueOf(status);

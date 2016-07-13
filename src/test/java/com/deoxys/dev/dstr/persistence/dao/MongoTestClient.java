@@ -13,6 +13,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,17 +24,18 @@ import java.util.List;
 public class MongoTestClient {
 
     private static MongoClient mongo;
+    private static final String CONFIG_RESOURCE;
+
+    static {
+        CONFIG_RESOURCE = "mongo.xml";
+    }
 
     public static MongoClient getMongo() {
-
         if (mongo != null) {
             return mongo;
         }
-
-        String prjPath = System.getProperty("user.dir");
-        String confPath =  prjPath + "/src/test/resources/mongo.xml";
-        File conf = new File(confPath);
-
+        URL confUrl = MongoTestClient.class.getClassLoader().getResource(CONFIG_RESOURCE);
+        File conf = new File(confUrl.toString());
         DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
         Document doc = null;
         try {
@@ -42,7 +44,6 @@ public class MongoTestClient {
         } catch (ParserConfigurationException | SAXException | IOException ex) {
             ex.printStackTrace();
         }
-
         doc.getDocumentElement().normalize();
 
         List<ServerAddress> seeds = new ArrayList<>();

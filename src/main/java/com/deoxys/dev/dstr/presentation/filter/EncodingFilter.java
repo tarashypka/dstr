@@ -3,14 +3,12 @@ package com.deoxys.dev.dstr.presentation.filter;
 import org.apache.log4j.Logger;
 
 import javax.servlet.*;
-import javax.servlet.annotation.WebFilter;
 import java.io.IOException;
 
 /**
  * Created by deoxys on 01.06.16.
  */
 
-@WebFilter(filterName = "EncodingFilter")
 public class EncodingFilter implements Filter {
     private Logger logger = Logger.getLogger(EncodingFilter.class);
 
@@ -29,6 +27,7 @@ public class EncodingFilter implements Filter {
             throws ServletException, IOException {
 
         req.setCharacterEncoding(encoding);
+        System.out.println("encoding");
         chain.doFilter(req, resp);
     }
 

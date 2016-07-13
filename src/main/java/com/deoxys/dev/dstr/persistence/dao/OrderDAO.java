@@ -36,7 +36,7 @@ public class OrderDAO extends MongoDAO<Order> {
         for (Item item : orderItems.keySet()) {
             int amount = orderItems.get(item);
             itemDAO.changeStockedStatus(item, - amount);
-            itemDAO.changedReservedStatus(item, + amount);
+            itemDAO.changeReservedStatus(item, +amount);
         }
 
         DBObject doc = converter.toDocument(order);

@@ -1,27 +1,28 @@
 # dstr
 ###### *Study project*
 
+
 ### Description
 
 Online store.
 
 Main entities: Customer, Order, Item.
 
-Admin can add Items, change Order status (Rejected, In process, Processed), ban Customer.
-Customer can make, reject Order.
+Customer can make, reject Order.  
+Admin can add Items, change Order status (Rejected, In process, Processed), ban Customer.  
 
 System is supposed to manage large amount of data (to be scalable).
 
-Polyglot persistence:
-Customers (relational data) are stored in PostgreSQL.
+Polyglot persistence:  
+Customers (relational data) are stored in PostgreSQL.  
 Orders and Items (non-relational data) are stored in MongoDB.
 
-MongoDB is pre-configured with replica of 3 shards.
-SlaveOk is configured, so Customer can read (but not write) data only with 1 shard alive.
+MongoDB is pre-configured with replica of 3 shards.  
+SlaveOk is configured, so Customer can read (but not write) data only with 1 shard alive.  
 
-Tomcat is pre-configured with Load Balancer redirecting to 1 of 3 instances.
-Customer session is saved in distributed in-memory cache (Hazelcast).
-Sticky session & session replication against loss of user's sensitive data.
+Tomcat is pre-configured with Load Balancer redirecting to 1 of 3 instances.  
+Customer session is saved in distributed in-memory cache (Hazelcast).  
+Sticky session & session replication against loss of user's sensitive data.  
 
 
 ### Software and Tools used
@@ -38,6 +39,7 @@ Apache Maven v3.3.9
 Intellij IDEA Ultimate v14.0.2
 Ubuntu v16.04
 ```
+
 
 ### Tomcat configuration
 
@@ -87,9 +89,9 @@ template1=# CREATE USER testdstrdbadmin WITH PASSWORD '1234';
 template1=# GRANT ALL PRIVILEGES ON DATABASE dstr to dstrdbadmin;
 template1=# GRANT ALL PRIVILEGES ON DATABASE testdstr to testdstrdbadmin;
 template1=# \q
-$ psql -d dstr -U dstrdbadmin -a -f conf/postgres/customers-create.sql
-$ psql -d dstr -U dstrdbadmin -a -f conf/postgres/admin-create.sql
-$ psql -d testdstr -U testdstrdbadmin -a -f conf/postgres/customers-create.sql
+$ psql -d dstr -U dstrdbadmin -a -f ../dstr/conf/postgres/customers-create.sql
+$ psql -d dstr -U dstrdbadmin -a -f ../dstr/conf/postgres/admin-create.sql
+$ psql -d testdstr -U testdstrdbadmin -a -f ../dstr/conf/postgres/customers-create.sql
 ```
 To use schemas manually user can connect with:
 ```
@@ -142,6 +144,12 @@ $ mongo dstr -u dstrDbAdmin -p 1234
 > db.users.insert( { "name" : "Taras", "email" : "tarashypka@gmail.com", "password" : "1234" } );  
 ```
 
+#### Add specific objects
+```
+$ mongo dstr -u dstrDbAdmin -p 1234 < ../dstr/conf/orders-number-seq.js  
+$ mongo dstr -u dstrDbAdmin -p 1234 < ../dstr/conf/orders-autoremove.js  
+```
+
 #### Start replica set
 
 ```
@@ -153,6 +161,7 @@ $ mongod --keyFile /path/to/mongodb-keyfile --replSet "rs0"
 ```
 $ mongo dstr --host <HOST> --port <PORT> -u dstrDbAdmin -p 1234  
 ```
+
 
 ### Configure Load Balancer for replication in Tomcat
 
@@ -179,6 +188,7 @@ All sessionIDs will be appended with worker names, so load balancer will know to
 ```
 $ sudo /path/to/apache/bin/apachectl start
 ```
+
 
 ### Distributed cache with Hazelcast
 
@@ -223,5 +233,6 @@ sudo ufw enable
 sudo ufw allow 5701
 sudo ufw allow 8009
 ```
+
 
 ### References
