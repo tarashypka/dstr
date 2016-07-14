@@ -35,7 +35,7 @@ public class CustomerStatusServlet extends HttpServlet {
         try {
             CustomerDAO customerDAO = new CustomerDAO(source);
 
-            if (customerDAO.updateStatus(id)) {
+            if (customerDAO.swapStatus(id)) {
                 logger.info("Customer's with id=" + id + " status was changed");
             } else {
                 logger.error("Customer's with id=" + id + " status was not changed");

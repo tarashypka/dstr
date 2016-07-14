@@ -12,7 +12,7 @@
 
 <t:genericpage>
   <jsp:attribute name="title">
-    <title>Товари</title>
+    <title>My Items</title>
   </jsp:attribute>
 
   <jsp:attribute name="style">
@@ -35,27 +35,24 @@
       <table>
         <tr>
           <th>ID</th>
-          <th>Категорія</th>
-          <th>Ціна</th>
-          <th>Валюта</th>
-          <th>Кількість</th>
-          <th>До оплати</th>
+          <th>Category</th>
+          <th>Price</th>
+          <th>Currency</th>
+          <th>Amount</th>
+          <th>Total price</th>
         </tr>
-        <c:forEach items="${requestScope.items}" var="item">
-          <c:url value="/item" var="itemURL">
-            <c:param name="id" value="${item.key.id}"></c:param>
+        <c:forEach var="item" items="${requestScope.items}">
+          <c:url var="itemURL" value="/controller/customer">
+            <c:param name="action" value="showItem"/>
+            <c:param name="id" value="${item.key.id}"/>
           </c:url>
           <tr>
-            <td>
-              <a href='<c:out value="${itemURL}"></c:out>'>
-                <c:out value="${item.key.id}"></c:out>
-              </a>
-            </td>
-            <td><c:out value="${item.key.category}"></c:out></td>
-            <td><c:out value="${item.key.price}"></c:out></td>
-            <td><c:out value="${item.key.currency}"></c:out></td>
-            <td><c:out value="${item.value}"></c:out></td>
-            <td><c:out value="${item.value * item.key.price}"></c:out></td>
+            <td><a href="${itemURL}">${item.key.id}</a></td>
+            <td>${item.key.category}</td>
+            <td>${item.key.price}</td>
+            <td>${item.key.currency}</td>
+            <td>${item.value}</td>
+            <td>${item.value * item.key.price}</td>
           </tr>
         </c:forEach>
       </table>

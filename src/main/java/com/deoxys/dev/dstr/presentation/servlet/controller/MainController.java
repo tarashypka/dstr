@@ -18,24 +18,28 @@ import java.io.IOException;
 @WebServlet(name = "MainController", urlPatterns = "/controller")
 public class MainController extends HttpServlet {
 
-    private static CustomerService customerService = new CustomerService();
-    private static OrderService orderService = new OrderService();
-    private static ItemService itemService = new ItemService();
+    private static CustomerService customerService;
+    private static OrderService orderService;
+    private static ItemService itemService;
 
-    private static final String HOME_LINK;
-    private static final String LOGIN_JSP;
-    private static final String REGISTER_JSP;
-    private static final String LOGOUT_JSP;
-    private static final String ITEM_JSP;
-    private static final String ALL_ITEMS_JSP;
+    private static final String
+            HOME_LINK,
+            LOGIN_JSP,
+            REGISTER_JSP,
+            LOGOUT_JSP,
+            ITEM_JSP,
+            ITEMS_JSP;
 
     static {
+        customerService = new CustomerService();
+        orderService = new OrderService();
+        itemService = new ItemService();
         HOME_LINK = "/home";
         LOGIN_JSP = "/WEB-INF/jsp/login.jsp";
         REGISTER_JSP = "/WEB-INF/jsp/register.jsp";
         LOGOUT_JSP = "/WEB-INF/jsp/logout.jsp";
         ITEM_JSP = "/WEB-INF/jsp/item.jsp";
-        ALL_ITEMS_JSP = "/WEB-INF/jsp/items.jsp";
+        ITEMS_JSP = "/WEB-INF/jsp/items.jsp";
     }
 
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)
@@ -60,7 +64,7 @@ public class MainController extends HttpServlet {
                 break;
             case "showItems":
                 itemService.loadItems(req);
-                req.getRequestDispatcher(ALL_ITEMS_JSP).forward(req, resp);
+                req.getRequestDispatcher(ITEMS_JSP).forward(req, resp);
                 break;
             default:
                 throw new ServletException("Wrong action");
@@ -76,21 +80,21 @@ public class MainController extends HttpServlet {
         switch (action) {
             case "login":
                 customerService.login(req);
-                if (req.getAttribute("error") == null) {
+                if (req.getAttribute("error") == null)
                     resp.sendRedirect(req.getContextPath() + HOME_LINK);
-                } else req.getRequestDispatcher(LOGIN_JSP).forward(req, resp);
+                else req.getRequestDispatcher(LOGIN_JSP).forward(req, resp);
                 break;
             case "register":
                 customerService.register(req);
-                if (req.getParameter("error") == null) {
+                if (req.getParameter("error") == null)
                     resp.sendRedirect(req.getContextPath() + HOME_LINK);
-                } else req.getRequestDispatcher(REGISTER_JSP).forward(req, resp);
+                else req.getRequestDispatcher(REGISTER_JSP).forward(req, resp);
                 break;
             case "logout":
                 customerService.logout(req);
-                if (req.getParameter("error") == null) {
+                if (req.getParameter("error") == null)
                     resp.sendRedirect(req.getContextPath() + HOME_LINK);
-                } else resp.sendRedirect(req.getHeader("referer"));
+                else resp.sendRedirect(req.getHeader("referer"));
                 break;
             default:
                 throw new ServletException("Wrong action");

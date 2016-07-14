@@ -8,7 +8,6 @@ import com.deoxys.dev.dstr.persistence.dao.ItemDAO;
 import org.apache.log4j.Logger;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 import java.util.Map;
 
 /**
@@ -30,25 +29,34 @@ public class ItemService extends MongoService<Item> {
     }
 
     public void loadItem(HttpServletRequest req) {
-        String itemId = req.getParameter("itemId");
-        req.setAttribute("item",itemDao.get(itemId));
+        String id = req.getParameter("id");
+        if (id == null || id.equals("")) req.setAttribute("error", "Wrong item id");
+        else req.setAttribute("item", itemDao.get(id));
     }
 
     public void loadItems(HttpServletRequest req) {
-        HttpSession ses = req.getSession();
-        ses.setAttribute("items", itemDao.getAll());
+        req.setAttribute("items", itemDao.getAll());
     }
 
     public void addItem(HttpServletRequest req) {
+        Item item = requestReader.read(req);
+        if (req.getAttribute("error") == null) itemDao.add(item);
+        req.setAttribute("item", item);
     }
 
     public void editItem(HttpServletRequest req) {
+        Item item = requestReader.read(req);
+        itemDao.update(item);
+        req.setAttribute("item", item);
+    }
 
+    public void deleteItem(HttpServletRequest req) {
+        String id = req.getParameter("id");
+        itemDao.delete(id);
     }
 
     public void loadCustomerItems(HttpServletRequest req) {
-        CustomerReader customerReader = new CustomerReader();
-        Customer customer = customerReader.read(req.getSession());
+        Customer customer = (Customer) req.getSession().getAttribute("customer");
         Map<Item, Integer> items = itemDao.getAllForCustomer(customer.getEmail());
         req.setAttribute("items", items);
     }

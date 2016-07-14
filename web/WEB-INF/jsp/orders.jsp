@@ -12,101 +12,56 @@
 
 <t:genericpage>
   <jsp:attribute name="title">
-    <title>Замовлення</title>
+    <title>Orders</title>
   </jsp:attribute>
 
   <jsp:body>
     <c:if test="${requestScope.orders ne null}">
       <table>
         <tr>
-          <th>№ замовлення</th>
-          <th>Дата</th>
-          <th>Замовник</th>
-          <th>Товар</th>
-          <th>Кількість</th>
-          <th>Вартість</th>
-          <th>Валюта</th>
-          <th>Статус</th>
+          <th>Order №</th>
+          <th>Date</th>
+          <th>Customer</th>
+          <th>Item</th>
+          <th>Quantity</th>
+          <th>Price</th>
+          <th>Currency</th>
+          <th>Status</th>
         </tr>
-        <c:set value="${requestScope.orders}" var="orders"/>
-        <c:forEach items="${orders}" var="order">
-          <c:url value="/customer" var="customerURL">
+        <c:set var="orders" value="${requestScope.orders}"/>
+        <c:forEach var="order" items="${orders}">
+          <c:url var="orderURL" value="/controller/admin">
+            <c:param name="action" value="showOrder"/>
+            <c:param name="id" value="${order.id}"/>
+          </c:url>
+          <c:url var="customerURL" value="/controller/customer">
+            <c:param name="action" value="showCustomer"/>
             <c:param name="email" value="${order.customer.email}"/>
           </c:url>
-          <c:url value="/order/status" var="setStatusRejectedURL">
+          <c:url var="changeOrderStatusURL" value="/controller/admin">
+            <c:param name="action" value="changeOrderStatus"/>
             <c:param name="id" value="${order.id}"/>
-            <c:param name="status" value="REJECTED"/>
-          </c:url>
-          <c:url value="/order/status" var="setStatusInProcessURL">
-            <c:param name="id" value="${order.id}"/>
-            <c:param name="status" value="IN_PROCESS"/>
-          </c:url>
-          <c:url value="/order/status" var="setStatusProcessedURL">
-            <c:param name="id" value="${order.id}"/>
-            <c:param name="status" value="PROCESSED"/>
           </c:url>
           <tr>
-            <td><c:out value="${order.orderNumber}"/></td>
-            <td><c:out value="${order.date}"/></td>
+            <td><a href="${orderURL}">${order.orderNumber}</a></td>
+            <td>${order.date}</td>
+            <td><a href=${customerURL}>${order.customer.name} ${order.customer.surname}</a></td>
             <td>
-              <a href='<c:out value="${customerURL}" escapeXml="false"/>'>
-                <c:out value="${order.customer.name} ${order.customer.surname}"/>
-              </a>
-            </td>
-            <td>
-              <c:forEach items="${order.items}" var="item">
-                <c:url value="/item" var="itemURL">
+              <c:forEach var="item" items="${order.items}">
+                <c:url var="itemURL" value="/controller">
+                  <c:param name="action" value="showItem"/>
                   <c:param name="id" value="${item.key.id}"/>
                 </c:url>
-                <a href='<c:out value="${itemURL}" escapeXml="false"/>'>
-                    <c:out value="${item.key.id}"/><br>
-                </a>
+                <a href="${itemURL}">${item.key.id}</a><br>
               </c:forEach>
             </td>
-            <td>
-              <c:forEach items="${order.items}" var="item">
-                <c:out value="${item.value}"/><br>
-              </c:forEach>
-            </td>
-            <td>
-              <c:forEach items="${order.receipt}" var="price">
-                <c:out value="${price.key}"/><br>
-              </c:forEach>
-            </td>
-            <td>
-              <c:forEach items="${order.receipt}" var="price">
-                <c:out value="${price.value}"/><br>
-              </c:forEach>
-            </td>
-            <td>
-              <c:choose>
-                <c:when test="${order.status.value eq -1}">
-                  <c:set var="status" value="Відмовлено"/>
-                </c:when>
-                <c:when test="${order.status.value eq -0}">
-                  <c:set var="status" value="В процесі"/>
-                </c:when>
-                <c:when test="${order.status.value eq 1}">
-                  <c:set var="status" value="Оброблено"/>
-                </c:when>
-              </c:choose>
-              <c:out value="${status}"></c:out>
-            </td>
-            <td>
-              <a href='<c:out value="${setStatusRejectedURL}" escapeXml="false"/>'>
-                Відмовити
-              </a>
-            </td>
-            <td>
-              <a href='<c:out value="${setStatusInProcessURL}" escapeXml="false"/>'>
-                В процесі
-              </a>
-            </td>
-            <td>
-              <a href='<c:out value="${setStatusProcessedURL}" escapeXml="false"/>'>
-                Оброблено
-              </a>
-            </td>
+            <td><c:forEach var="item" items="${order.items}">${item.value}<br></c:forEach></td>
+            <td><c:forEach var="price" items="${order.receipt}">${price.value}<br></c:forEach></td>
+            <td><c:forEach var="price" items="${order.receipt}">${price.key}<br></c:forEach></td>
+            <td>${order.status.name}</td>
+            <td><a href="${changeOrderStatusURL}&status=REJECTED">Reject</a></td>
+            <td><a href="${changeOrderStatusURL}&status=IN_PROCESS">In process</a></td>
+            <td><a href="${changeOrderStatusURL}&status=PROCESSED">Processed</a></td>
           </tr>
         </c:forEach>
       </table>

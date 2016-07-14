@@ -12,6 +12,6 @@
 
 <t:genericpage>
     <jsp:attribute name="title">
-        <title>Домашня сторінка</title>
+        <title>dstr</title>
     </jsp:attribute>
 </t:genericpage>

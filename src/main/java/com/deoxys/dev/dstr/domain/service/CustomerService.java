@@ -16,24 +16,35 @@ import java.sql.SQLException;
 public class CustomerService extends PostgresService<Customer> {
     Logger logger = Logger.getLogger(CustomerService.class);
 
-    private CustomerDAO dao;
+    private CustomerDAO customerDao;
 
     public CustomerService() {
         super(new CustomerReader());
-        dao = new CustomerDAO(dataSource);
+        customerDao = new CustomerDAO(dataSource);
     }
 
     public void loadCustomer(HttpServletRequest req) {
+        String email = req.getParameter("email");
+        try {
+            req.setAttribute("customer", customerDao.get(email));
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
     }
 
     public void loadCustomers(HttpServletRequest req) {
+        try {
+            req.setAttribute("customers", customerDao.getAll());
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
     }
 
     public void login(HttpServletRequest req) {
         Customer customer = requestReader.read(req);
         Customer shouldBe = null;
         try {
-            shouldBe = dao.get(customer.getEmail());
+            shouldBe = customerDao.get(customer.getEmail());
         } catch (SQLException ex) {
             ex.printStackTrace();
         }
@@ -58,5 +69,12 @@ public class CustomerService extends PostgresService<Customer> {
     }
 
     public void swapCustomerStatus(HttpServletRequest req) {
+        long id = Long.parseLong(req.getParameter("id"));
+        try {
+            customerDao.swapStatus(id);
+            req.setAttribute("customer", customerDao.get(id));
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
     }
 }

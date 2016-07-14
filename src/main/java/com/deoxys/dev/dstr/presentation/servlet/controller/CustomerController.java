@@ -18,11 +18,11 @@ import java.io.IOException;
 @WebServlet(name = "CustomerController", urlPatterns = "/controller/customer")
 public class CustomerController extends HttpServlet {
 
-    private static CustomerService customerService = new CustomerService();
-    private static OrderService orderService = new OrderService();
-    private static ItemService itemService = new ItemService();
+    private static CustomerService customerService;
+    private static OrderService orderService;
+    private static ItemService itemService;
 
-    private static String
+    private static final String
             CUSTOMER_JSP,
             CUSTOMER_ITEMS_JSP,
             CUSTOMER_ORDER_JSP,
@@ -30,6 +30,9 @@ public class CustomerController extends HttpServlet {
             NEW_ORDER_JSP;
 
     static {
+        customerService = new CustomerService();
+        orderService = new OrderService();
+        itemService = new ItemService();
         CUSTOMER_JSP = "/WEB-INF/jsp/customer.jsp";
         CUSTOMER_ITEMS_JSP = "/WEB-INF/jsp/customer/items.jsp";
         CUSTOMER_ORDER_JSP = "/WEB-INF/jsp/customer/order.jsp";
@@ -64,6 +67,10 @@ public class CustomerController extends HttpServlet {
             case "newOrder":
                 itemService.loadItems(req);
                 req.getRequestDispatcher(NEW_ORDER_JSP).forward(req, resp);
+            case "changeOrderStatus":
+                orderService.swapOrderStatus(req);
+                req.getRequestDispatcher(CUSTOMER_ORDER_JSP).forward(req, resp);
+                break;
             default:
                 throw new ServletException("Wrong action");
         }
@@ -83,15 +90,9 @@ public class CustomerController extends HttpServlet {
                 break;
             case "newOrder":
                 orderService.makeOrder(req);
-                if (req.getParameter("error") == null) {
-                    orderService.loadCustomerOrders(req);
-                    req.getRequestDispatcher(CUSTOMER_ORDERS_JSP).forward(req, resp);
-                } else req.getRequestDispatcher(NEW_ORDER_JSP).forward(req, resp);
-                break;
-            case "changeOrderStatus":
-                orderService.swapOrderStatus(req);
-                orderService.loadCustomerOrders(req);
-                req.getRequestDispatcher(CUSTOMER_ORDERS_JSP).forward(req, resp);
+                if (req.getParameter("error") == null)
+                    req.getRequestDispatcher(req.getHeader("referer")).forward(req, resp);
+                else req.getRequestDispatcher(NEW_ORDER_JSP).forward(req, resp);
                 break;
             default:
                 throw new ServletException("Wrong action");

@@ -18,25 +18,30 @@ import java.io.IOException;
 @WebServlet(name = "AdminController", urlPatterns = "/controller/admin")
 public class AdminController extends HttpServlet {
 
-    private static CustomerService customerService = new CustomerService();
-    private static OrderService orderService = new OrderService();
-    private static ItemService itemService = new ItemService();
+    private static CustomerService customerService;
+    private static OrderService orderService;
+    private static ItemService itemService;
 
-    private static String
-            MAIN_CONTROLLER,
-            ALL_ORDERS_JSP,
+    private static final String
+            ORDER_JSP,
+            ORDERS_JSP,
             CUSTOMER_JSP,
-            ALL_CUSTOMERS_JSP,
+            CUSTOMERS_JSP,
             NEW_ITEM_JSP,
-            EDIT_ITEM_JSP;
+            EDIT_ITEM_JSP,
+            ITEM_JSP;
 
     static {
-        MAIN_CONTROLLER = "/controller";
-        ALL_ORDERS_JSP = "/WEB-INF/jsp/orders.jsp";
+        customerService = new CustomerService();
+        orderService = new OrderService();
+        itemService = new ItemService();
+        ORDER_JSP = "/WEB-INF/jsp/order.jsp";
+        ORDERS_JSP = "/WEB-INF/jsp/orders.jsp";
         CUSTOMER_JSP = "/WEB-INF/jsp/customer.jsp";
-        ALL_CUSTOMERS_JSP = "/WEB-INF/jsp/customers.jsp";
+        CUSTOMERS_JSP = "/WEB-INF/jsp/customers.jsp";
         NEW_ITEM_JSP = "/WEB-INF/jsp/newitem.jsp";
         EDIT_ITEM_JSP = "/WEB-INF/jsp/edititem.jsp";
+        ITEM_JSP = "/WEB-INF/jsp/item.jsp";
     }
 
     @Override
@@ -47,17 +52,9 @@ public class AdminController extends HttpServlet {
         if (action == null) throw new ServletException("Wrong operation");
 
         switch (action) {
-            case "showOrders":
-                orderService.loadOrders(req);
-                req.getRequestDispatcher(ALL_ORDERS_JSP).forward(req, resp);
-                break;
-            case "showCustomer":
-                customerService.loadCustomer(req);
-                req.getRequestDispatcher(CUSTOMER_JSP).forward(req, resp);
-                break;
             case "showCustomers":
                 customerService.loadCustomers(req);
-                req.getRequestDispatcher(ALL_CUSTOMERS_JSP).forward(req, resp);
+                req.getRequestDispatcher(CUSTOMERS_JSP).forward(req, resp);
                 break;
             case "newItem":
                 req.getRequestDispatcher(NEW_ITEM_JSP).forward(req, resp);
@@ -65,6 +62,27 @@ public class AdminController extends HttpServlet {
             case "editItem":
                 itemService.loadItem(req);
                 req.getRequestDispatcher(EDIT_ITEM_JSP).forward(req, resp);
+                break;
+            case "deleteItem":
+                itemService.deleteItem(req);
+                resp.sendRedirect(req.getHeader("referer"));
+                break;
+            case "showOrder":
+                orderService.loadOrder(req);
+                req.getRequestDispatcher(ORDER_JSP).forward(req, resp);
+                break;
+            case "showOrders":
+                orderService.loadOrders(req);
+                req.getRequestDispatcher(ORDERS_JSP).forward(req, resp);
+                break;
+            case "swapCustomerStatus":
+                customerService.swapCustomerStatus(req);
+                req.getRequestDispatcher(CUSTOMER_JSP).forward(req, resp);
+                break;
+            case "changeOrderStatus":
+                orderService.changeOrderStatus(req);
+                System.out.println("ORDER=" + req.getAttribute("order"));
+                req.getRequestDispatcher(ORDER_JSP).forward(req, resp);
                 break;
             default:
                 throw new ServletException("Wrong action");
@@ -81,26 +99,15 @@ public class AdminController extends HttpServlet {
         switch (action) {
             case "newItem":
                 itemService.addItem(req);
-                if (req.getParameter("error") == null) {
-                    req.setAttribute("action", "showItems");
-                    req.getRequestDispatcher(MAIN_CONTROLLER).forward(req, resp);
-                } else req.getRequestDispatcher(NEW_ITEM_JSP).forward(req, resp);
+                if (req.getParameter("error") == null)
+                    req.getRequestDispatcher(ITEM_JSP).forward(req, resp);
+                else req.getRequestDispatcher(NEW_ITEM_JSP).forward(req, resp);
                 break;
             case "editItem":
                 itemService.editItem(req);
-                if (req.getParameter("error") == null) {
-                    req.setAttribute("action", "showItems");
-                    req.getRequestDispatcher(MAIN_CONTROLLER).forward(req, resp);
-                } else req.getRequestDispatcher(EDIT_ITEM_JSP).forward(req, resp);
-                break;
-            case "changeCustomerStatus":
-                customerService.swapCustomerStatus(req);
-                customerService.loadCustomers(req);
-                req.getRequestDispatcher(ALL_CUSTOMERS_JSP).forward(req, resp);
-            case "changeOrderStatus":
-                orderService.changeOrderStatus(req);
-                orderService.loadOrders(req);
-                req.getRequestDispatcher(ALL_ORDERS_JSP).forward(req, resp);
+                if (req.getParameter("error") == null)
+                    req.getRequestDispatcher(ITEM_JSP).forward(req, resp);
+                else req.getRequestDispatcher(EDIT_ITEM_JSP).forward(req, resp);
                 break;
             default:
                 throw new ServletException("Wrong action");

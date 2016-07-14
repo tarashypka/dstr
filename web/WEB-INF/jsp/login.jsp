@@ -12,24 +12,16 @@
 
 <t:genericpage>
   <jsp:attribute name="title">
-    <title>Вхід</title>
-  </jsp:attribute>
-
-  <jsp:attribute name="error">
-    <c:if test="${requestScope.error ne null}">
-      <c:out value="${requestScope.error}"/>
-    </c:if>
+    <title>Login</title>
   </jsp:attribute>
 
   <jsp:body>
     <c:url var="controller" value="/controller"/>
     <form action="${controller}" method="post">
       <input type="hidden" name="action" value="login">
-      <input type="text" name="email"
-             placeholder="Електронна пошта?"><br>
-      <input type="password" name="password"
-             placeholder="Пароль?"><br>
-      <input type="submit" value="Увійти в систему">
+      <input type="text" name="email" placeholder="Email?"><br>
+      <input type="password" name="password" placeholder="Password?"><br>
+      <input type="submit" value="Enter">
     </form>
   </jsp:body>
 </t:genericpage>

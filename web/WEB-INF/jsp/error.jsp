@@ -12,7 +12,7 @@
 
 <t:genericpage>
   <jsp:attribute name="title">
-    <title>Помилка</title>
+    <title>Error</title>
   </jsp:attribute>
 
   <jsp:attribute name="error">
@@ -21,20 +21,16 @@
         <h3>Error Details</h3>
         <ul>
           <li>Status Code: 404</li>
-          <li>
-            Requested URI:
-            <c:out value="${requestScope.requestUri}"></c:out>
-            is not allowed or doesn't exist
-          </li>
+          <li>Requested URI: ${requestScope.requestUri} is not allowed or doesn't exist</li>
         </ul>
       </c:when>
       <c:when test="${requestScope.statusCode eq 500}">
         <h3>Exception Details</h3>
         <ul>
-          <li>Servlet Name: <c:out value="${requestScope.servletName}"></c:out></li>
-          <li>Requested URI: <c:out value="${requestScope.requestUri}"></c:out></li>
-          <li>Exception Name: <c:out value="${requestScope.exception}"></c:out></li>
-          <li>Exception Message: <c:out value="${requestScope.exceptionMsg}"></c:out></li>
+          <li>Servlet Name: ${requestScope.servletName}</li>
+          <li>Requested URI: ${requestScope.requestUri}</li>
+          <li>Exception Name: ${requestScope.exception}</li>
+          <li>Exception Message:${requestScope.exceptionMsg}</li>
         </ul>
       </c:when>
     </c:choose>

@@ -19,7 +19,6 @@ public class CustomerDAO extends PostgresDAO<Customer> {
         super(ds);
     }
 
-    // Customer specific sql statements
     private static final String
             SELECT_CUSTOMER_BY_ID,
             SELECT_CUSTOMER_BY_EMAIL,
@@ -83,6 +82,7 @@ public class CustomerDAO extends PostgresDAO<Customer> {
             try (ResultSet rs = stmt.executeQuery()) {
                 return rs.next()
                         ? new Customer(
+                                id,
                                 rs.getString("email"),
                                 rs.getString("password"),
                                 rs.getString("name"),
@@ -102,6 +102,7 @@ public class CustomerDAO extends PostgresDAO<Customer> {
             try (ResultSet rs = stmt.executeQuery()) {
                 return rs.next()
                         ? new Customer(
+                                rs.getLong("id"),
                                 rs.getString("email"),
                                 rs.getString("password"),
                                 rs.getString("name"),
@@ -122,6 +123,7 @@ public class CustomerDAO extends PostgresDAO<Customer> {
 
             while (rs.next())
                 customers.add(new Customer(
+                        rs.getLong("id"),
                         rs.getString("email"),
                         rs.getString("password"),
                         rs.getString("name"),
@@ -194,7 +196,7 @@ public class CustomerDAO extends PostgresDAO<Customer> {
         }
     }
 
-    public boolean updateStatus(long id) throws SQLException {
+    public boolean swapStatus(long id) throws SQLException {
         try (Connection conn = dataSource.getConnection();
              PreparedStatement stmt1 = conn.prepareStatement(SELECT_STATUS_BY_ID)) {
 
@@ -203,9 +205,8 @@ public class CustomerDAO extends PostgresDAO<Customer> {
                  PreparedStatement stmt2 = conn.prepareStatement(UPDATE_STATUS_BY_ID)) {
 
                 if ( ! rs.next()) return false;
-                stmt2.setString(1, COLLECTION);
-                stmt2.setBoolean(2, ! rs.getBoolean("enabled"));
-                stmt2.setLong(3, id);
+                stmt2.setBoolean(1, ! rs.getBoolean("enabled"));
+                stmt2.setLong(2, id);
                 return stmt2.executeUpdate() == 1;
             }
         }

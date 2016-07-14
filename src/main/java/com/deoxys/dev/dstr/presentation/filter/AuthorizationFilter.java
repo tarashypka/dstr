@@ -142,8 +142,7 @@ public class AuthorizationFilter implements Filter {
         if (uri.equals(MAIN_CONTROLLER)) return true;
         if (customer == null) return false;
         if (customer.isCustomer()) return uri.equals(CUSTOMER_CONTROLLER);
-        if (customer.isAdmin()) return uri.equals(ADMIN_CONTROLLER);
-        return false;
+        return uri.equals(ADMIN_CONTROLLER) || uri.equals(CUSTOMER_CONTROLLER);
     }
 
     private boolean allowedAction(Customer customer, String action) {

@@ -34,11 +34,17 @@ public class OrderService extends MongoService<Order> {
         return orderDao.count();
     }
 
+    public void loadOrder(HttpServletRequest req) {
+        String id = req.getParameter("id");
+        req.setAttribute("order", orderDao.get(id));
+    }
+
     public void loadOrders(HttpServletRequest req) {
+        req.setAttribute("orders", orderDao.getAll());
     }
 
     public void loadCustomerOrder(HttpServletRequest req) {
-
+        loadOrder(req);
     }
 
     public void loadCustomerOrders(HttpServletRequest req) {
@@ -96,17 +102,57 @@ public class OrderService extends MongoService<Order> {
     }
 
     public void swapOrderStatus(HttpServletRequest req) {
+        String orderId = req.getParameter("orderId");
+
+        /**
+         * Possible solutions:
+         *      load OrderStatus, if it's valid, then load Order
+         *      load Order
+         */
+        Order order = orderDao.get(orderId);
+        Order.OrderStatus oldStatus = order.getStatus();
+        ItemService itemService = new ItemService();
+        switch (oldStatus) {
+            case IN_PROCESS:
+                itemService.takeOrderItemsFromReserve(order.getItems());
+                itemService.addOrderItemsToSold(order.getItems());
+                break;
+            case PROCESSED:
+                itemService.takeOrderItemsFromSold(order.getItems());
+                itemService.addOrderItemsToReserve(order.getItems());
+                break;
+            default:
+                return;
+        }
+        req.setAttribute("order", order);
     }
 
     public void changeOrderStatus(HttpServletRequest req) {
-        String orderId = req.getParameter("orderId");
-        String status = req.getParameter("orderNewStatus");
+        String id = req.getParameter("id");
+        String status = req.getParameter("status");
         Order.OrderStatus newStatus = Order.OrderStatus.valueOf(status);
-        Order order = orderDao.get(orderId);
-        Order.OrderStatus oldStatus = order.getStatus();
 
-        if (newStatus.equals(oldStatus)) return;
+        /**
+         * Possible solutions:
+         *      load OrderStatus, if it's valid, then load Order
+         *      load Order
+         */
+        Order order = orderDao.get(id);
+        Order.OrderStatus oldStatus = order.getStatus();
+        if (newStatus.equals(oldStatus)) {
+            req.setAttribute("order", order);
+            return;
+        }
+
+        /**
+         * To change order status, items statuses should be changed
+         * and
+         * orderDao.get(id) returns order with items that only have id field.
+         */
+        itemDao.expandOrderItems(order);
+
         ItemService itemService = new ItemService();
+        for (Item item : order.getItems().keySet()) item = itemDao.get(item.getId());
         switch (oldStatus) {
             case REJECTED:
                 itemService.takeOrderItemsFromStock(order.getItems());
@@ -134,7 +180,8 @@ public class OrderService extends MongoService<Order> {
                 return;
         }
         orderDao.updateStatus(order.getId(), newStatus);
-        logger.info("Order's with id=" + orderId + " status was changed: "
+        req.setAttribute("order", orderDao.get(id));
+        logger.info("Order's with id=" + id + " status was changed: "
                 + oldStatus + " --> " + newStatus);
     }
 }

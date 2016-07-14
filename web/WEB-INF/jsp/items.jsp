@@ -12,7 +12,7 @@
 
 <t:genericpage>
   <jsp:attribute name="title">
-    <title>Товари</title>
+    <title>Items</title>
   </jsp:attribute>
 
   <jsp:body>
@@ -20,46 +20,38 @@
       <table>
         <tr>
           <th>ID</th>
-          <th>Категорія</th>
-          <th>Ціна</th>
-          <th>Валюта</th>
-          <th>Залишилось</th>
-          <th>Зарезервовано</th>
-          <th>Продано</th>
+          <th>Category</th>
+          <th>Price</th>
+          <th>Currency</th>
+          <th>Left</th>
+          <th>Reserved</th>
+          <th>Sold</th>
         </tr>
-        <c:forEach items="${requestScope.items}" var="item">
-          <c:url value="/item" var="itemURL">
+        <c:forEach var="item" items="${requestScope.items}">
+          <c:set var="status" value="${item.status}"/>
+          <c:url var="showItemURL" value="/controller">
+            <c:param name="action" value="showItem"/>
             <c:param name="id" value="${item.id}"/>
           </c:url>
           <tr>
-            <td>
-              <a href='<c:out value="${itemURL}"/>'>
-                <c:out value="${item.id}"/>
-              </a>
-            </td>
-            <td><c:out value="${item.category}"/></td>
-            <td><c:out value="${item.price}"/></td>
-            <td><c:out value="${item.currency}"/></td>
-            <td><c:out value="${item.status.stocked}"/></td>
-            <td><c:out value="${item.status.reserved}"/></td>
-            <td><c:out value="${item.status.sold}"/></td>
+            <td><a href="${showItemURL}">${item.id}</a></td>
+            <td>${item.category}</td>
+            <td>${item.price}</td>
+            <td>${item.currency}</td>
+            <td>${status.stocked}</td>
+            <td>${status.reserved}</td>
+            <td>${item.status.sold}</td>
             <c:if test="${sessionScope.customer.role eq 'admin'}">
-              <c:url value="/item/edit" var="itemEditURL">
+              <c:url var="editItemURL" value="/controller/admin">
+                <c:param name="action" value="editItem"/>
                 <c:param name="id" value="${item.id}"/>
               </c:url>
-              <c:url value="/item/delete" var="itemDeleteURL">
+              <c:url var="deleteItemURL" value="/controller/admin">
+                <c:param name="action" value="deleteItem"/>
                 <c:param name="id" value="${item.id}"/>
               </c:url>
-              <td>
-                <a href='<c:out value="${itemEditURL}" escapeXml="false"/>'>
-                  Редагувати
-                </a>
-              </td>
-              <td>
-                <a href='<c:out value="${itemDeleteURL}" escapeXml="false"/>'>
-                  Видалити
-                </a>
-              </td>
+              <td><a href="${editItemURL}">Edit</a></td>
+              <td><a href="${deleteItemURL}">Delete</a></td>
             </c:if>
           </tr>
         </c:forEach>

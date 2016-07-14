@@ -12,15 +12,16 @@
 
     <action actionname="newItem" auth="true" allowed="admin"/>
     <action actionname="editItem" auth="true" allowed="admin"/>
+    <action actionname="deleteItem" auth="true" allowed="admin"/>
     <action actionname="showItem" auth="*"/>
     <action actionname="showItems" auth="*"/>
 
-    <action actionname="newOrder" auth="true" allowed="customer"/>
-    <action actionname="changeOrderStatus" auth="true" allowed="*"/>
     <action actionname="showOrder" auth="true" allowed="*"/>
     <action actionname="showOrders" auth="true" allowed="*"/>
+    <action actionname="newOrder" auth="true" allowed="customer"/>
+    <action actionname="changeOrderStatus" auth="true" allowed="*"/>
 
-    <action actionname="changeCustomerStatus" auth="true" allowed="admin"/>
     <action actionname="showCustomer" auth="true" allowed="*"/>
     <action actionname="showCustomers" auth="true" allowed="admin"/>
+    <action actionname="swapCustomerStatus" auth="true" allowed="admin"/>
 </auth-rules>

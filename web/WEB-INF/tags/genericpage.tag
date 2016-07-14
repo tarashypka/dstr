@@ -19,18 +19,17 @@
     <c:url var="controller" value="/controller"/>
     <form action="${controller}" method="get">
         <input type="hidden" name="action" value="showItems">
-        <input type="submit" value="Усі товари">
+        <input type="submit" value="All items">
     </form>
     <c:choose>
         <c:when test="${sessionScope.customer eq null}">
             <form action="${controller}" method="get">
                 <input type="hidden" name="action" value="login">
-                <input type="submit" value="Увійти в систему">
+                <input type="submit" value="Login">
             </form>
-
             <form action="${controller}" method="get">
                 <input type="hidden" name="action" value="register">
-                <input type="submit" value="Зареєструватись">
+                <input type="submit" value="Register">
             </form>
         </c:when>
         <c:otherwise>
@@ -39,36 +38,36 @@
                     <c:url var="adminController" value="/controller/admin"/>
                     <form action="${adminController}" method="get">
                         <input type="hidden" name="action" value="showOrders">
-                        <input type="submit" value="Усі замовлення">
+                        <input type="submit" value="All orders">
                     </form>
                     <form action="${adminController}" method="get">
                         <input type="hidden" name="action" value="showCustomers">
-                        <input type="submit" value="Усі замовники">
+                        <input type="submit" value="All customers">
                     </form>
                     <form action="${adminController}" method="get">
                         <input type="hidden" name="action" value="newItem">
-                        <input type="submit" value="Додати товар">
+                        <input type="submit" value="Add item">
                     </form>
                 </c:when>
                 <c:otherwise>
                     <c:url var="customerController" value="/controller/customer"/>
                     <form action="${customerController}" method="get">
                         <input type="hidden" name="action" value="showItems">
-                        <input type="submit" value="Куплені товари">
+                        <input type="submit" value="My items">
                     </form>
                     <form action="${customerController}" method="get">
                         <input type="hidden" name="action" value="showOrders">
-                        <input type="submit" value="Мої замовлення">
+                        <input type="submit" value="My orders">
                     </form>
                     <form action="${customerController}" method="get">
                         <input type="hidden" name="action" value="newOrder">
-                        <input type="submit" value="Нове замовлення">
+                        <input type="submit" value="New order">
                     </form>
                 </c:otherwise>
             </c:choose>
             <form action="${controller}" method="post">
                 <input type="hidden" name="action" value="logout">
-                <input type="submit" value="Вийти із системи">
+                <input type="submit" value="Logout">
             </form>
         </c:otherwise>
     </c:choose>
@@ -76,8 +75,7 @@
     <jsp:invoke fragment="bar"/>
 
     <!-- page -->
-    <jsp:invoke fragment="error"/>
-
+    <c:if test="${requestScope.error ne null}">${requestScope.error}</c:if>
     <jsp:doBody/>
 
     <!-- footer -->

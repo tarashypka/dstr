@@ -58,7 +58,7 @@ public class Item implements Serializable {
     }
 
     public void setCurrency(String currencyCode) {
-        this.currency = Currency.getInstance(currencyCode.toUpperCase());
+        currency = Currency.getInstance(currencyCode.toUpperCase());
     }
 
     public ItemStatus getStatus() {
@@ -70,23 +70,23 @@ public class Item implements Serializable {
     }
 
     public boolean enoughInStock(int required) {
-        return required <= this.status.getStocked();
+        return required <= status.getStocked();
     }
 
     public int stocked() {
-        return this.status.getStocked();
+        return status.getStocked();
     }
 
     public int reserved() {
-        return this.status.getReserved();
+        return status.getReserved();
     }
 
     public int sold() {
-        return this.status.getSold();
+        return status.getSold();
     }
 
     public Map<String, String> getExtendedFields() {
-        return this.extendedFields;
+        return extendedFields;
     }
 
     public void setExtendedFields(Map<String, String> extendedFields) {

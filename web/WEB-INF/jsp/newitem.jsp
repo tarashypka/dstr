@@ -12,47 +12,31 @@
 
 <t:genericpage>
   <jsp:attribute name="title">
-    <title>Новий товар</title>
-  </jsp:attribute>
-
-  <jsp:attribute name="error">
-    <c:if test="${requestScope.error ne null}">
-      <c:out value="${requestScope.error}"/>
-    </c:if>
+    <title>New item</title>
   </jsp:attribute>
 
   <jsp:body>
-    <c:url value="/item/add" var="itemAddURL"/>
-    <c:set var="price"
-           value="${(requestScope.item.price ge 0.0) ?
-           requestScope.item.price : ''}"/>
-    <c:set var="stocked"
-           value="${(requestScope.item.status.stocked ge 0) ?
-           requestScope.item.status.stocked : ''}"/>
-    <c:set var="reserved"
-           value="${(requestScope.item.status.reserved ge 0) ?
-           requestScope.item.status.reserved : ''}"/>
-    <c:set var="sold"
-           value="${(requestScope.item.status.sold ge 0) ?
-           requestScope.item.status.sold : ''}"/>
-
-    <form action='<c:out value="${itemAddURL}"/>' method="post">
-      <input type="text" value="${requestScope.item.category}"
-             placeholder="Категорія" name="category"><br>
-      <input type="number" step="0.01" value="${price}" placeholder="Ціна" name="price"><br>
+    <c:url var="customerController" value="/controller/admin"/>
+    <c:set var="item" value="${requestScope.item}"/>
+    <c:set var="status" value="${item.status}"/>
+    <c:set var="price" value="${(item.price ge 0.0) ? item.price : ''}"/>
+    <c:set var="stocked" value="${(status.stocked ge 0) ? status.stocked : ''}"/>
+    <c:set var="reserved" value="${(status.reserved ge 0) ? status.reserved : ''}"/>
+    <c:set var="sold" value="${(status.sold ge 0) ? status.sold : ''}"/>
+    <form action="${customerController}" method="post">
+      <input type="hidden" name="action" value="newItem">
+      <input type="text" name="category" value="${item.category}" placeholder="Category?"><br>
+      <input type="number" name="price" value="${price}" step="0.01" placeholder="Price?"><br>
       <select name="currency">
-        <option value="USD">долар США ($)</option>
-        <option value="EUR">євро (€)</option>
-        <option value="UAH">гривня (₴)</option>
-        <option value="RUB">російський рубль (₽)</option>
+        <option value="USD">USD ($)</option>
+        <option value="EUR">EURO (€)</option>
+        <option value="UAH">HRYVNIA (₴)</option>
+        <option value="RUB">RUBLE (₽)</option>
       </select><br>
-      <input type="number" value="${stocked}"
-             placeholder="Залишилось" name="status.stocked"><br>
-      <input type="number" value="${reserved}"
-             placeholder="Зарезервовано" name="status.reserved"><br>
-      <input type="number" value="${sold}"
-             placeholder="Продано" name="status.sold"><br>
-      <input type="submit" value="Додати товар">
+      <input type="number" name="stocked" value="${stocked}" placeholder="Left?"><br>
+      <input type="number" name="reserved" value="${reserved}" placeholder="Reserved?"><br>
+      <input type="number" name="sold" value="${sold}" placeholder="Sold?"><br>
+      <input type="submit" value="Add item">
     </form>
   </jsp:body>
 </t:genericpage>

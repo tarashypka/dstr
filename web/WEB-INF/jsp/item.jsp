@@ -12,44 +12,46 @@
 
 <t:genericpage>
   <jsp:attribute name="title">
-    <title>Товар</title>
+    <title>Item</title>
   </jsp:attribute>
 
   <jsp:body>
-    <c:if test="${requestScope.item ne null}">
+    <c:set var="item" value="${requestScope.item}"/>
+    <c:if test="${item ne null}">
+      <c:set var="status" value="${item.status}"/>
       <table>
         <tr>
           <th>ID</th>
-          <td><c:out value="${requestScope.item.id}"/></td>
+          <td>${item.id}</td>
         </tr>
         <tr>
-          <th>Категорія</th>
-          <td><c:out value="${requestScope.item.category}"/></td>
+          <th>Category</th>
+          <td>${requestScope.item.category}</td>
         </tr>
         <tr>
-          <th>Ціна</th>
-          <td><c:out value="${requestScope.item.price}"/></td>
+          <th>Price</th>
+          <td>${item.price}</td>
         </tr>
         <tr>
-          <th>Валюта</th>
-          <td><c:out value="${requestScope.item.currency}"/></td>
+          <th>Currency</th>
+          <td>${item.currency}</td>
         </tr>
         <tr>
-          <th>Залишилось</th>
-          <td><c:out value="${requestScope.item.status.stocked}"/></td>
+          <th>Left</th>
+          <td>${status.stocked}</td>
         </tr>
         <tr>
-          <th>Зарезервовано</th>
-          <td><c:out value="${requestScope.item.status.reserved}"/></td>
+          <th>Reserved</th>
+          <td>${status.reserved}</td>
         </tr>
         <tr>
-          <th>Продано</th>
-          <td><c:out value="${requestScope.item.status.sold}"/></td>
+          <th>Sold</th>
+          <td>${status.sold}</td>
         </tr>
-        <c:forEach items="${requestScope.item.extendedFields}" var="field">
+        <c:forEach var="field" items="${item.extendedFields}">
           <tr>
-            <th><c:out value="${requestScope.item.key}"/></th>
-            <td><c:out value="${requestScope.item.value}"/></td>
+            <th>${field.key}</th>
+            <td>${field.value}</td>
           </tr>
         </c:forEach>
       </table>

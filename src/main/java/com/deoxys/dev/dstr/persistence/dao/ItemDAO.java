@@ -60,21 +60,6 @@ public class ItemDAO extends MongoDAO<Item> {
         return items;
     }
 
-    public boolean updateItemStatus(String id, ItemStatus status) {
-        ObjectId _id = new ObjectId(id);
-        DBObject query = new BasicDBObject("_id", _id);
-
-        DBObject statusDoc = new BasicDBObject();
-        statusDoc.put("stocked", status.getStocked());
-        statusDoc.put("reserved", status.getReserved());
-        statusDoc.put("sold", status.getSold());
-
-        // Without $set operator, order document will be not updated, but replaced
-        DBObject update = new BasicDBObject("status", statusDoc);
-        DBObject set = new BasicDBObject("$set", update);
-        return collection.update(query, set).wasAcknowledged();
-    }
-
     public ItemStatus getStatus(String id) {
         ObjectId _id = new ObjectId(id);
         DBObject query = new BasicDBObject("_id", _id);
@@ -97,6 +82,15 @@ public class ItemDAO extends MongoDAO<Item> {
             }
         }
         return true;
+    }
+
+    public void expandOrderItems(Order order) {
+        Map<Item, Integer> items = order.getItems();
+        for (Item item : order.getItems().keySet()) {
+            Item expanded = get(item.getId());
+            int quantity = items.remove(item);
+            items.put(expanded, quantity);
+        }
     }
 
     /**

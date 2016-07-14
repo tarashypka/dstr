@@ -12,7 +12,7 @@
 
 <t:genericpage>
   <jsp:attribute name="title">
-    <title>Замовлення</title>
+    <title>My Orders</title>
   </jsp:attribute>
 
   <jsp:attribute name="style">
@@ -34,64 +34,40 @@
     <c:if test="${requestScope.orders ne null}">
       <table>
         <tr>
-          <th>№ замовлення</th>
-          <th>Дата</th>
-          <th>Товар</th>
-          <th>Кількість</th>
-          <th>Вартість</th>
-          <th>Валюта</th>
+          <th>Order №</th>
+          <th>Date</th>
+          <th>Item</th>
+          <th>Quantity</th>
+          <th>Price</th>
+          <th>Currency</th>
         </tr>
-        <c:forEach items="${requestScope.orders}" var="order">
+        <c:forEach var="order" items="${requestScope.orders}">
           <tr>
-            <td><c:out value="${order.orderNumber}"></c:out></td>
-            <td><c:out value="${order.date}"></c:out></td>
+            <td>${order.orderNumber}</td>
+            <td>${order.date}</td>
             <td>
-              <c:forEach items="${order.items}" var="item">
-                <c:url value="/item" var="itemURL">
-                  <c:param name="id" value="${item.key.id}"></c:param>
+              <c:forEach var="item" items="${order.items}">
+                <c:url var="itemURL" value="/controller">
+                  <c:param name="action" value="showItem"/>
+                  <c:param name="id" value="${item.key.id}"/>
                 </c:url>
-                <a href='<c:out value="${itemURL}" escapeXml="false"></c:out>'>
-                  <c:out value="${item.key.id}"></c:out><br>
-                </a>
+                <a href="${itemURL}">${item.key.id}</a><br>
               </c:forEach>
             </td>
-            <td>
-              <c:forEach items="${order.items}" var="item">
-                <c:out value="${item.value}"></c:out><br>
-              </c:forEach>
-            </td>
-            <td>
-              <c:forEach items="${order.receipt}" var="price">
-                <c:out value="${price.key}"></c:out><br>
-              </c:forEach>
-            </td>
-            <td>
-              <c:forEach items="${order.receipt}" var="price">
-                <c:out value="${price.value}"></c:out><br>
-              </c:forEach>
-            </td>
+            <td><c:forEach var="item" items="${order.items}">${item.value}<br></c:forEach></td>
+            <td><c:forEach var="price" items="${order.receipt}">${price.key}<br></c:forEach></td>
+            <td><c:forEach var="price" items="${order.receipt}">${price.value}<br></c:forEach></td>
+            <c:set var="status" value="${order.status}"/>
+            <c:url var="swapStatusURL" value="/controller/customer">
+              <c:param name="action" value="changeOrderStatus"/>
+              <c:param name="id" value="${order.id}"/>
+            </c:url>
             <c:choose>
-              <c:when test="${order.status.value eq -1}">
-                <td>
-                  <c:url value="/order/status" var="setStatusInProcessURL">
-                    <c:param name="id" value="${order.id}"/>
-                    <c:param name="status" value="IN_PROCESS"/>
-                  </c:url>
-                  <a href='<c:out value="${setStatusInProcessURL}" escapeXml="false"/>'>
-                    В процесі
-                  </a>
-                </td>
+              <c:when test="${status.value eq -1}">
+                <td><a href="${swapStatusURL}">Put in process</a></td>
               </c:when>
-              <c:when test="${order.status.value eq 0}">
-                <td>
-                  <c:url value="/order/status" var="setStatusRejectedURL">
-                    <c:param name="id" value="${order.id}"/>
-                    <c:param name="status" value="REJECTED"/>
-                  </c:url>
-                  <a href='<c:out value="${setStatusRejectedURL}" escapeXml="false"/>'>
-                    Відхилити
-                  </a>
-                </td>
+              <c:when test="${status.value eq 0}">
+                <td><a href="${swapStatusURL}">Reject</a></td>
               </c:when>
             </c:choose>
           </tr>

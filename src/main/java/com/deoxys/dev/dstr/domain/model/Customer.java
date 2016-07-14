@@ -34,9 +34,10 @@ public class Customer implements Serializable {
         this.surname = surname;
     }
 
-    public Customer(String email, String password, String name, String surname,
-                    String role, boolean enabled) {
+    public Customer(long id, String email, String password, String name,
+                    String surname, String role, boolean enabled) {
 
+        this.id = id;
         this.email = email;
         this.password = password;
         this.name = name;

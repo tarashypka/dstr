@@ -13,66 +13,56 @@
 
 <t:genericpage>
   <jsp:attribute name="title">
-    <title>Користувачі</title>
+    <title>Customers</title>
   </jsp:attribute>
 
   <jsp:body>
     <c:if test="${requestScope.customers ne null}">
       <table>
         <tr>
-          <th>Ініціали</th>
-          <th>Електронна пошта</th>
-          <th>Зроблено замовлень</th>
-          <th>Куплено товарів</th>
-          <th>Статус</th>
+          <th>Initials</th>
+          <th>Email</th>
+          <th>Orders</th>
+          <th>Items</th>
+          <th>Status</th>
         </tr>
-        <c:forEach items="${requestScope.customers}" var="customer">
-          <c:url value="/customer" var="customerURL">
-            <c:param name="email" value="${customer.email}"></c:param>
-          </c:url>
-          <c:url value="/orders" var="customerOrdersURL">
-            <c:param name="email" value="${customer.email}"></c:param>
-          </c:url>
-          <c:url value="/items" var="customerItemsURL">
-            <c:param name="email" value="${customer.email}"></c:param>
+        <c:forEach var="customer" items="${requestScope.customers}">
+          <c:url var="customerController" value="/controller/customer">
+            <c:param name="email" value="${customer.email}"/>
           </c:url>
           <tr>
             <td>
-              <a href='<c:out value="${customerURL}" escapeXml="false"></c:out>'>
-                <c:out value="${customer.name} ${customer.surname}"></c:out>
+              <a href="${customerController}&action=showCustomer">
+                ${customer.name} ${customer.surname}
               </a>
             </td>
-            <td><c:out value="${customer.email}"></c:out></td>
+            <td>${customer.email}</td>
             <td>
-              <a href='<c:out value="${customerOrdersURL}" escapeXml="false"></c:out>'>
-                <c:out value="${fn:length(customer.orders)}"></c:out>
+              <a href="${customerController}&action=showOrders">
+                ${fn:length(customer.orders)}
               </a>
             </td>
             <td>
-              <a href='<c:out value="${customerItemsURL}" escapeXml="false"></c:out>'>
-                <c:out value="${fn:length(customer.items)}"></c:out>
+              <a href="${customerController}&action=showItems">
+                ${fn:length(customer.items)}
               </a>
             </td>
-
             <td>
               <c:choose>
-                <c:when test="${customer.enabled}">
-                  ОК
-                </c:when>
-                <c:otherwise>
-                  Забанений
-                </c:otherwise>
+                <c:when test="${customer.enabled}">ОК</c:when>
+                <c:otherwise>Banned</c:otherwise>
               </c:choose>
             </td>
             <c:if test="${sessionScope.customer.role eq 'admin'}">
-              <c:url value="/customer/status" var="customerStatusURL">
-                <c:param name="email" value="${customer.email}"></c:param>
+              <c:url var="swapStatusURL" value="/controller/admin">
+                <c:param name="action" value="swapCustomerStatus"/>
+                <c:param name="id" value="${customer.id}"/>
               </c:url>
               <td>
-                <a href='<c:out value="${customerStatusURL}" escapeXml="false"></c:out>'>
+                <a href="${swapStatusURL}">
                   <c:choose>
-                    <c:when test="${customer.enabled}">Забанити</c:when>
-                    <c:otherwise>Розбанити</c:otherwise>
+                    <c:when test="${customer.enabled}">Ban</c:when>
+                    <c:otherwise>Unban</c:otherwise>
                   </c:choose>
                 </a>
               </td>

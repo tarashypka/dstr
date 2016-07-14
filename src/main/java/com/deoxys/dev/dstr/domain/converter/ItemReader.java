@@ -16,24 +16,49 @@ implements HttpRequestReader<Item>, HttpSessionReader<Item> {
     /**
      * Read Item from a request.
      *
-     * It could be Admin adding a new Item,
-     * or customer adding Item to an Order.
+     * It could be Admin adding new / updating existing Item.
      */
     @Override
     public Item read(HttpServletRequest req) {
         Item item = new Item();
-        item.setId(req.getParameter("id"));
-        item.setCategory(req.getParameter("category"));
-        item.setCurrency(req.getParameter("currency"));
+        String error = null;
+        String action = req.getParameter("action");
+        if (action.equals("editItem")) {
+            String id = req.getParameter("id");
+            if (id == null || id.equals(""))
+                error = "Wrong item id";
+            else item.setId(req.getParameter("id"));
+        }
+
+        String category = req.getParameter("category");
         String price = req.getParameter("price");
-        if (price != null) item.setPrice(Integer.parseInt(price));
-        ItemStatus status = new ItemStatus();
-        String reserved = req.getParameter("reserved");
-        if (reserved != null) status.setSold(Integer.parseInt(reserved));
-        String sold = req.getParameter("sold");
-        if (sold != null) status.setSold(Integer.parseInt(sold));
+        String currency = req.getParameter("currency");
         String stocked = req.getParameter("stocked");
-        if (stocked != null) status.setStocked(Integer.parseInt(stocked));
+        String reserved = req.getParameter("reserved");
+        String sold = req.getParameter("sold");
+
+        if (category == null || category.equals("")) {
+            if (error == null) error = "Select category";
+        } else item.setCategory(category);
+        if (price == null || price.equals("")) {
+            if (error == null) error = "Enter price";
+        } else item.setPrice(Double.parseDouble(price));
+        if (currency == null || currency.equals("")) {
+            if (error == null) error = "Select currency";
+        } else item.setCurrency(currency);
+
+        ItemStatus status = new ItemStatus();
+
+        if (stocked == null || stocked.equals("")) {
+            if (error == null) error = "How many in stock?";
+        } else status.setStocked(Integer.parseInt(stocked));
+        if (reserved == null || reserved.equals(""))
+            status.setReserved(0);
+        else status.setReserved(Integer.parseInt(reserved));
+        if (sold == null || sold.equals(""))
+            status.setSold(0);
+        else status.setSold(Integer.parseInt(sold));
+
         item.setStatus(status);
         return item;
     }

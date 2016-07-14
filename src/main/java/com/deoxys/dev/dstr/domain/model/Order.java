@@ -26,6 +26,7 @@ public class Order implements Serializable {
         REJECTED(-1), IN_PROCESS(0), PROCESSED(+1);
 
         private int value;
+        private String name;    // for easy output with JSTL
 
         private OrderStatus(int value) {
             this.value = value;
@@ -46,6 +47,10 @@ public class Order implements Serializable {
 
         public int getValue() {
             return value;
+        }
+
+        public String getName() {
+            return value == -1 ? "Rejected" : (value == 0 ? "In process" : "Processed");
         }
     }
 

@@ -12,13 +12,7 @@
 
 <t:genericpage>
   <jsp:attribute name="title">
-    <title>Нове замовлення</title>
-  </jsp:attribute>
-
-  <jsp:attribute name="error">
-    <c:if test="${requestScope.error ne null}">
-      <c:out value="${requestScope.error}"/>
-    </c:if>
+    <title>New order</title>
   </jsp:attribute>
 
   <jsp:body>
@@ -28,16 +22,16 @@
       <table id="order">
         <tr>
           <th>ID</th>
-          <th>Кількість</th>
-          <th>Вартість</th>
-          <th>Валюта</th>
+          <th>Amount</th>
+          <th>Price</th>
+          <th>Currency</th>
         </tr>
-        <c:forEach items="${order.items}" var="item">
+        <c:forEach var="item" items="${order.items}">
           <tr>
-            <td><c:out value="${item.key.id}"/></td>
-            <td><c:out value="${item.value}"/></td>
-            <td><c:out value="${item.key.price * item.value}"/></td>
-            <td><c:out value="${item.key.currency}"/></td>
+            <td>${item.key.id}</td>
+            <td>${item.value}</td>
+            <td>${item.key.price * item.value}</td>
+            <td>${item.key.currency}</td>
           </tr>
         </c:forEach>
         <tr>
@@ -46,9 +40,8 @@
             <td><input type="submit" value="Зробити замовлення"></td>
           </form>
           <td>
-            <c:forEach items="${order.receipt}" var="price">
-              <c:out value="${price.value}"/>
-              <c:out value="${price.key}"/><br>
+            <c:forEach var="price" items="${order.receipt}">
+              ${price.value} ${price.key}<br>
             </c:forEach>
           </td>
         </tr>
@@ -59,29 +52,29 @@
       <table id="items">
         <tr>
           <th>ID</th>
-          <th>Категорія</th>
-          <th>Ціна</th>
-          <th>Валюта</th>
-          <th>Залишилось</th>
+          <th>Category</th>
+          <th>Price</th>
+          <th>Currency</th>
+          <th>Left</th>
         </tr>
         <c:forEach items="${sessionScope.items}" var="item">
-          <c:url var="controller" value="/controller">
+          <c:url var="showItemURL" value="/controller">
             <c:param name="action" value="showItem"/>
             <c:param name="id" value="${item.id}"/>
           </c:url>
           <tr>
             <td>
-              <a href="${controller}"><c:out value="${item.id}"/></a>
+              <a href="${showItemURL}">${item.id}</a>
             </td>
-            <td><c:out value="${item.category}">Category?</c:out></td>
-            <td><c:out value="${item.price}">Price?</c:out></td>
-            <td><c:out value="${item.currency}">Currency?</c:out></td>
-            <td><c:out value="${item.status.stocked}">How much in stock?</c:out></td>
+            <td><c:out value="${item.category}" default="Category?"/></td>
+            <td><c:out value="${item.price}" default="Price?"/></td>
+            <td><c:out value="${item.currency}" default="Currency?"/></td>
+            <td><c:out value="${item.status.stocked}" default="How much in stock?"/></td>
             <form action="${customerController}" method="post">
               <input type="hidden" name="action" value="addOrderItem">
-              <input type="hidden" name="id" value="${item.id}"/>
-              <td><input type="number" name="quantity" placeholder="Кількість"></td>
-              <td><input type="submit" value="Додати товар"></td>
+              <input type="hidden" name="id" value="${item.id}">
+              <td><input type="number" name="quantity" placeholder="How much?"></td>
+              <td><input type="submit" value="Add item"></td>
             </form>
           </tr>
         </c:forEach>
