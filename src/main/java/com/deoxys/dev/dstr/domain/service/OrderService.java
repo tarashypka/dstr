@@ -43,15 +43,17 @@ public class OrderService extends MongoService<Order> {
         req.setAttribute("orders", orderDao.getAll());
     }
 
-    public void loadCustomerOrder(HttpServletRequest req) {
-        loadOrder(req);
-    }
-
     public void loadCustomerOrders(HttpServletRequest req) {
         CustomerReader customerReader = new CustomerReader();
         Customer customer = customerReader.read(req.getSession());
         List<Order> orders = orderDao.getAllForCustomer(customer.getEmail());
         req.setAttribute("orders", orders);
+    }
+
+    public void loadCustomerActivity(HttpServletRequest req) {
+        String email = req.getParameter("email");
+        req.setAttribute("nItems", orderDao.countCustomerItems(email));
+        req.setAttribute("nOrders", orderDao.countCustomerOrders(email));
     }
 
     public void addItemToOrder(HttpServletRequest req) {
@@ -91,6 +93,7 @@ public class OrderService extends MongoService<Order> {
             order.setStatus(Order.OrderStatus.IN_PROCESS);
             orderDao.add(order);
             ses.removeAttribute("order");
+            req.setAttribute("order", order);
             logger.info("New order=" + order + " has been made");
         } else {
             /**

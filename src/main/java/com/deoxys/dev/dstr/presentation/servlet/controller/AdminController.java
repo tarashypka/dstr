@@ -67,10 +67,6 @@ public class AdminController extends HttpServlet {
                 itemService.deleteItem(req);
                 resp.sendRedirect(req.getHeader("referer"));
                 break;
-            case "showOrder":
-                orderService.loadOrder(req);
-                req.getRequestDispatcher(ORDER_JSP).forward(req, resp);
-                break;
             case "showOrders":
                 orderService.loadOrders(req);
                 req.getRequestDispatcher(ORDERS_JSP).forward(req, resp);

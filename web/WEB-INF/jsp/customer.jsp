@@ -40,7 +40,7 @@
           <th>Orders</th>
           <td>
             <a href="${customerController}&action=showOrders">
-              ${fn:length(requestScope.customer.orders)}
+              ${requestScope.nOrders}
             </a>
           </td>
         </tr>
@@ -48,7 +48,7 @@
           <th>Items</th>
           <td>
             <a href="${customerController}&action=showItems">
-              ${fn:length(requestScope.customer.items)}
+              ${requestScope.nItems}
             </a>
           </td>
         </tr>

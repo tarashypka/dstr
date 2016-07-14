@@ -59,6 +59,14 @@ public class OrderDAO extends MongoDAO<Order> {
         return orders;
     }
 
+    public int countCustomerItems(String email) {
+        return 0;
+    }
+
+    public int countCustomerOrders(String email) {
+        return 0;
+    }
+
     public Order.OrderStatus getStatus(String id) {
         DBObject query = new BasicDBObject("_id", new ObjectId(id));
         DBObject projection = new BasicDBObject("status", 1);

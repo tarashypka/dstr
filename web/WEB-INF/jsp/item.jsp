@@ -30,11 +30,7 @@
         </tr>
         <tr>
           <th>Price</th>
-          <td>${item.price}</td>
-        </tr>
-        <tr>
-          <th>Currency</th>
-          <td>${item.currency}</td>
+          <td>${item.price} ${item.currency}</td>
         </tr>
         <tr>
           <th>Left</th>

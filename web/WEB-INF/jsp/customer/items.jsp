@@ -42,7 +42,7 @@
           <th>Total price</th>
         </tr>
         <c:forEach var="item" items="${requestScope.items}">
-          <c:url var="itemURL" value="/controller/customer">
+          <c:url var="itemURL" value="/controller">
             <c:param name="action" value="showItem"/>
             <c:param name="id" value="${item.key.id}"/>
           </c:url>

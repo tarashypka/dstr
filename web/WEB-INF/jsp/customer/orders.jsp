@@ -37,13 +37,17 @@
           <th>Order №</th>
           <th>Date</th>
           <th>Item</th>
-          <th>Quantity</th>
+          <th>Amount</th>
           <th>Price</th>
-          <th>Currency</th>
+          <th>Status</th>
         </tr>
         <c:forEach var="order" items="${requestScope.orders}">
+          <c:url var="orderURL" value="/controller/customer">
+            <c:param name="action" value="showOrder"/>
+            <c:param name="id" value="${order.id}"/>
+          </c:url>
           <tr>
-            <td>${order.orderNumber}</td>
+            <td><a href="${orderURL}">${order.orderNumber}</a></td>
             <td>${order.date}</td>
             <td>
               <c:forEach var="item" items="${order.items}">
@@ -54,10 +58,18 @@
                 <a href="${itemURL}">${item.key.id}</a><br>
               </c:forEach>
             </td>
-            <td><c:forEach var="item" items="${order.items}">${item.value}<br></c:forEach></td>
-            <td><c:forEach var="price" items="${order.receipt}">${price.key}<br></c:forEach></td>
-            <td><c:forEach var="price" items="${order.receipt}">${price.value}<br></c:forEach></td>
+            <td>
+              <c:forEach var="item" items="${order.items}">
+                ${item.value}<br>
+              </c:forEach>
+            </td>
+            <td>
+              <c:forEach var="price" items="${order.receipt}">
+                ${price.value} ${price.key}<br>
+              </c:forEach>
+            </td>
             <c:set var="status" value="${order.status}"/>
+            <td>${status.name}</td>
             <c:url var="swapStatusURL" value="/controller/customer">
               <c:param name="action" value="changeOrderStatus"/>
               <c:param name="id" value="${order.id}"/>

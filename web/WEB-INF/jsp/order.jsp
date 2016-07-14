@@ -18,6 +18,11 @@
   <jsp:body>
     <c:set var="order" value="${requestScope.order}"/>
     <c:if test="${order ne null}">
+      <c:set var="customer" value="${order.customer}"/>
+      <c:url var="customerURL" value="/controller/customer">
+        <c:param name="action" value="showCustomer"/>
+        <c:param name="email" value="${customer.email}"/>
+      </c:url>
       <table>
         <tr>
           <th>ID</th>
@@ -33,7 +38,11 @@
         </tr>
         <tr>
           <th>Customer</th>
-          <td>${order.customer.name} ${order.customer.surname}</td>
+          <td>
+            <a href="${customerURL}">
+              ${customer.name} ${customer.surname}
+            </a>
+          </td>
         </tr>
           <th>Items</th>
           <td>

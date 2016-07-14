@@ -27,6 +27,7 @@ public class CustomerController extends HttpServlet {
             CUSTOMER_ITEMS_JSP,
             CUSTOMER_ORDER_JSP,
             CUSTOMER_ORDERS_JSP,
+            ORDER_JSP,
             NEW_ORDER_JSP;
 
     static {
@@ -35,8 +36,9 @@ public class CustomerController extends HttpServlet {
         itemService = new ItemService();
         CUSTOMER_JSP = "/WEB-INF/jsp/customer.jsp";
         CUSTOMER_ITEMS_JSP = "/WEB-INF/jsp/customer/items.jsp";
-        CUSTOMER_ORDER_JSP = "/WEB-INF/jsp/customer/order.jsp";
+        CUSTOMER_ORDER_JSP = "/WEB-INF/jsp/order.jsp";
         CUSTOMER_ORDERS_JSP = "/WEB-INF/jsp/customer/orders.jsp";
+        ORDER_JSP = "/WEB-INF/jsp/order.jsp";
         NEW_ORDER_JSP = "/WEB-INF/jsp/neworder.jsp";
     }
 
@@ -50,6 +52,7 @@ public class CustomerController extends HttpServlet {
         switch (action) {
             case "showCustomer":
                 customerService.loadCustomer(req);
+                orderService.loadCustomerActivity(req);
                 req.getRequestDispatcher(CUSTOMER_JSP).forward(req, resp);
                 break;
             case "showItems":
@@ -57,7 +60,7 @@ public class CustomerController extends HttpServlet {
                 req.getRequestDispatcher(CUSTOMER_ITEMS_JSP).forward(req, resp);
                 break;
             case "showOrder":
-                orderService.loadCustomerOrder(req);
+                orderService.loadOrder(req);
                 req.getRequestDispatcher(CUSTOMER_ORDER_JSP).forward(req, resp);
                 break;
             case "showOrders":
@@ -86,12 +89,13 @@ public class CustomerController extends HttpServlet {
         switch (action) {
             case "addOrderItem":
                 orderService.addItemToOrder(req);
+                itemService.loadItems(req);
                 req.getRequestDispatcher(NEW_ORDER_JSP).forward(req, resp);
                 break;
             case "newOrder":
                 orderService.makeOrder(req);
                 if (req.getParameter("error") == null)
-                    req.getRequestDispatcher(req.getHeader("referer")).forward(req, resp);
+                    req.getRequestDispatcher(ORDER_JSP).forward(req, resp);
                 else req.getRequestDispatcher(NEW_ORDER_JSP).forward(req, resp);
                 break;
             default:

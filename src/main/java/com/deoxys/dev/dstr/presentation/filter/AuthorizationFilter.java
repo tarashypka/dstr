@@ -113,8 +113,6 @@ public class AuthorizationFilter implements Filter {
         } else chain.doFilter(req, resp);
     }
 
-
-
     private boolean allowed(Customer customer, String uri, String action) {
         if (isResource(uri)) return allowedResource(customer, uri);
         return allowedUri(customer, uri) && allowedAction(customer, action);

@@ -30,7 +30,7 @@
         </tr>
         <c:set var="orders" value="${requestScope.orders}"/>
         <c:forEach var="order" items="${orders}">
-          <c:url var="orderURL" value="/controller/admin">
+          <c:url var="orderURL" value="/controller/customer">
             <c:param name="action" value="showOrder"/>
             <c:param name="id" value="${order.id}"/>
           </c:url>
