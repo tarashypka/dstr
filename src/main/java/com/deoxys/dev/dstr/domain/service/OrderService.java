@@ -1,6 +1,5 @@
 package com.deoxys.dev.dstr.domain.service;
 
-import com.deoxys.dev.dstr.domain.converter.CustomerReader;
 import com.deoxys.dev.dstr.domain.converter.OrderReader;
 import com.deoxys.dev.dstr.domain.model.Customer;
 import com.deoxys.dev.dstr.domain.model.Item;
@@ -12,7 +11,6 @@ import org.apache.log4j.Logger;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.util.Date;
-import java.util.List;
 
 /**
  * Created by deoxys on 07.07.16.
@@ -44,14 +42,18 @@ public class OrderService extends MongoService<Order> {
     }
 
     public void loadCustomerOrders(HttpServletRequest req) {
-        CustomerReader customerReader = new CustomerReader();
-        Customer customer = customerReader.read(req.getSession());
-        List<Order> orders = orderDao.getAllForCustomer(customer.getEmail());
-        req.setAttribute("orders", orders);
+        Customer customer = (Customer) req.getSession().getAttribute("customer");
+        String email = customer.isAdmin()
+                ? req.getParameter("email")
+                : customer.getEmail();
+        req.setAttribute("orders", orderDao.getAllForCustomer(email));
     }
 
     public void loadCustomerActivity(HttpServletRequest req) {
-        String email = req.getParameter("email");
+        Customer customer = (Customer) req.getSession().getAttribute("customer");
+        String email = customer.isAdmin()
+                ? req.getParameter("email")
+                : customer.getEmail();
         req.setAttribute("nItems", orderDao.countCustomerItems(email));
         req.setAttribute("nOrders", orderDao.countCustomerOrders(email));
     }

@@ -44,14 +44,14 @@
       </form>
     </c:if>
 
-    <c:if test="${requestScope.items ne null}">
+    <c:if test="${items ne null}">
       <table>
         <tr>
           <th>ID</th>
           <th>Category</th>
           <th>Price</th>
         </tr>
-        <c:forEach var="item" items="${requestScope.items}">
+        <c:forEach var="item" items="${items}">
           <c:url var="itemURL" value="/controller">
             <c:param name="action" value="showItem"/>
             <c:param name="id" value="${item.id}"/>

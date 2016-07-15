@@ -16,7 +16,6 @@
   </jsp:attribute>
 
   <jsp:body>
-    <c:set var="item" value="${requestScope.item}"/>
     <c:if test="${item ne null}">
       <c:set var="status" value="${item.status}"/>
       <table>

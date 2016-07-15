@@ -24,7 +24,10 @@ public class CustomerService extends PostgresService<Customer> {
     }
 
     public void loadCustomer(HttpServletRequest req) {
-        String email = req.getParameter("email");
+        Customer customer = sessionReader.read(req.getSession());
+        String email = customer.isAdmin()
+                ? req.getParameter("email")
+                : customer.getEmail();
         try {
             req.setAttribute("customer", customerDao.get(email));
         } catch (SQLException ex) {
@@ -60,6 +63,19 @@ public class CustomerService extends PostgresService<Customer> {
     }
 
     public void register(HttpServletRequest req) {
+        Customer customer = requestReader.read(req);
+        if (req.getAttribute("error") == null) try {
+            if (customerDao.exists(customer)) {
+                req.setAttribute("error", "Email is already reserved");
+                req.setAttribute("_customer", customer);
+            } else {
+                customerDao.add(customer);
+                customer = customerDao.get(customer.getId());
+                req.getSession().setAttribute("customer", customer);
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        } else req.setAttribute("_customer", customer);
     }
 
     public void logout(HttpServletRequest req) {

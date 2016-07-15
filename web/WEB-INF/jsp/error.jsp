@@ -17,20 +17,20 @@
 
   <jsp:attribute name="error">
     <c:choose>
-      <c:when test="${requestScope.statusCode eq 404}">
+      <c:when test="${statusCode eq 404}">
         <h3>Error Details</h3>
         <ul>
           <li>Status Code: 404</li>
-          <li>Requested URI: ${requestScope.requestUri} is not allowed or doesn't exist</li>
+          <li>Requested URI: ${requestUri} is not allowed or doesn't exist</li>
         </ul>
       </c:when>
-      <c:when test="${requestScope.statusCode eq 500}">
+      <c:when test="${statusCode eq 500}">
         <h3>Exception Details</h3>
         <ul>
-          <li>Servlet Name: ${requestScope.servletName}</li>
-          <li>Requested URI: ${requestScope.requestUri}</li>
-          <li>Exception Name: ${requestScope.exception}</li>
-          <li>Exception Message:${requestScope.exceptionMsg}</li>
+          <li>Servlet Name: ${servletName}</li>
+          <li>Requested URI: ${requestUri}</li>
+          <li>Exception Name: ${exception}</li>
+          <li>Exception Message:${exceptionMsg}</li>
         </ul>
       </c:when>
     </c:choose>

@@ -14,15 +14,16 @@
 <body>
 
     <!-- header -->
-    <c:url value="/home" var="homeURL"/>
+    <c:url var="homeURL" value="/"/>
     <a href="${homeURL}">Customers&Orders</a>
     <c:url var="controller" value="/controller"/>
     <form action="${controller}" method="get">
         <input type="hidden" name="action" value="showItems">
         <input type="submit" value="All items">
     </form>
+    <c:set var="customer" value="${sessionScope.customer}"/>
     <c:choose>
-        <c:when test="${sessionScope.customer eq null}">
+        <c:when test="${customer eq null}">
             <form action="${controller}" method="get">
                 <input type="hidden" name="action" value="login">
                 <input type="submit" value="Login">
@@ -34,7 +35,7 @@
         </c:when>
         <c:otherwise>
             <c:choose>
-                <c:when test="${sessionScope.customer.role eq 'admin'}">
+                <c:when test="${customer.role eq 'admin'}">
                     <c:url var="adminController" value="/controller/admin"/>
                     <form action="${adminController}" method="get">
                         <input type="hidden" name="action" value="showOrders">
@@ -51,6 +52,10 @@
                 </c:when>
                 <c:otherwise>
                     <c:url var="customerController" value="/controller/customer"/>
+                    <form action="${customerController}" method="get">
+                        <input type="hidden" name="action" value="showCustomer">
+                        <input type="submit" value="My account">
+                    </form>
                     <form action="${customerController}" method="get">
                         <input type="hidden" name="action" value="showItems">
                         <input type="submit" value="My items">

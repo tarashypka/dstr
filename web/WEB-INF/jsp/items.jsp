@@ -16,7 +16,7 @@
   </jsp:attribute>
 
   <jsp:body>
-    <c:if test="${requestScope.items ne null}">
+    <c:if test="${items ne null}">
       <table>
         <tr>
           <th>ID</th>
@@ -27,7 +27,7 @@
           <th>Reserved</th>
           <th>Sold</th>
         </tr>
-        <c:forEach var="item" items="${requestScope.items}">
+        <c:forEach var="item" items="${items}">
           <c:set var="status" value="${item.status}"/>
           <c:url var="showItemURL" value="/controller">
             <c:param name="action" value="showItem"/>

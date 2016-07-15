@@ -16,7 +16,6 @@
   </jsp:attribute>
 
   <jsp:body>
-    <c:set var="order" value="${requestScope.order}"/>
     <c:if test="${order ne null}">
       <c:set var="customer" value="${order.customer}"/>
       <c:url var="customerURL" value="/controller/customer">

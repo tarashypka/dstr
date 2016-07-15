@@ -17,7 +17,6 @@
 
   <jsp:body>
     <c:url var="customerController" value="/controller/admin"/>
-    <c:set var="item" value="${requestScope.item}"/>
     <c:set var="status" value="${item.status}"/>
     <c:set var="price" value="${(item.price ge 0.0) ? item.price : ''}"/>
     <c:set var="stocked" value="${(status.stocked ge 0) ? status.stocked : ''}"/>

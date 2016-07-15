@@ -1,6 +1,5 @@
 package com.deoxys.dev.dstr.domain.service;
 
-import com.deoxys.dev.dstr.domain.converter.CustomerReader;
 import com.deoxys.dev.dstr.domain.converter.ItemReader;
 import com.deoxys.dev.dstr.domain.model.Customer;
 import com.deoxys.dev.dstr.domain.model.Item;
@@ -57,8 +56,10 @@ public class ItemService extends MongoService<Item> {
 
     public void loadCustomerItems(HttpServletRequest req) {
         Customer customer = (Customer) req.getSession().getAttribute("customer");
-        Map<Item, Integer> items = itemDao.getAllForCustomer(customer.getEmail());
-        req.setAttribute("items", items);
+        String email = customer.isAdmin()
+                ? req.getParameter("email")
+                : customer.getEmail();
+        req.setAttribute("items", itemDao.getAllForCustomer(email));
     }
 
     /**

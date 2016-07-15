@@ -29,7 +29,8 @@ public class CustomerDAO extends PostgresDAO<Customer> {
             UPDATE_CUSTOMER_BY_ID,
             UPDATE_STATUS_BY_ID,
             DELETE_CUSTOMER_BY_ID,
-            COUNT_CUSTOMERS;
+            COUNT_ALL_CUSTOMERS,
+            COUNT_CUSTOMERS_BY_EMAIL;
 
     static {
         SELECT_CUSTOMER_BY_ID =
@@ -69,8 +70,12 @@ public class CustomerDAO extends PostgresDAO<Customer> {
                 "DELETE FROM " + COLLECTION + " " +
                 "WHERE id = ?";
 
-        COUNT_CUSTOMERS =
+        COUNT_ALL_CUSTOMERS =
                 "SELECT COUNT(*) FROM " + COLLECTION;
+
+        COUNT_CUSTOMERS_BY_EMAIL =
+                "SELECT COUNT(*) FROM " + COLLECTION + " " +
+                "WHERE email = ?";
     }
 
     @Override
@@ -175,11 +180,22 @@ public class CustomerDAO extends PostgresDAO<Customer> {
         }
     }
 
+    public boolean exists(Customer customer) throws SQLException {
+        try (Connection conn = dataSource.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(COUNT_CUSTOMERS_BY_EMAIL)) {
+
+            stmt.setString(1, customer.getEmail());
+            try (ResultSet rs = stmt.executeQuery()) {
+                return rs.next() && rs.getLong("count") > 0;
+            }
+        }
+    }
+
     @Override
     public long count() throws SQLException {
         try (Connection conn = dataSource.getConnection();
              Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery(COUNT_CUSTOMERS)) {
+             ResultSet rs = stmt.executeQuery(COUNT_ALL_CUSTOMERS)) {
 
             return rs.next() ? rs.getLong("count") : -1;
         }

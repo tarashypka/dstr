@@ -86,13 +86,13 @@ public class MainController extends HttpServlet {
                 break;
             case "register":
                 customerService.register(req);
-                if (req.getParameter("error") == null)
+                if (req.getAttribute("error") == null)
                     resp.sendRedirect(req.getContextPath() + HOME_LINK);
                 else req.getRequestDispatcher(REGISTER_JSP).forward(req, resp);
                 break;
             case "logout":
                 customerService.logout(req);
-                if (req.getParameter("error") == null)
+                if (req.getAttribute("error") == null)
                     resp.sendRedirect(req.getContextPath() + HOME_LINK);
                 else resp.sendRedirect(req.getHeader("referer"));
                 break;

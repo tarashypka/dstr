@@ -17,7 +17,7 @@
   </jsp:attribute>
 
   <jsp:body>
-    <c:if test="${requestScope.customers ne null}">
+    <c:if test="${customers ne null}">
       <table>
         <tr>
           <th>Initials</th>
@@ -26,7 +26,7 @@
           <th>Items</th>
           <th>Status</th>
         </tr>
-        <c:forEach var="customer" items="${requestScope.customers}">
+        <c:forEach var="customer" items="${customers}">
           <c:url var="customerController" value="/controller/customer">
             <c:param name="email" value="${customer.email}"/>
           </c:url>

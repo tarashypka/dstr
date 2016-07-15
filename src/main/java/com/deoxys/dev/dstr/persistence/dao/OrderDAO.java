@@ -10,10 +10,28 @@ import java.util.*;
 
 public class OrderDAO extends MongoDAO<Order> {
 
-    private final static String COLLECTION = "orders";
+    private final static String COLLECTION;
+
+    private final static String N_ITEMS_MAP_FUNC, N_ITEMS_REDUCE_FUNC;
 
     public OrderDAO(MongoClient client) {
         super(client, COLLECTION, new OrderConverter());
+    }
+
+    static {
+        COLLECTION = "orders";
+        N_ITEMS_MAP_FUNC =
+            "function() {" +
+            "   var nOrderItems = 0;" +
+            "   this.items.forEach(function(item) { nOrderItems += item.quantity });" +
+            "   emit (\"nItems\", nOrderItems);" +
+            "}";
+        N_ITEMS_REDUCE_FUNC =
+            "function(key, values) {" +
+            "   var nCustomerItems = 0;" +
+            "   values.forEach(function(nOrderItems) { nCustomerItems += nOrderItems });" +
+            "   return nCustomerItems;" +
+            "}";
     }
 
     @Override
@@ -60,11 +78,24 @@ public class OrderDAO extends MongoDAO<Order> {
     }
 
     public int countCustomerItems(String email) {
-        return 0;
+        int nItems = 0;
+        DBObject query = new BasicDBObject("customer.email", email);
+        query.put("status", Order.OrderStatus.PROCESSED.getValue());
+        MapReduceOutput out = collection.mapReduce(
+                N_ITEMS_MAP_FUNC, N_ITEMS_REDUCE_FUNC,
+                MapReduceCommand.OutputType.INLINE.name(), query);
+        Iterator<DBObject> iterator = out.results().iterator();
+        if (iterator.hasNext()) {
+            String value = iterator.next().get("value").toString();
+            nItems = (int) Double.parseDouble(value);
+        }
+        out.drop();
+        return nItems;
     }
 
     public int countCustomerOrders(String email) {
-        return 0;
+        DBObject query = new BasicDBObject("customer.email", email);
+        return (int) collection.count(query);
     }
 
     public Order.OrderStatus getStatus(String id) {

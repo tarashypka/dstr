@@ -17,7 +17,6 @@
   </jsp:attribute>
 
   <jsp:body>
-    <c:set var="customer" value="${requestScope.customer}"/>
     <c:if test="${customer ne null}">
       <c:url var="customerController" value="/controller/customer">
         <c:param name="email" value="${customer.email}"/>
