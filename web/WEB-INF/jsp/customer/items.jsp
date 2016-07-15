@@ -37,7 +37,6 @@
           <th>ID</th>
           <th>Category</th>
           <th>Price</th>
-          <th>Currency</th>
           <th>Amount</th>
           <th>Total price</th>
         </tr>
@@ -49,8 +48,7 @@
           <tr>
             <td><a href="${itemURL}">${item.key.id}</a></td>
             <td>${item.key.category}</td>
-            <td>${item.key.price}</td>
-            <td>${item.key.currency}</td>
+            <td>${item.key.price} ${item.key.currency}</td>
             <td>${item.value}</td>
             <td>${item.value * item.key.price}</td>
           </tr>

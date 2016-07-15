@@ -50,6 +50,7 @@
           <th>ID</th>
           <th>Category</th>
           <th>Price</th>
+          <th>Left</th>
         </tr>
         <c:forEach var="item" items="${items}">
           <c:url var="itemURL" value="/controller">
@@ -60,6 +61,7 @@
             <td><a href="${itemURL}">${item.id}</a></td>
             <td>${item.category}</td>
             <td>${item.price} ${item.currency}</td>
+            <td>${item.status.stocked}</td>
             <form action="${customerController}" method="post">
               <input type="hidden" name="action" value="addOrderItem">
               <input type="hidden" name="id" value="${item.id}">

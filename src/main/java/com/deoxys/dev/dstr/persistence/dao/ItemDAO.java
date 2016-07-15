@@ -86,11 +86,10 @@ public class ItemDAO extends MongoDAO<Item> {
 
     public void expandOrderItems(Order order) {
         Map<Item, Integer> items = order.getItems();
-        for (Item item : order.getItems().keySet()) {
-            Item expanded = get(item.getId());
-            int quantity = items.remove(item);
-            items.put(expanded, quantity);
-        }
+        Map<Item, Integer> expandedItems = new HashMap();
+        for (Item item : items.keySet())
+            expandedItems.put(get(item.getId()), items.get(item));
+        order.setItems(expandedItems);
     }
 
     /**

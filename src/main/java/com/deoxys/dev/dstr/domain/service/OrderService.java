@@ -107,15 +107,26 @@ public class OrderService extends MongoService<Order> {
     }
 
     public void swapOrderStatus(HttpServletRequest req) {
-        String orderId = req.getParameter("orderId");
+        String id = req.getParameter("id");
 
         /**
          * Possible solutions:
          *      load OrderStatus, if it's valid, then load Order
          *      load Order
          */
-        Order order = orderDao.get(orderId);
+        Order order = orderDao.get(id);
         Order.OrderStatus oldStatus = order.getStatus();
+        Order.OrderStatus newStatus = oldStatus.equals(Order.OrderStatus.REJECTED)
+                        ? Order.OrderStatus.IN_PROCESS
+                        : Order.OrderStatus.REJECTED;
+
+        /**
+         * To change order status, items statuses should be changed
+         * and
+         * orderDao.get(id) returns order with items that only have id field.
+         */
+        itemDao.expandOrderItems(order);
+
         ItemService itemService = new ItemService();
         switch (oldStatus) {
             case IN_PROCESS:
@@ -129,7 +140,10 @@ public class OrderService extends MongoService<Order> {
             default:
                 return;
         }
-        req.setAttribute("order", order);
+        orderDao.updateStatus(id, newStatus);
+        req.setAttribute("order", orderDao.get(id));
+        logger.info("Order's with id=" + id + " status was changed: "
+                + oldStatus + " --> " + newStatus);
     }
 
     public void changeOrderStatus(HttpServletRequest req) {

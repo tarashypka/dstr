@@ -36,9 +36,8 @@
         <tr>
           <th>Order №</th>
           <th>Date</th>
-          <th>Item</th>
-          <th>Amount</th>
-          <th>Price</th>
+          <th>Items</th>
+          <th>Receipt</th>
           <th>Status</th>
         </tr>
         <c:forEach var="order" items="${orders}">
@@ -55,12 +54,7 @@
                   <c:param name="action" value="showItem"/>
                   <c:param name="id" value="${item.key.id}"/>
                 </c:url>
-                <a href="${itemURL}">${item.key.id}</a><br>
-              </c:forEach>
-            </td>
-            <td>
-              <c:forEach var="item" items="${order.items}">
-                ${item.value}<br>
+                ${item.value} <a href="${itemURL}">${item.key.id}</a><br>
               </c:forEach>
             </td>
             <td>

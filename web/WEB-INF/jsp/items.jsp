@@ -22,7 +22,6 @@
           <th>ID</th>
           <th>Category</th>
           <th>Price</th>
-          <th>Currency</th>
           <th>Left</th>
           <th>Reserved</th>
           <th>Sold</th>
@@ -36,8 +35,7 @@
           <tr>
             <td><a href="${showItemURL}">${item.id}</a></td>
             <td>${item.category}</td>
-            <td>${item.price}</td>
-            <td>${item.currency}</td>
+            <td>${item.price} ${item.currency}</td>
             <td>${status.stocked}</td>
             <td>${status.reserved}</td>
             <td>${item.status.sold}</td>
