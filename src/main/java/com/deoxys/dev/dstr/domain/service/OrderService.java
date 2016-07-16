@@ -131,10 +131,10 @@ public class OrderService extends MongoService<Order> {
         switch (oldStatus) {
             case IN_PROCESS:
                 itemService.takeOrderItemsFromReserve(order.getItems());
-                itemService.addOrderItemsToSold(order.getItems());
+                itemService.addOrderItemsToStock(order.getItems());
                 break;
-            case PROCESSED:
-                itemService.takeOrderItemsFromSold(order.getItems());
+            case REJECTED:
+                itemService.takeOrderItemsFromStock(order.getItems());
                 itemService.addOrderItemsToReserve(order.getItems());
                 break;
             default:
