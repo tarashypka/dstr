@@ -23,7 +23,6 @@ public class MainController extends HttpServlet {
     private static ItemService itemService;
 
     private static final String
-            HOME_LINK,
             LOGIN_JSP,
             REGISTER_JSP,
             LOGOUT_JSP,
@@ -34,7 +33,6 @@ public class MainController extends HttpServlet {
         customerService = new CustomerService();
         orderService = new OrderService();
         itemService = new ItemService();
-        HOME_LINK = "/home";
         LOGIN_JSP = "/WEB-INF/jsp/login.jsp";
         REGISTER_JSP = "/WEB-INF/jsp/register.jsp";
         LOGOUT_JSP = "/WEB-INF/jsp/logout.jsp";
@@ -81,19 +79,19 @@ public class MainController extends HttpServlet {
             case "login":
                 customerService.login(req);
                 if (req.getAttribute("error") == null)
-                    resp.sendRedirect(req.getContextPath() + HOME_LINK);
+                    resp.sendRedirect(req.getContextPath());
                 else req.getRequestDispatcher(LOGIN_JSP).forward(req, resp);
                 break;
             case "register":
                 customerService.register(req);
                 if (req.getAttribute("error") == null)
-                    resp.sendRedirect(req.getContextPath() + HOME_LINK);
+                    resp.sendRedirect(req.getContextPath());
                 else req.getRequestDispatcher(REGISTER_JSP).forward(req, resp);
                 break;
             case "logout":
                 customerService.logout(req);
                 if (req.getAttribute("error") == null)
-                    resp.sendRedirect(req.getContextPath() + HOME_LINK);
+                    resp.sendRedirect(req.getContextPath());
                 else resp.sendRedirect(req.getHeader("referer"));
                 break;
             default:

@@ -11,7 +11,5 @@
 --%>
 
 <t:genericpage>
-    <jsp:attribute name="title">
-        <title>dstr</title>
-    </jsp:attribute>
+    <jsp:attribute name="title">dstr</jsp:attribute>
 </t:genericpage>

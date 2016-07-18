@@ -11,24 +11,7 @@
 --%>
 
 <t:genericpage>
-  <jsp:attribute name="title">
-    <title>My Items</title>
-  </jsp:attribute>
-
-  <jsp:attribute name="style">
-    <style>
-      #body table {
-        position: fixed;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-      }
-      #body table, tr, th, td {
-        border: 1px solid black;
-        text-align: center;
-      }
-    </style>
-  </jsp:attribute>
+  <jsp:attribute name="title">My Items</jsp:attribute>
 
   <jsp:body>
     <c:if test="${items ne null}">
@@ -41,8 +24,8 @@
           <th>Total price</th>
         </tr>
         <c:forEach var="item" items="${items}">
-          <c:url var="itemURL" value="/controller">
-            <c:param name="action" value="showItem"/>
+          <c:url var="itemURL" value="/controller/customer">
+            <c:param name="action" value="showItems"/>
             <c:param name="id" value="${item.key.id}"/>
           </c:url>
           <tr>

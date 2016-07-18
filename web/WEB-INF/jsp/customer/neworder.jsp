@@ -11,9 +11,7 @@
 --%>
 
 <t:genericpage>
-  <jsp:attribute name="title">
-    <title>New order</title>
-  </jsp:attribute>
+  <jsp:attribute name="title">New order</jsp:attribute>
 
   <jsp:body>
     <c:url var="customerController" value="/controller/customer"/>

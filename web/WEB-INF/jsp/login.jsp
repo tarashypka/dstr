@@ -11,9 +11,7 @@
 --%>
 
 <t:genericpage>
-  <jsp:attribute name="title">
-    <title>Login</title>
-  </jsp:attribute>
+  <jsp:attribute name="title">Login</jsp:attribute>
 
   <jsp:body>
     <c:url var="controller" value="/controller"/>

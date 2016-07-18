@@ -23,25 +23,25 @@ public class AdminController extends HttpServlet {
     private static ItemService itemService;
 
     private static final String
-            ORDER_JSP,
-            ORDERS_JSP,
             CUSTOMER_JSP,
             CUSTOMERS_JSP,
+            ITEM_JSP,
             NEW_ITEM_JSP,
             EDIT_ITEM_JSP,
-            ITEM_JSP;
+            ORDER_JSP,
+            ORDERS_JSP;
 
     static {
         customerService = new CustomerService();
         orderService = new OrderService();
         itemService = new ItemService();
-        ORDER_JSP = "/WEB-INF/jsp/order.jsp";
-        ORDERS_JSP = "/WEB-INF/jsp/orders.jsp";
-        CUSTOMER_JSP = "/WEB-INF/jsp/customer.jsp";
-        CUSTOMERS_JSP = "/WEB-INF/jsp/customers.jsp";
-        NEW_ITEM_JSP = "/WEB-INF/jsp/newitem.jsp";
-        EDIT_ITEM_JSP = "/WEB-INF/jsp/edititem.jsp";
+        CUSTOMER_JSP = "/WEB-INF/jsp/customer/customer.jsp";
+        CUSTOMERS_JSP = "/WEB-INF/jsp/admin/customers.jsp";
         ITEM_JSP = "/WEB-INF/jsp/item.jsp";
+        NEW_ITEM_JSP = "/WEB-INF/jsp/admin/newitem.jsp";
+        EDIT_ITEM_JSP = "/WEB-INF/jsp/admin/edititem.jsp";
+        ORDER_JSP = "/WEB-INF/jsp/customer/order.jsp";
+        ORDERS_JSP = "/WEB-INF/jsp/admin/orders.jsp";
     }
 
     @Override
@@ -73,11 +73,12 @@ public class AdminController extends HttpServlet {
                 break;
             case "swapCustomerStatus":
                 customerService.swapCustomerStatus(req);
+                customerService.loadCustomer(req);
+                orderService.loadCustomerActivity(req);
                 req.getRequestDispatcher(CUSTOMER_JSP).forward(req, resp);
                 break;
             case "changeOrderStatus":
                 orderService.changeOrderStatus(req);
-                System.out.println("ORDER=" + req.getAttribute("order"));
                 req.getRequestDispatcher(ORDER_JSP).forward(req, resp);
                 break;
             default:

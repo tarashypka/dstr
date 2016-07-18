@@ -9,7 +9,7 @@
 <head>
     <link rel="shortcut icon"
           href="<c:out value='${pageContext.request.contextPath}'/>/resources/favicon.ico"/>
-    <jsp:invoke fragment="title"/>
+    <title><jsp:invoke fragment="title"/></title>
 </head>
 <body>
 

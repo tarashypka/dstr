@@ -99,6 +99,13 @@ public class CustomerDAO extends PostgresDAO<Customer> {
         }
     }
 
+    /**
+     * Required on user login when id is not known yet
+     * to verify if user with such an email already exists.
+     *
+     * It's better to use get(email) with 1 connection to database,
+     * than get(getId(email)) with 2 connections to database.
+     */
     public Customer get(String email) throws SQLException {
         try (Connection conn = dataSource.getConnection();
              PreparedStatement stmt = conn.prepareStatement(SELECT_CUSTOMER_BY_EMAIL)) {

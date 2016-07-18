@@ -5,30 +5,13 @@
 <%--
   Created by IntelliJ IDEA.
   User: deoxys
-  Date: 29.05.16
-  Time: 4:26
+  Date: 01.06.16
+  Time: 1:04
   To change this template use File | Settings | File Templates.
 --%>
 
 <t:genericpage>
-  <jsp:attribute name="title">
-    <title>My Orders</title>
-  </jsp:attribute>
-
-  <jsp:attribute name="style">
-    <style>
-      #body table {
-        position: fixed;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-      }
-      #body table, tr, th, td {
-        border: 1px solid black;
-        text-align: center;
-      }
-    </style>
-  </jsp:attribute>
+  <jsp:attribute name="title">Orders</jsp:attribute>
 
   <jsp:body>
     <c:if test="${orders ne null}">
@@ -43,6 +26,10 @@
         <c:forEach var="order" items="${orders}">
           <c:url var="orderURL" value="/controller/customer">
             <c:param name="action" value="showOrder"/>
+            <c:param name="id" value="${order.id}"/>
+          </c:url>
+          <c:url var="changeStatusURL" value="/controller/customer">
+            <c:param name="action" value="changeOrderStatus"/>
             <c:param name="id" value="${order.id}"/>
           </c:url>
           <tr>
@@ -62,18 +49,13 @@
                 ${price.value} ${price.key}<br>
               </c:forEach>
             </td>
-            <c:set var="status" value="${order.status}"/>
-            <td>${status.name}</td>
-            <c:url var="swapStatusURL" value="/controller/customer">
-              <c:param name="action" value="changeOrderStatus"/>
-              <c:param name="id" value="${order.id}"/>
-            </c:url>
+            <td>${order.status.name}</td>
             <c:choose>
-              <c:when test="${status.value eq -1}">
-                <td><a href="${swapStatusURL}">Put in process</a></td>
+              <c:when test="${order.status.value eq -1}">
+                <td><a href="${changeStatusURL}">Put in process</a></td>
               </c:when>
-              <c:when test="${status.value eq 0}">
-                <td><a href="${swapStatusURL}">Reject</a></td>
+              <c:when test="${order.status.value eq 0}">
+                <td><a href="${changeStatusURL}">Reject</a></td>
               </c:when>
             </c:choose>
           </tr>

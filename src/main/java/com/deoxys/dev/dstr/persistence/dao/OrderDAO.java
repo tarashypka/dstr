@@ -65,9 +65,9 @@ public class OrderDAO extends MongoDAO<Order> {
         return false;
     }
 
-    public List<Order> getAllForCustomer(String email) {
+    public List<Order> getAllForCustomer(long id) {
         List<Order> orders = new ArrayList<>();
-        DBObject query = new BasicDBObject("customer.email", email);
+        DBObject query = new BasicDBObject("customer.id", id);
         DBCursor cursor = collection.find(query);
         while (cursor.hasNext()) {
             DBObject doc = cursor.next();
@@ -77,9 +77,9 @@ public class OrderDAO extends MongoDAO<Order> {
         return orders;
     }
 
-    public int countCustomerItems(String email) {
+    public int countCustomerItems(long id) {
         int nItems = 0;
-        DBObject query = new BasicDBObject("customer.email", email);
+        DBObject query = new BasicDBObject("customer.id", id);
         query.put("status", Order.OrderStatus.PROCESSED.getValue());
         MapReduceOutput out = collection.mapReduce(
                 N_ITEMS_MAP_FUNC, N_ITEMS_REDUCE_FUNC,
@@ -93,8 +93,8 @@ public class OrderDAO extends MongoDAO<Order> {
         return nItems;
     }
 
-    public int countCustomerOrders(String email) {
-        DBObject query = new BasicDBObject("customer.email", email);
+    public int countCustomerOrders(long id) {
+        DBObject query = new BasicDBObject("customer.id", id);
         return (int) collection.count(query);
     }
 

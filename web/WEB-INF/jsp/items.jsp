@@ -11,9 +11,7 @@
 --%>
 
 <t:genericpage>
-  <jsp:attribute name="title">
-    <title>Items</title>
-  </jsp:attribute>
+  <jsp:attribute name="title">Items</jsp:attribute>
 
   <jsp:body>
     <c:if test="${items ne null}">
@@ -23,8 +21,10 @@
           <th>Category</th>
           <th>Price</th>
           <th>Left</th>
-          <th>Reserved</th>
-          <th>Sold</th>
+          <c:if test="${sessionScope.customer.role eq 'admin'}">
+            <th>Reserved</th>
+            <th>Sold</th>
+          </c:if>
         </tr>
         <c:forEach var="item" items="${items}">
           <c:set var="status" value="${item.status}"/>
@@ -37,9 +37,9 @@
             <td>${item.category}</td>
             <td>${item.price} ${item.currency}</td>
             <td>${status.stocked}</td>
-            <td>${status.reserved}</td>
-            <td>${item.status.sold}</td>
             <c:if test="${sessionScope.customer.role eq 'admin'}">
+              <td>${status.reserved}</td>
+              <td>${item.status.sold}</td>
               <c:url var="editItemURL" value="/controller/admin">
                 <c:param name="action" value="editItem"/>
                 <c:param name="id" value="${item.id}"/>

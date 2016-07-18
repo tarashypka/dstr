@@ -43,19 +43,19 @@ public class OrderService extends MongoService<Order> {
 
     public void loadCustomerOrders(HttpServletRequest req) {
         Customer customer = (Customer) req.getSession().getAttribute("customer");
-        String email = customer.isAdmin()
-                ? req.getParameter("email")
-                : customer.getEmail();
-        req.setAttribute("orders", orderDao.getAllForCustomer(email));
+        long id = customer.isAdmin()
+                ? Long.parseLong(req.getParameter("id"))
+                : customer.getId();
+        req.setAttribute("orders", orderDao.getAllForCustomer(id));
     }
 
     public void loadCustomerActivity(HttpServletRequest req) {
         Customer customer = (Customer) req.getSession().getAttribute("customer");
-        String email = customer.isAdmin()
-                ? req.getParameter("email")
-                : customer.getEmail();
-        req.setAttribute("nItems", orderDao.countCustomerItems(email));
-        req.setAttribute("nOrders", orderDao.countCustomerOrders(email));
+        long id = customer.isAdmin()
+                ? Long.parseLong(req.getParameter("id"))
+                : customer.getId();
+        req.setAttribute("nItems", orderDao.countCustomerItems(id));
+        req.setAttribute("nOrders", orderDao.countCustomerOrders(id));
     }
 
     public void addItemToOrder(HttpServletRequest req) {

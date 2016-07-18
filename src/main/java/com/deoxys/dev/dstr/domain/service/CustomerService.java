@@ -25,11 +25,11 @@ public class CustomerService extends PostgresService<Customer> {
 
     public void loadCustomer(HttpServletRequest req) {
         Customer customer = sessionReader.read(req.getSession());
-        String email = customer.isAdmin()
-                ? req.getParameter("email")
-                : customer.getEmail();
+        long id = customer.isAdmin()
+                ? Long.parseLong(req.getParameter("id"))
+                : customer.getId();
         try {
-            req.setAttribute("customer", customerDao.get(email));
+            req.setAttribute("customer", customerDao.get(id));
         } catch (SQLException ex) {
             ex.printStackTrace();
         }
@@ -88,7 +88,9 @@ public class CustomerService extends PostgresService<Customer> {
         long id = Long.parseLong(req.getParameter("id"));
         try {
             customerDao.swapStatus(id);
-            req.setAttribute("customer", customerDao.get(id));
+            Customer updated = customerDao.get(id);
+            req.setAttribute("customer", updated);
+            req.setAttribute("email", updated.getEmail());
         } catch (SQLException ex) {
             ex.printStackTrace();
         }

@@ -56,10 +56,10 @@ public class ItemService extends MongoService<Item> {
 
     public void loadCustomerItems(HttpServletRequest req) {
         Customer customer = (Customer) req.getSession().getAttribute("customer");
-        String email = customer.isAdmin()
-                ? req.getParameter("email")
-                : customer.getEmail();
-        req.setAttribute("items", itemDao.getAllForCustomer(email));
+        long id = customer.isAdmin()
+                ? Long.parseLong(req.getParameter("id"))
+                : customer.getId();
+        req.setAttribute("items", itemDao.getAllForCustomer(id));
     }
 
     /**

@@ -11,9 +11,7 @@
 --%>
 
 <t:genericpage>
-  <jsp:attribute name="title">
-    <title>Error</title>
-  </jsp:attribute>
+  <jsp:attribute name="title">Error</jsp:attribute>
 
   <jsp:attribute name="error">
     <c:choose>

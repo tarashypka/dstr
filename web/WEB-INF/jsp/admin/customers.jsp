@@ -1,7 +1,6 @@
 <%@ page contentType="text/html" pageEncoding="UTF-8" %>
 <%@ taglib prefix="t" tagdir="/WEB-INF/tags" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
 <%--
   Created by IntelliJ IDEA.
@@ -12,9 +11,7 @@
 --%>
 
 <t:genericpage>
-  <jsp:attribute name="title">
-    <title>Customers</title>
-  </jsp:attribute>
+  <jsp:attribute name="title">Customers</jsp:attribute>
 
   <jsp:body>
     <c:if test="${customers ne null}">
@@ -22,31 +19,16 @@
         <tr>
           <th>Initials</th>
           <th>Email</th>
-          <th>Orders</th>
-          <th>Items</th>
           <th>Status</th>
         </tr>
         <c:forEach var="customer" items="${customers}">
-          <c:url var="customerController" value="/controller/customer">
-            <c:param name="email" value="${customer.email}"/>
+          <c:url var="customerURL" value="/controller/customer">
+            <c:param name="action" value="showCustomer"/>
+            <c:param name="id" value="${customer.id}"/>
           </c:url>
           <tr>
-            <td>
-              <a href="${customerController}&action=showCustomer">
-                ${customer.name} ${customer.surname}
-              </a>
-            </td>
+            <td><a href="${customerURL}">${customer.name} ${customer.surname}</a></td>
             <td>${customer.email}</td>
-            <td>
-              <a href="${customerController}&action=showOrders">
-                ${fn:length(customer.orders)}
-              </a>
-            </td>
-            <td>
-              <a href="${customerController}&action=showItems">
-                ${fn:length(customer.items)}
-              </a>
-            </td>
             <td>
               <c:choose>
                 <c:when test="${customer.enabled}">ОК</c:when>

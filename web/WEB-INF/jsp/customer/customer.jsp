@@ -1,7 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="t" tagdir="/WEB-INF/tags" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
 <%--
   Created by IntelliJ IDEA.
@@ -12,16 +11,13 @@
 --%>
 
 <t:genericpage>
-  <jsp:attribute name="title">
-    <title>Customer</title>
-  </jsp:attribute>
+  <jsp:attribute name="title">Customer</jsp:attribute>
 
   <jsp:body>
     <c:if test="${customer ne null}">
       <c:url var="customerController" value="/controller/customer">
-        <c:param name="email" value="${customer.email}"/>
+        <c:param name="id" value="${customer.id}"/>
       </c:url>
-
       <table>
         <tr>
           <th>Name</th>
@@ -61,6 +57,18 @@
           </td>
         </tr>
       </table>
+      <c:if test="${sessionScope.customer.role eq 'admin'}">
+        <c:url var="swapStatusURL" value="/controller/admin">
+          <c:param name="action" value="swapCustomerStatus"/>
+          <c:param name="id" value="${customer.id}"/>
+        </c:url>
+        <a href="${swapStatusURL}">
+          <c:choose>
+            <c:when test="${customer.enabled}">Ban</c:when>
+            <c:otherwise>Unban</c:otherwise>
+          </c:choose>
+        </a>
+      </c:if>
     </c:if>
   </jsp:body>
 </t:genericpage>

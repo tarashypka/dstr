@@ -13,6 +13,7 @@ public class CustomerConverter implements MongoConverter<Customer> {
     @Override
     public DBObject toDocument(Customer customer) {
         DBObject doc = new BasicDBObject();
+        doc.put("id", customer.getId());
         doc.put("email", customer.getEmail());
         doc.put("name", customer.getName());
         doc.put("surname", customer.getSurname());
@@ -22,7 +23,8 @@ public class CustomerConverter implements MongoConverter<Customer> {
     @Override
     public Customer toObject(DBObject doc) {
         Customer customer = new Customer();
-        customer.setEmail((String )doc.get("email"));
+        customer.setId((Long) doc.get("id"));
+        customer.setEmail((String) doc.get("email"));
         customer.setName((String) doc.get("name"));
         customer.setSurname((String) doc.get("surname"));
         return customer;

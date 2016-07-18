@@ -11,16 +11,14 @@
 --%>
 
 <t:genericpage>
-  <jsp:attribute name="title">
-    <title>Order</title>
-  </jsp:attribute>
+  <jsp:attribute name="title">Order</jsp:attribute>
 
   <jsp:body>
     <c:if test="${order ne null}">
       <c:set var="customer" value="${order.customer}"/>
       <c:url var="customerURL" value="/controller/customer">
         <c:param name="action" value="showCustomer"/>
-        <c:param name="email" value="${customer.email}"/>
+        <c:param name="id" value="${customer.id}"/>
       </c:url>
       <table>
         <tr>
@@ -67,6 +65,15 @@
           <td>${order.status.name}</td>
         </tr>
       </table>
+      <c:if test="${sessionScope.customer.role eq 'admin'}">
+        <c:url var="changeStatusURL" value="/controller/admin">
+          <c:param name="action" value="changeOrderStatus"/>
+          <c:param name="id" value="${order.id}"/>
+        </c:url>
+        <a href="${changeStatusURL}&status=REJECTED">Reject</a>
+        <a href="${changeStatusURL}&status=IN_PROCESS">Put in process</a>
+        <a href="${changeStatusURL}&status=PROCESSED">Process</a>
+      </c:if>
     </c:if>
   </jsp:body>
 </t:genericpage>

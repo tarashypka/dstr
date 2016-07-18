@@ -11,9 +11,7 @@
 --%>
 
 <t:genericpage>
-  <jsp:attribute name="title">
-    <title>Item</title>
-  </jsp:attribute>
+  <jsp:attribute name="title">Item</jsp:attribute>
 
   <jsp:body>
     <c:if test="${item ne null}">
@@ -35,14 +33,16 @@
           <th>Left</th>
           <td>${status.stocked}</td>
         </tr>
-        <tr>
-          <th>Reserved</th>
-          <td>${status.reserved}</td>
-        </tr>
-        <tr>
-          <th>Sold</th>
-          <td>${status.sold}</td>
-        </tr>
+        <c:if test="${sessionScope.customer.role eq 'admin'}">
+          <tr>
+            <th>Reserved</th>
+            <td>${status.reserved}</td>
+          </tr>
+          <tr>
+            <th>Sold</th>
+            <td>${status.sold}</td>
+          </tr>
+        </c:if>
         <c:forEach var="field" items="${item.extendedFields}">
           <tr>
             <th>${field.key}</th>
@@ -50,6 +50,18 @@
           </tr>
         </c:forEach>
       </table>
+    <c:if test="${sessionScope.customer.role eq 'admin'}">
+      <c:url var="editItemURL" value="/controller/admin">
+        <c:param name="action" value="editItem"/>
+        <c:param name="id" value="${item.id}"/>
+      </c:url>
+      <c:url var="deleteItemURL" value="/controller/admin">
+        <c:param name="action" value="deleteItem"/>
+        <c:param name="id" value="${item.id}"/>
+      </c:url>
+      <a href="${editItemURL}">Edit</a>
+      <a href="${deleteItemURL}">Delete</a>
+    </c:if>
     </c:if>
   </jsp:body>
 </t:genericpage>

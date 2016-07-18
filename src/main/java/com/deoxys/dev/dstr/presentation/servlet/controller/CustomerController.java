@@ -24,22 +24,20 @@ public class CustomerController extends HttpServlet {
 
     private static final String
             CUSTOMER_JSP,
-            CUSTOMER_ITEMS_JSP,
-            CUSTOMER_ORDER_JSP,
-            CUSTOMER_ORDERS_JSP,
+            ITEMS_JSP,
             ORDER_JSP,
+            ORDERS_JSP,
             NEW_ORDER_JSP;
 
     static {
         customerService = new CustomerService();
         orderService = new OrderService();
         itemService = new ItemService();
-        CUSTOMER_JSP = "/WEB-INF/jsp/customer.jsp";
-        CUSTOMER_ITEMS_JSP = "/WEB-INF/jsp/customer/items.jsp";
-        CUSTOMER_ORDER_JSP = "/WEB-INF/jsp/order.jsp";
-        CUSTOMER_ORDERS_JSP = "/WEB-INF/jsp/customer/orders.jsp";
-        ORDER_JSP = "/WEB-INF/jsp/order.jsp";
-        NEW_ORDER_JSP = "/WEB-INF/jsp/neworder.jsp";
+        CUSTOMER_JSP = "/WEB-INF/jsp/customer/customer.jsp";
+        ITEMS_JSP = "/WEB-INF/jsp/customer/items.jsp";
+        ORDER_JSP = "/WEB-INF/jsp/customer/order.jsp";
+        ORDERS_JSP = "/WEB-INF/jsp/customer/orders.jsp";
+        NEW_ORDER_JSP = "/WEB-INF/jsp/customer/neworder.jsp";
     }
 
     @Override
@@ -57,22 +55,22 @@ public class CustomerController extends HttpServlet {
                 break;
             case "showItems":
                 itemService.loadCustomerItems(req);
-                req.getRequestDispatcher(CUSTOMER_ITEMS_JSP).forward(req, resp);
+                req.getRequestDispatcher(ITEMS_JSP).forward(req, resp);
                 break;
             case "showOrder":
                 orderService.loadOrder(req);
-                req.getRequestDispatcher(CUSTOMER_ORDER_JSP).forward(req, resp);
+                req.getRequestDispatcher(ORDER_JSP).forward(req, resp);
                 break;
             case "showOrders":
                 orderService.loadCustomerOrders(req);
-                req.getRequestDispatcher(CUSTOMER_ORDERS_JSP).forward(req, resp);
+                req.getRequestDispatcher(ORDERS_JSP).forward(req, resp);
                 break;
             case "newOrder":
                 itemService.loadItems(req);
                 req.getRequestDispatcher(NEW_ORDER_JSP).forward(req, resp);
             case "changeOrderStatus":
                 orderService.swapOrderStatus(req);
-                req.getRequestDispatcher(CUSTOMER_ORDER_JSP).forward(req, resp);
+                req.getRequestDispatcher(ORDER_JSP).forward(req, resp);
                 break;
             default:
                 throw new ServletException("Wrong action");
