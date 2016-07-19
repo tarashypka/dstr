@@ -77,6 +77,21 @@ public class OrderDAO extends MongoDAO<Order> {
         return orders;
     }
 
+    public List<Order> getAllInPeriod(Date from, Date till) {
+        List<Order> orders = new ArrayList<>();
+        DBObject filter = new BasicDBObject();
+        filter.put("$gte", from);
+        filter.put("$lte", till);
+        DBObject query = new BasicDBObject("date", filter);
+        DBCursor cursor = collection.find(query);
+        while (cursor.hasNext()) {
+            DBObject doc = cursor.next();
+            orders.add(converter.toObject(doc));
+        }
+        cursor.close();
+        return orders;
+    }
+
     public int countCustomerItems(long id) {
         int nItems = 0;
         DBObject query = new BasicDBObject("customer.id", id);

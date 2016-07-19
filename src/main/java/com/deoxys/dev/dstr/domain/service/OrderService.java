@@ -10,6 +10,8 @@ import org.apache.log4j.Logger;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
@@ -28,6 +30,12 @@ public class OrderService extends MongoService<Order> {
         itemDao = new ItemDAO(mongo);
     }
 
+    private static final String DATE_FORMAT;
+
+    static {
+        DATE_FORMAT = "yyyy-MM-dd";
+    }
+
     public long count() {
         return orderDao.count();
     }
@@ -38,7 +46,16 @@ public class OrderService extends MongoService<Order> {
     }
 
     public void loadOrders(HttpServletRequest req) {
-        req.setAttribute("orders", orderDao.getAll());
+        String filter = req.getParameter("filter");
+        if (filter != null) {
+            switch (filter) {
+                case "date":
+                    loadOrdersInPeriod(req);
+                    break;
+                default:
+                    break;
+            }
+        } else req.setAttribute("orders", orderDao.getAll());
     }
 
     public void loadCustomerOrders(HttpServletRequest req) {
@@ -47,6 +64,19 @@ public class OrderService extends MongoService<Order> {
                 ? Long.parseLong(req.getParameter("id"))
                 : customer.getId();
         req.setAttribute("orders", orderDao.getAllForCustomer(id));
+    }
+
+    private void loadOrdersInPeriod(HttpServletRequest req) {
+        String fromStr = req.getParameter("from");
+        String tillStr = req.getParameter("till");
+        try {
+            SimpleDateFormat format = new SimpleDateFormat(DATE_FORMAT);
+            Date from = format.parse(fromStr);
+            Date till = format.parse(tillStr);
+            req.setAttribute("orders", orderDao.getAllInPeriod(from, till));
+        } catch (ParseException ex) {
+            ex.printStackTrace();
+        }
     }
 
     public void loadCustomerActivity(HttpServletRequest req) {

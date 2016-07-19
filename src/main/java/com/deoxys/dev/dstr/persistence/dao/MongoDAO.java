@@ -9,10 +9,6 @@ import java.util.List;
 
 /**
  * Created by deoxys on 09.07.16.
- */
-
-/**
- * Created by deoxys on 09.07.16.
  *
  * Mongo 3.2 Java Driver proposes at least two approaches
  * to execute basic collection queries:

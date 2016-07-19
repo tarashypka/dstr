@@ -1,6 +1,7 @@
 <%@ page contentType="text/html" pageEncoding="UTF-8" %>
 <%@ taglib prefix="t" tagdir="/WEB-INF/tags" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
 <%--
   Created by IntelliJ IDEA.
@@ -10,10 +11,21 @@
   To change this template use File | Settings | File Templates.
 --%>
 
+<% request.setAttribute("today", new java.util.Date()); %>
+
 <t:genericpage>
   <jsp:attribute name="title">Orders</jsp:attribute>
 
   <jsp:body>
+    <fmt:formatDate var="today" value="${today}" pattern="yyyy-MM-dd"/>
+    <c:url var="controller" value="/controller/admin"/>
+    <form action="${controller}" method="get">
+      <input type="hidden" name="action" value="showOrders">
+      <input type="hidden" name="filter" value="date"/>
+      <input type="date" name="from" value="${today}"/>
+      <input type="date" name="till" value="${today}"/>
+      <input type="submit" value="Show"/>
+    </form>
     <c:if test="${orders ne null}">
       <table>
         <tr>
