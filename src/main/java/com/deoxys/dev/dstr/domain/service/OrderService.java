@@ -115,7 +115,7 @@ public class OrderService extends MongoService<Order> {
 
         /**
          * Since another Customer could have been ordered any Item
-         * from this Order meanwhile, it may be some losses.
+         * from this Order meanwhile, it may be some conflicts.
          *
          * Decision to be made is whether to verify if that's true.
          */
@@ -201,7 +201,6 @@ public class OrderService extends MongoService<Order> {
         itemDao.expandOrderItems(order);
 
         ItemService itemService = new ItemService();
-        for (Item item : order.getItems().keySet()) item = itemDao.get(item.getId());
         switch (oldStatus) {
             case REJECTED:
                 itemService.takeOrderItemsFromStock(order.getItems());

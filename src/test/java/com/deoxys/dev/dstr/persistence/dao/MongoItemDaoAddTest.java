@@ -10,7 +10,6 @@ import java.util.Currency;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 
 public class MongoItemDaoAddTest {
 
@@ -26,14 +25,14 @@ public class MongoItemDaoAddTest {
     @Test
     public void testInsertWatch_onlyWatchWasInserted() {
         long nItemsOld = itemDao.count();
-        assertNotNull(itemDao.add(watch));
+        itemDao.add(watch);
         long nItemsNew = itemDao.count();
         assertEquals(nItemsNew, nItemsOld + 1);
     }
 
     @Test
     public void testInsertWatch_properWatchWasInserted() {
-        assertNotNull(itemDao.add(watch));
+        itemDao.add(watch);
         Item shouldBeWatch = itemDao.get(watch.getId());
         assertNotNull(shouldBeWatch);
 
@@ -50,6 +49,6 @@ public class MongoItemDaoAddTest {
 
     @After
     public void tearDown() {
-        assertTrue(itemDao.delete(watch.getId()));
+        itemDao.delete(watch.getId());
     }
 }

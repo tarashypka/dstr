@@ -70,16 +70,10 @@ public class ItemService extends MongoService<Item> {
      *      item.status.sold -= orderItems.get(item)
      *
      * @param orderItems items that weren't actually sold
-     * @return true if all orderItems sold statuses where updated
      */
-    public boolean takeOrderItemsFromSold(Map<Item, Integer> orderItems) {
-
-        for (Item item : orderItems.keySet()) {
-            if ( ! itemDao.changeSoldStatus(item, - orderItems.get(item))) {
-                return false;
-            }
-        }
-        return true;
+    void takeOrderItemsFromSold(Map<Item, Integer> orderItems) {
+        for (Item item : orderItems.keySet())
+            itemDao.changeSoldStatus(item, - orderItems.get(item));
     }
 
     /**
@@ -90,16 +84,10 @@ public class ItemService extends MongoService<Item> {
      *      item.status.sold += orderItems.get(item)
      *
      * @param orderItems items that were sold
-     * @return true if all orderItems sold statuses were updated
      */
-    public boolean addOrderItemsToSold(Map<Item, Integer> orderItems) {
-
-        for (Item item : orderItems.keySet()) {
-            if ( ! itemDao.changeSoldStatus(item, + orderItems.get(item))) {
-                return false;
-            }
-        }
-        return true;
+    void addOrderItemsToSold(Map<Item, Integer> orderItems) {
+        for (Item item : orderItems.keySet())
+            itemDao.changeSoldStatus(item, + orderItems.get(item));
     }
 
     /**
@@ -110,16 +98,10 @@ public class ItemService extends MongoService<Item> {
      *      item.status.stocked -= orderItems.get(item)
      *
      * @param orderItems items that shouldn't be in stock
-     * @return true if all orderItems stocked statuses where updated
      */
-    public boolean takeOrderItemsFromStock(Map<Item, Integer> orderItems) {
-
-        for (Item item : orderItems.keySet()) {
-            if ( ! itemDao.changeStockedStatus(item, - orderItems.get(item))) {
-                return false;
-            }
-        }
-        return true;
+    void takeOrderItemsFromStock(Map<Item, Integer> orderItems) {
+        for (Item item : orderItems.keySet())
+            itemDao.changeStockedStatus(item, - orderItems.get(item));
     }
 
     /**
@@ -130,16 +112,10 @@ public class ItemService extends MongoService<Item> {
      *      item.status.stocked += orderItems.get(item)
      *
      * @param orderItems items that should be in stock
-     * @return true if all orderItems stocked statuses were updated
      */
-    public boolean addOrderItemsToStock(Map<Item, Integer> orderItems) {
-
-        for (Item item : orderItems.keySet()) {
-            if ( ! itemDao.changeStockedStatus(item, + orderItems.get(item))) {
-                return false;
-            }
-        }
-        return true;
+    void addOrderItemsToStock(Map<Item, Integer> orderItems) {
+        for (Item item : orderItems.keySet())
+            itemDao.changeStockedStatus(item, + orderItems.get(item));
     }
 
     /**
@@ -150,16 +126,10 @@ public class ItemService extends MongoService<Item> {
      *      item.status.reserved -= orderItems.get(item)
      *
      * @param orderItems items that shouldn't be in reserve
-     * @return true if all orderItems reserved statuses were updated
      */
-    public boolean takeOrderItemsFromReserve(Map<Item, Integer> orderItems) {
-
-        for (Item item : orderItems.keySet()) {
-            if ( ! itemDao.changeReservedStatus(item, -orderItems.get(item))) {
-                return false;
-            }
-        }
-        return true;
+    void takeOrderItemsFromReserve(Map<Item, Integer> orderItems) {
+        for (Item item : orderItems.keySet())
+            itemDao.changeReservedStatus(item, -orderItems.get(item));
     }
 
     /**
@@ -170,15 +140,9 @@ public class ItemService extends MongoService<Item> {
      *      item.status.reserved += orderItems.get(item)
      *
      * @param orderItems items that should be in reserve
-     * @return true if all orderItems reserved statuses were updated
      */
-    public boolean addOrderItemsToReserve(Map<Item, Integer> orderItems) {
-
-        for (Item item : orderItems.keySet()) {
-            if ( ! itemDao.changeReservedStatus(item, +orderItems.get(item))) {
-                return false;
-            }
-        }
-        return true;
+    void addOrderItemsToReserve(Map<Item, Integer> orderItems) {
+        for (Item item : orderItems.keySet())
+            itemDao.changeReservedStatus(item, +orderItems.get(item));
     }
 }

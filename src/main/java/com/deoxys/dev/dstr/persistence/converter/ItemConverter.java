@@ -4,6 +4,7 @@ import com.deoxys.dev.dstr.domain.model.Item;
 import com.deoxys.dev.dstr.domain.model.ItemStatus;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
+import org.bson.Document;
 import org.bson.types.ObjectId;
 
 import java.util.HashMap;
@@ -16,7 +17,7 @@ import java.util.Map;
 public class ItemConverter implements MongoConverter<Item> {
 
     @Override
-    public Item toObject(DBObject doc) {
+    public Item toObject(Document doc) {
 
         if (doc == null) {
             return null;
@@ -24,25 +25,26 @@ public class ItemConverter implements MongoConverter<Item> {
 
         Item item = new Item();
         item.setId(doc.get("_id").toString());
-        doc.removeField("_id");
+
+        doc.remove("_id");
 
         String category = (String) doc.get("category");
         item.setCategory(category);
-        doc.removeField("category");
+        doc.remove("category");
 
         item.setPrice((Double) doc.get("price"));
-        doc.removeField("price");
+        doc.remove("price");
 
         item.setCurrency((String) doc.get("currency"));
-        doc.removeField("currency");
+        doc.remove("currency");
 
-        DBObject statusDoc = (DBObject) doc.get("status");
+        Document statusDoc = (Document) doc.get("status");
         int stocked = (Integer) statusDoc.get("stocked");
         int reserved = (Integer) statusDoc.get("reserved");
         int sold = (Integer) statusDoc.get("sold");
 
         item.setStatus(new ItemStatus(stocked, reserved, sold));
-        doc.removeField("status");
+        doc.remove("status");
 
         Map<String, String> extFields = new HashMap<>();
         for (String extKey : doc.keySet()) {
@@ -54,8 +56,8 @@ public class ItemConverter implements MongoConverter<Item> {
     }
 
     @Override
-    public DBObject toDocument(Item item) {
-        DBObject doc = new BasicDBObject();
+    public Document toDocument(Item item) {
+        Document doc = new Document();
 
         if (item.getId() != null) {
             doc.put("_id", new ObjectId(item.getId()));

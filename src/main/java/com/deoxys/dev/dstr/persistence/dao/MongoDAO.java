@@ -2,87 +2,72 @@ package com.deoxys.dev.dstr.persistence.dao;
 
 import com.deoxys.dev.dstr.persistence.converter.MongoConverter;
 import com.mongodb.*;
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoCursor;
+import com.mongodb.client.MongoDatabase;
+import org.bson.*;
+import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
 
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by deoxys on 09.07.16.
- *
- * Mongo 3.2 Java Driver proposes at least two approaches
- * to execute basic collection queries:
- *
- *      1. Using newly implemented (v2.10.0) classes:
- *              MongoClient, MongoCollection, Document, ...
- *      2. Using standard classes:
- *              Mongo, DBCollection, DBObject, ...
- *
- * First approach does not support queries with projections yet,
- * so second (deprecated) was used.
- */
+import static com.mongodb.client.model.Filters.eq;
+import static com.mongodb.client.model.Filters.exists;
 
 public abstract class MongoDAO<T> {
 
-    protected MongoClient client;
-    protected DB db;
-    protected DBCollection collection;
+    MongoClient client;
+    MongoDatabase database;
+    MongoCollection<Document> collection;
     protected MongoConverter<T> converter;
 
     private final String MONGO_DB = "dstr";
 
-    public MongoDAO(MongoClient client, String collName, MongoConverter<T> converter) {
+    MongoDAO(MongoClient client, String collName, MongoConverter<T> converter) {
         this.client = client;
-        db = client.getDB(MONGO_DB);
-        collection = db.getCollection(collName);
+        database = client.getDatabase(MONGO_DB);
+        collection = database.getCollection(collName);
         this.converter = converter;
     }
 
-    public abstract boolean add(T obj);
+    public abstract void add(T obj);
 
     public long count() {
         return collection.count();
     }
 
     public T get(String id) {
-        ObjectId _id = new ObjectId(id);
-        DBObject query = new BasicDBObject("_id", _id);
-        DBObject doc = collection.findOne(query);
-        return converter.toObject(doc);
+        Bson filter = eq("_id", new ObjectId(id));
+        return converter.toObject(collection.find(filter).first());
     }
 
     public List<T> getAll() {
         List<T> objects = new ArrayList<>();
 
         // Exclude sequences
-        DBObject exists = new BasicDBObject("$exists", false);
-        DBObject query = new BasicDBObject("seq", exists);
-        DBCursor cursor = collection.find(query);
-
-        while (cursor.hasNext()) {
-            DBObject doc = cursor.next();
-            objects.add(converter.toObject(doc));
+        Bson filter = exists("seq", false);
+        try (MongoCursor<Document> cursor = collection.find(filter).iterator()) {
+            while (cursor.hasNext())
+                objects.add(converter.toObject(cursor.next()));
         }
-        cursor.close();
         return objects;
     }
 
     public long getNextSequence(String fieldName) {
-        DBObject query = new BasicDBObject("_id", fieldName);
-        DBObject seq = new BasicDBObject("seq", 1);
-        DBObject update = new BasicDBObject("$inc", seq);
-        DBObject obj = collection.findAndModify(query, update);
-        return (long) obj.get("seq");
+        Bson filter = new BsonDocument("_id", new BsonString(fieldName));
+        Bson seq = new BsonDocument("seq", new BsonInt64(1));
+        Bson update = new BasicDBObject("$inc", seq);
+        Document doc = collection.findOneAndUpdate(filter, update);
+        return (long) doc.get("seq");
     }
 
-    public boolean update(T obj) {
-        DBObject doc = converter.toDocument(obj);
-        return collection.save(doc).wasAcknowledged();
+    public void update(T obj) {
+        Document doc = converter.toDocument(obj);
+        collection.updateOne(eq("_id", doc.getObjectId("_id")), doc);
     }
 
-    public boolean delete(String id) {
-        ObjectId _id = new ObjectId(id);
-        DBObject query = new BasicDBObject("_id", _id);
-        return this.collection.remove(query).wasAcknowledged();
+    public void delete(String id) {
+        collection.deleteOne(eq("_id", new ObjectId(id)));
     }
 }

@@ -23,18 +23,13 @@ public class MongoItemDaoDeleteTest {
 
     @Before
     public void setUp() throws Exception {
-        assertNotNull(itemDao.add(watch));
-    }
-
-    @Test
-    public void testRemoveWatch_thereIsWatch_methodReturnsTrue() throws Exception {
-        assertTrue(itemDao.delete(watch.getId()));
+        itemDao.add(watch);
     }
 
     @Test
     public void testRemoveWatch_thereIsWatch_onlyWatchWasDeleted() throws Exception {
         long nItemsOld = itemDao.count();
-        assertTrue(itemDao.delete(watch.getId()));
+        itemDao.delete(watch.getId());
         assertNull(itemDao.get(watch.getId()));
         long nItemsNew = itemDao.count();
         assertEquals(nItemsNew, nItemsOld - 1);

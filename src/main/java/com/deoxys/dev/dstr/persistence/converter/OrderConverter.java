@@ -7,6 +7,9 @@ import com.mongodb.BasicDBList;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 import com.mongodb.DBRef;
+import com.mongodb.client.MongoIterable;
+import org.bson.Document;
+import org.bson.LazyBSONList;
 import org.bson.types.ObjectId;
 
 import java.util.*;
@@ -18,20 +21,19 @@ import java.util.*;
 public class OrderConverter implements MongoConverter<Order> {
 
     @Override
-    public Order toObject(DBObject doc) {
+    public Order toObject(Document doc) {
         Order order = new Order();
         order.setId(doc.get("_id").toString());
         order.setOrderNumber((Long) doc.get("orderNumber"));
         order.setDate((Date) doc.get("date"));
 
-        DBObject customerDoc = (DBObject) doc.get("customer");
+        Document customerDoc = (Document) doc.get("customer");
         CustomerConverter customerConverter = new CustomerConverter();
         order.setCustomer(customerConverter.toObject(customerDoc));
 
         Map<Item, Integer> items = new HashMap<>();
-        BasicDBList itemsDbl = (BasicDBList) doc.get("items");
-        for (Object itemObj : itemsDbl) {
-            DBObject itemDoc = (DBObject) itemObj;
+        List<Document> itemsL = (ArrayList) doc.get("items");
+        for (Document itemDoc : itemsL) {
             DBRef dbRef = (DBRef) itemDoc.get("id");
             String id = dbRef.getId().toString();
             items.put(new Item(id), (Integer) itemDoc.get("quantity"));
@@ -39,11 +41,10 @@ public class OrderConverter implements MongoConverter<Order> {
         order.setItems(items);
 
         Map<Currency, Double> receipt = new HashMap<>();
-        BasicDBList receiptDocs = (BasicDBList) doc.get("receipt");
-        for (Object receiptObj : receiptDocs) {
-            DBObject receiptDoc = (DBObject) receiptObj;
-            Double price = (Double) receiptDoc.get("price");
-            Currency currency = Currency.getInstance((String) receiptDoc.get("currency"));
+        List<Document> receiptL = (ArrayList) doc.get("receipt");
+        for (Document priceDoc : receiptL) {
+            Double price = (Double) priceDoc.get("price");
+            Currency currency = Currency.getInstance((String) priceDoc.get("currency"));
             receipt.put(currency, price);
         }
         order.setReceipt(receipt);
@@ -55,8 +56,8 @@ public class OrderConverter implements MongoConverter<Order> {
     }
 
     @Override
-    public DBObject toDocument(Order order) {
-        DBObject doc = new BasicDBObject();
+    public Document toDocument(Order order) {
+        Document doc = new Document();
 
         if (order.getId() != null) {
             doc.put("_id", new ObjectId(order.getId()));

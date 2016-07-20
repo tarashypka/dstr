@@ -4,9 +4,17 @@ import com.deoxys.dev.dstr.persistence.converter.OrderConverter;
 import com.deoxys.dev.dstr.domain.model.Item;
 import com.deoxys.dev.dstr.domain.model.Order;
 import com.mongodb.*;
+import com.mongodb.client.MongoCursor;
+import org.bson.*;
+import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
 
 import java.util.*;
+
+import static com.mongodb.client.model.Filters.*;
+import static com.mongodb.client.model.Projections.excludeId;
+import static com.mongodb.client.model.Projections.fields;
+import static com.mongodb.client.model.Projections.include;
 
 public class OrderDAO extends MongoDAO<Order> {
 
@@ -35,100 +43,77 @@ public class OrderDAO extends MongoDAO<Order> {
     }
 
     @Override
-    public boolean add(Order order) {
+    public void add(Order order) {
         ItemDAO itemDAO = new ItemDAO(client);
-
-        /**
-         * Verify if there are enough items.
-         * Another order with required items could have been made,
-         * before this order was acknowledged by customer.
-         *
-         * This could be reimplemented according to business politics:
-         * Sometimes it's better to have items in reserve
-         * and boost performance by avoiding additional issues covered here.
-         */
-        if ( ! itemDAO.enoughItems(order.getItems())) return false;
 
         // Move ordered items to reserved
         Map<Item, Integer> orderItems = order.getItems();
         for (Item item : orderItems.keySet()) {
             int amount = orderItems.get(item);
-            itemDAO.changeStockedStatus(item, - amount);
-            itemDAO.changeReservedStatus(item, +amount);
+            itemDAO.changeStockedStatus(item, -amount);
+            itemDAO.changeReservedStatus(item, amount);
         }
-
-        DBObject doc = converter.toDocument(order);
-        if (collection.insert(doc).wasAcknowledged()) {
-            order.setId(doc.get("_id").toString());
-            return true;
-        }
-        return false;
+        Document doc = converter.toDocument(order);
+        collection.insertOne(doc);
+        order.setId(doc.get("_id").toString());
     }
 
     public List<Order> getAllForCustomer(long id) {
         List<Order> orders = new ArrayList<>();
-        DBObject query = new BasicDBObject("customer.id", id);
-        DBCursor cursor = collection.find(query);
-        while (cursor.hasNext()) {
-            DBObject doc = cursor.next();
-            orders.add(converter.toObject(doc));
+        Bson filter = eq("customer.id", id);
+        try (MongoCursor<Document> cursor = collection.find(filter).iterator()) {
+            while (cursor.hasNext())
+                orders.add(converter.toObject(cursor.next()));
         }
-        cursor.close();
         return orders;
     }
 
     public List<Order> getAllInPeriod(Date from, Date till) {
         List<Order> orders = new ArrayList<>();
-        DBObject filter = new BasicDBObject();
-        filter.put("$gte", from);
-        filter.put("$lte", till);
-        DBObject query = new BasicDBObject("date", filter);
-        DBCursor cursor = collection.find(query);
-        while (cursor.hasNext()) {
-            DBObject doc = cursor.next();
-            orders.add(converter.toObject(doc));
+
+        Bson filter = and(gte("date", from), lte("date", till));
+        try (MongoCursor<Document> cursor = collection.find(filter).iterator()) {
+            while (cursor.hasNext())
+                orders.add(converter.toObject(cursor.next()));
         }
-        cursor.close();
         return orders;
     }
 
     public int countCustomerItems(long id) {
         int nItems = 0;
-        DBObject query = new BasicDBObject("customer.id", id);
-        query.put("status", Order.OrderStatus.PROCESSED.getValue());
-        MapReduceOutput out = collection.mapReduce(
-                N_ITEMS_MAP_FUNC, N_ITEMS_REDUCE_FUNC,
-                MapReduceCommand.OutputType.INLINE.name(), query);
-        Iterator<DBObject> iterator = out.results().iterator();
-        if (iterator.hasNext()) {
-            String value = iterator.next().get("value").toString();
-            nItems = (int) Double.parseDouble(value);
+        BsonDocument filter = new BsonDocument("customer.id", new BsonInt64(id));
+        filter.put("status", new BsonInt32(Order.OrderStatus.PROCESSED.getValue()));
+        try (MongoCursor<Document> cursor = collection.mapReduce(
+                N_ITEMS_MAP_FUNC, N_ITEMS_REDUCE_FUNC).filter(filter).iterator()) {
+
+            if (cursor.hasNext()) {
+                String value = cursor.next().get("value").toString();
+                nItems = (int) Double.parseDouble(value);
+            }
         }
-        out.drop();
         return nItems;
     }
 
     public int countCustomerOrders(long id) {
-        DBObject query = new BasicDBObject("customer.id", id);
-        return (int) collection.count(query);
+        Bson filter = new BsonDocument("customer.id", new BsonInt64(id));
+        return (int) collection.count(filter);
     }
 
     public Order.OrderStatus getStatus(String id) {
-        DBObject query = new BasicDBObject("_id", new ObjectId(id));
-        DBObject projection = new BasicDBObject("status", 1);
-        DBObject doc = collection.findOne(query, projection);
+        ObjectId _id = new ObjectId(id);
+        Bson filter = new BsonDocument("_id", new BsonObjectId(_id));
+        Bson fields = fields(include("status"), excludeId());
+        Document doc = collection.find(filter).projection(fields).first();
         int statusVal = (Integer) doc.get("status");
         return Order.OrderStatus.getStatus(statusVal);
     }
 
-    public boolean updateStatus(String id, Order.OrderStatus newStatus) {
-        Order.OrderStatus oldStatus = getStatus(id);
-        if (newStatus.equals(oldStatus)) return false;
-
-        // Without $set operator, order document will be not updated, but replaced
-        DBObject query = new BasicDBObject("_id", new ObjectId(id));
-        DBObject update = new BasicDBObject("status", newStatus.getValue());
-        DBObject set = new BasicDBObject("$set", update);
-        return collection.update(query, set).wasAcknowledged();
+    // Without $set operator, order document will be not updated, but replaced
+    public void updateStatus(String id, Order.OrderStatus newStatus) {
+        ObjectId _id = new ObjectId(id);
+        Bson filter = new BsonDocument("_id", new BsonObjectId(_id));
+        Bson set  = new BsonDocument("status", new BsonInt32(newStatus.getValue()));
+        Bson update = new BasicDBObject("$set", set);
+        collection.updateOne(filter, update);
     }
 }

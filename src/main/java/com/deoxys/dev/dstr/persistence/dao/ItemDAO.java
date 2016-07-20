@@ -5,10 +5,15 @@ import com.deoxys.dev.dstr.domain.model.ItemStatus;
 import com.deoxys.dev.dstr.domain.model.Order;
 import com.mongodb.*;
 import com.deoxys.dev.dstr.persistence.converter.ItemConverter;
+import com.mongodb.client.MongoCursor;
+import org.bson.*;
+import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import static com.mongodb.client.model.Projections.*;
 
 /**
  * Created by deoxys on 27.05.16.
@@ -23,50 +28,48 @@ public class ItemDAO extends MongoDAO<Item> {
     }
 
     @Override
-    public boolean add(Item item) {
-        DBObject doc = converter.toDocument(item);
-        if (collection.insert(doc).wasAcknowledged()) {
-            item.setId(doc.get("_id").toString());
-            return true;
-        }
-        return false;
+    public void add(Item item) {
+        Document doc = converter.toDocument(item);
+        collection.insertOne(doc);
+        item.setId(doc.get("_id").toString());
     }
 
     public Map<Item, Integer> getAllForCustomer(long id) {
         Map<Item, Integer> items = new HashMap<>();
-        OrderDAO orderDAO = new OrderDAO(client);
-        DBObject query = new BasicDBObject("customer.id", id);
-        query.put("status", Order.OrderStatus.PROCESSED.getValue());
-        DBCursor cursor = orderDAO.collection.find(query);
-        while (cursor.hasNext()) {
-            DBObject orderDoc = cursor.next();
-            BasicDBList orderItemsDbl = (BasicDBList) orderDoc.get("items");
-            for (Object itemObj : orderItemsDbl) {
-                DBObject itemDoc = (DBObject) itemObj;
-                DBRef itemDbRef = (DBRef) itemDoc.get("id");
-                ObjectId itemId = (ObjectId) itemDbRef.getId();
-                Item item = get(itemId.toString());
-                Integer quantity = (Integer) itemDoc.get("quantity");
 
-                if (items.containsKey(item)) {
-                    int newQuantity = items.get(item) + quantity;
-                    items.put(item, newQuantity);
-                } else {
-                    items.put(item, quantity);
+        OrderDAO orderDAO = new OrderDAO(client);
+        BsonDocument filter = new BsonDocument("customer.id", new BsonInt64(id));
+        filter.put("status", new BsonInt32(Order.OrderStatus.PROCESSED.getValue()));
+        try (MongoCursor<Document> cursor = orderDAO.collection.find(filter).iterator()) {
+            while (cursor.hasNext()) {
+                Document orderDoc = cursor.next();
+                BasicDBList orderItems = (BasicDBList) orderDoc.get("items");
+                for (Object itemObj : orderItems) {
+                    DBObject itemDoc = (DBObject) itemObj;
+                    DBRef itemDbRef = (DBRef) itemDoc.get("id");
+                    ObjectId itemId = (ObjectId) itemDbRef.getId();
+                    Item item = get(itemId.toString());
+                    Integer quantity = (Integer) itemDoc.get("quantity");
+
+                    if (items.containsKey(item)) {
+                        int newQuantity = items.get(item) + quantity;
+                        items.put(item, newQuantity);
+                    } else {
+                        items.put(item, quantity);
+                    }
                 }
             }
         }
-        cursor.close();
         return items;
     }
 
-    public ItemStatus getStatus(String id) {
+    private ItemStatus getStatus(String id) {
         ObjectId _id = new ObjectId(id);
-        DBObject query = new BasicDBObject("_id", _id);
-        DBObject projection = new BasicDBObject("status", 1);
-        DBObject doc = collection.findOne(query, projection);
+        Bson filter = new BsonDocument("_id", new BsonObjectId(_id));
+        Bson fields = fields(include("status"), excludeId());
+        Document doc = collection.find(filter).projection(fields).first();
         if (doc == null) return null;
-        DBObject statusDoc = (DBObject) doc.get("status");
+        Document statusDoc = (Document) doc.get("status");
         int stocked = (Integer) statusDoc.get("stocked");
         int reserved = (Integer) statusDoc.get("reserved");
         int sold = (Integer) statusDoc.get("sold");
@@ -84,6 +87,7 @@ public class ItemDAO extends MongoDAO<Item> {
         return true;
     }
 
+    @SuppressWarnings("unchecked")
     public void expandOrderItems(Order order) {
         Map<Item, Integer> items = order.getItems();
         Map<Item, Integer> expandedItems = new HashMap();
@@ -97,12 +101,15 @@ public class ItemDAO extends MongoDAO<Item> {
      *      positive: items should be added to sold
      *      negative: item should be removed from sold
      */
-    public boolean changeSoldStatus(Item item, int amount) {
-        DBObject query = new BasicDBObject("_id", new ObjectId(item.getId()));
-        int newSoldVal = item.sold() + amount;
-        DBObject update = new BasicDBObject("status.sold", newSoldVal);
-        DBObject set = new BasicDBObject("$set", update);
-        return collection.update(query, set).wasAcknowledged();
+    public void changeSoldStatus(Item item, int amount) {
+        int sold = item.sold() + amount;
+        ObjectId _id = new ObjectId(item.getId());
+
+        // Without $set operator, item document will be not updated, but replaced
+        Bson filter = new BsonDocument("_id", new BsonObjectId(_id));
+        Bson set  = new BsonDocument("status.sold", new BsonInt32(sold));
+        Bson update = new BasicDBObject("$set", set);
+        collection.updateOne(filter, update);
     }
 
     /**
@@ -110,12 +117,15 @@ public class ItemDAO extends MongoDAO<Item> {
      *      positive: item should be added to stock
      *      negative: item should be removed from stock
      */
-    public boolean changeStockedStatus(Item item, int amount) {
-        DBObject query = new BasicDBObject("_id", new ObjectId(item.getId()));
-        int newStockedVal = item.stocked() + amount;
-        DBObject update = new BasicDBObject("status.stocked", newStockedVal);
-        DBObject set = new BasicDBObject("$set", update);
-        return collection.update(query, set).wasAcknowledged();
+    public void changeStockedStatus(Item item, int amount) {
+        int stocked = item.stocked() + amount;
+        ObjectId _id = new ObjectId(item.getId());
+
+        // Without $set operator, item document will be not updated, but replaced
+        Bson filter = new BsonDocument("_id", new BsonObjectId(_id));
+        Bson set  = new BsonDocument("status.stocked", new BsonInt32(stocked));
+        Bson update = new BasicDBObject("$set", set);
+        collection.updateOne(filter, update);
     }
 
     /**
@@ -123,11 +133,14 @@ public class ItemDAO extends MongoDAO<Item> {
      *      positive: item should be added to reserve
      *      negative: item should be removed from reserve
      */
-    public boolean changeReservedStatus(Item item, int amount) {
-        DBObject query = new BasicDBObject("_id", new ObjectId(item.getId()));
-        int newReservedVal = item.reserved() + amount;
-        DBObject update = new BasicDBObject("status.reserved", newReservedVal);
-        DBObject set = new BasicDBObject("$set", update);
-        return collection.update(query, set).wasAcknowledged();
+    public void changeReservedStatus(Item item, int amount) {
+        int reserved = item.reserved() + amount;
+        ObjectId _id = new ObjectId(item.getId());
+
+        // Without $set operator, item document will be not updated, but replaced
+        Bson filter = new BsonDocument("_id", new BsonObjectId(_id));
+        Bson set  = new BsonDocument("status.reserved", new BsonInt32(reserved));
+        Bson update = new BasicDBObject("$set", set);
+        collection.updateOne(filter, update);
     }
 }

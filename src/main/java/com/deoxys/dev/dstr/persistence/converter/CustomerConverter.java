@@ -1,8 +1,7 @@
 package com.deoxys.dev.dstr.persistence.converter;
 
 import com.deoxys.dev.dstr.domain.model.Customer;
-import com.mongodb.BasicDBObject;
-import com.mongodb.DBObject;
+import org.bson.Document;
 
 /**
  * Created by deoxys on 27.05.16.
@@ -11,9 +10,8 @@ import com.mongodb.DBObject;
 public class CustomerConverter implements MongoConverter<Customer> {
 
     @Override
-    public DBObject toDocument(Customer customer) {
-        DBObject doc = new BasicDBObject();
-        doc.put("id", customer.getId());
+    public Document toDocument(Customer customer) {
+        Document doc = new Document("id", customer.getId());
         doc.put("email", customer.getEmail());
         doc.put("name", customer.getName());
         doc.put("surname", customer.getSurname());
@@ -21,7 +19,7 @@ public class CustomerConverter implements MongoConverter<Customer> {
     }
 
     @Override
-    public Customer toObject(DBObject doc) {
+    public Customer toObject(Document doc) {
         Customer customer = new Customer();
         customer.setId((Long) doc.get("id"));
         customer.setEmail((String) doc.get("email"));
