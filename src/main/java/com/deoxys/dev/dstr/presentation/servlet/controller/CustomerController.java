@@ -90,6 +90,11 @@ public class CustomerController extends HttpServlet {
                 itemService.loadItems(req);
                 req.getRequestDispatcher(NEW_ORDER_JSP).forward(req, resp);
                 break;
+            case "dropOrderItem":
+                orderService.dropItemFromOrder(req);
+                itemService.loadItems(req);
+                req.getRequestDispatcher(NEW_ORDER_JSP).forward(req, resp);
+                break;
             case "newOrder":
                 orderService.makeOrder(req);
                 if (req.getParameter("error") == null)

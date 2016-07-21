@@ -109,6 +109,13 @@ public class OrderService extends MongoService<Order> {
         }
     }
 
+    public void dropItemFromOrder(HttpServletRequest req) {
+        HttpSession ses = req.getSession();
+        Order order = sessionReader.read(ses);
+        Item item = new Item(req.getParameter("id"));
+        order.removeItem(item);
+    }
+
     public void makeOrder(HttpServletRequest req) {
         HttpSession ses = req.getSession();
         Order order = sessionReader.read(ses);

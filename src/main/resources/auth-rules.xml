@@ -19,6 +19,7 @@
     <action actionname="showOrder" auth="true" allowed="*"/>
     <action actionname="showOrders" auth="true" allowed="*"/>
     <action actionname="addOrderItem" auth="true" allowed="customer"/>
+    <action actionname="dropOrderItem" auth="true" allowed="customer"/>
     <action actionname="newOrder" auth="true" allowed="customer"/>
     <action actionname="changeOrderStatus" auth="true" allowed="*"/>
 

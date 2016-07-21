@@ -94,6 +94,10 @@ public class Order implements Serializable {
         this.items = items;
     }
 
+    public void removeItem(Item item) {
+        items.remove(item);
+    }
+
     public void addItem(Item item, int amount) {
         items.put(item, amount);
     }

@@ -15,7 +15,6 @@
 
   <jsp:body>
     <c:url var="customerController" value="/controller/customer"/>
-    <c:set var="order" value="${sessionScope.order}"/>
     <c:if test="${order ne null and order.items ne null}">
       Ordered items:<br>
       <table>
@@ -29,6 +28,11 @@
             <td>${item.key.id}</td>
             <td>${item.value}</td>
             <td>${item.key.price * item.value} ${item.key.currency}</td>
+            <form action="${customerController}" method="post">
+              <input type="hidden" name="action" value="dropOrderItem">
+              <input type="hidden" name="id" value="${item.key.id}">
+              <td><input type="submit" value="Drop item"></td>
+            </form>
           </tr>
         </c:forEach>
       </table>
