@@ -67,7 +67,7 @@ public class ItemConverter implements MongoConverter<Item> {
         doc.put("price", item.getPrice());
         doc.put("currency", item.getCurrency().toString());
 
-        DBObject statusDoc = new BasicDBObject();
+        Document statusDoc = new Document();
         statusDoc.put("stocked", item.stocked());
         statusDoc.put("reserved", item.reserved());
         statusDoc.put("sold", item.sold());
