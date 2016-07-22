@@ -85,8 +85,8 @@ public class CustomerController extends HttpServlet {
         if (action == null) throw new ServletException("Wrong operation");
 
         switch (action) {
-            case "addOrderItem":
-                orderService.addItemToOrder(req);
+            case "addOrderItems":
+                orderService.addItemsToOrder(req);
                 itemService.loadItems(req);
                 req.getRequestDispatcher(NEW_ORDER_JSP).forward(req, resp);
                 break;
@@ -100,6 +100,11 @@ public class CustomerController extends HttpServlet {
                 if (req.getParameter("error") == null)
                     req.getRequestDispatcher(ORDER_JSP).forward(req, resp);
                 else req.getRequestDispatcher(NEW_ORDER_JSP).forward(req, resp);
+                break;
+            case "declineOrder":
+                orderService.declineOrder(req);
+                itemService.loadItems(req);
+                req.getRequestDispatcher(NEW_ORDER_JSP).forward(req, resp);
                 break;
             default:
                 throw new ServletException("Wrong action");

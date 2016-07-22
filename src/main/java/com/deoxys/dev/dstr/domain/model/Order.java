@@ -28,7 +28,7 @@ public class Order implements Serializable {
         private int value;
         private String name;    // for easy output with JSTL
 
-        private OrderStatus(int value) {
+        OrderStatus(int value) {
             this.value = value;
         }
 
@@ -94,12 +94,22 @@ public class Order implements Serializable {
         this.items = items;
     }
 
-    public void removeItem(Item item) {
-        items.remove(item);
+    public Item getItem(String id) {
+        for (Item item : items.keySet())
+            if (id.equals(item.getId())) return item;
+        return null;
     }
 
     public void addItem(Item item, int amount) {
+        updateReceipt(item, amount);
         items.put(item, amount);
+    }
+
+    public void removeItem(Item item, int amount) {
+        updateReceipt(item, 0);
+        int currAmount = items.get(item);
+        if (amount == currAmount) items.remove(item);
+        else items.put(item, currAmount - amount);
     }
 
     public Map<Currency, Double> getReceipt() {
@@ -110,8 +120,7 @@ public class Order implements Serializable {
         this.receipt = receipt;
     }
 
-    public void updateReceipt(Order order, Item item, int quantity) {
-        Map<Item, Integer> items = order.getItems();
+    public void updateReceipt(Item item, int quantity) {
         Currency currency = item.getCurrency();
         Double oldTotal = receipt.get(currency);
         Double price = item.getPrice();
@@ -120,7 +129,8 @@ public class Order implements Serializable {
         // If item was already in receipt
         if (items.containsKey(item)) newTotal -= price * items.get(item);
 
-        receipt.put(currency, newTotal);
+        if (newTotal == 0) receipt.remove(currency);
+        else receipt.put(currency, newTotal);
     }
 
     public OrderStatus getStatus() {

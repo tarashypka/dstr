@@ -19,7 +19,7 @@
       <input type="hidden" name="action" value="login">
       <input type="text" name="email" placeholder="Email?"><br>
       <input type="password" name="password" placeholder="Password?"><br>
-      <input type="submit" value="Enter">
+      <input type="submit" value="Login">
     </form>
   </jsp:body>
 </t:genericpage>

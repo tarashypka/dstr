@@ -12,7 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.util.*;
 
 /**
  * Created by deoxys on 07.07.16.
@@ -88,32 +88,55 @@ public class OrderService extends MongoService<Order> {
         req.setAttribute("nOrders", orderDao.countCustomerOrders(id));
     }
 
-    public void addItemToOrder(HttpServletRequest req) {
+    public void addItemsToOrder(HttpServletRequest req) {
+
+        System.out.println("session ID = " + req.getSession().getId());
+
         HttpSession ses = req.getSession();
         Order order = sessionReader.read(ses);
-        String itemId = req.getParameter("id");
-        int quantity = Integer.parseInt(req.getParameter("quantity"));
-
-        /**
-         * It's better to access Database only once and get the whole Item,
-         * then to access it twice getting the Item stocked status first,
-         * and then (not always, but in most cases) the whole Item.
-         */
-        Item item = itemDao.get(itemId);
-        if (item.stocked() >= quantity) {
-            order.updateReceipt(order, item, quantity);
-            order.addItem(item, quantity);
-            ses.setAttribute("order", order);
-        } else {
-            req.setAttribute("error", "Not enough items in stock.");
+        Enumeration<String> params = req.getParameterNames();
+        while (params.hasMoreElements()) {
+            String param = params.nextElement();
+            String value = req.getParameter(param);
+            if (! value.isEmpty() && param.matches("^[0-9a-fA-F]{24}$")) {
+                /**
+                 * Better to access Database once and get the whole Item,
+                 * then to access it twice getting Item stocked status first,
+                 * and then (not always, but in most cases) the whole Item.
+                 */
+                Item item = itemDao.get(param);
+                int quantity = Integer.parseInt(req.getParameter(param));
+                if (item.stocked() >= quantity) {
+                    ItemService itemService = new ItemService();
+                    itemService.takeOrderItemFromStock(item, quantity);
+                    itemService.addOrderItemToReserve(item, quantity);
+                    order.addItem(item, quantity);
+                    ses.setAttribute("order", order);
+                } else {
+                    req.setAttribute("error", "Not enough items in stock.");
+                    return;
+                }
+            }
         }
     }
 
     public void dropItemFromOrder(HttpServletRequest req) {
         HttpSession ses = req.getSession();
         Order order = sessionReader.read(ses);
-        Item item = new Item(req.getParameter("id"));
-        order.removeItem(item);
+        Enumeration<String> params = req.getParameterNames();
+        while (params.hasMoreElements()) {
+            String param = params.nextElement();
+            if (param.matches("^[0-9a-fA-F]{24}$")) {
+                Item item = order.getItem(param);
+                int quantity = order.getItems().get(item);
+                ItemService itemService = new ItemService();
+                itemService.takeOrderItemFromReserve(item, quantity);
+                itemService.addOrderItemToStock(item, quantity);
+                order.removeItem(item, quantity);
+                if (order.getItems().size() == 0) ses.removeAttribute("order");
+                else ses.setAttribute("order", order);
+            }
+        }
     }
 
     public void makeOrder(HttpServletRequest req) {
@@ -141,6 +164,15 @@ public class OrderService extends MongoService<Order> {
              */
             req.setAttribute("error", "Not enough items in stock.");
         }
+    }
+
+    public void declineOrder(HttpServletRequest req) {
+        HttpSession ses = req.getSession();
+        Order order = sessionReader.read(ses);
+        ItemService itemService = new ItemService();
+        itemService.takeOrderItemsFromReserve(order.getItems());
+        itemService.addOrderItemsToStock(order.getItems());
+        ses.removeAttribute("order");
     }
 
     public void swapOrderStatus(HttpServletRequest req) {

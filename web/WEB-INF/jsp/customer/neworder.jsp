@@ -16,26 +16,28 @@
   <jsp:body>
     <c:url var="customerController" value="/controller/customer"/>
     <c:if test="${order ne null and order.items ne null}">
-      Ordered items:<br>
-      <table>
-        <tr>
-          <th>ID</th>
-          <th>Amount</th>
-          <th>Price</th>
-        </tr>
-        <c:forEach var="item" items="${order.items}">
+      <form action="${customerController}" method="POST">
+        <input type="hidden" name="action" value="dropOrderItem">
+        <table>
           <tr>
-            <td>${item.key.id}</td>
-            <td>${item.value}</td>
-            <td>${item.key.price * item.value} ${item.key.currency}</td>
-            <form action="${customerController}" method="post">
-              <input type="hidden" name="action" value="dropOrderItem">
-              <input type="hidden" name="id" value="${item.key.id}">
-              <td><input type="submit" value="Drop item"></td>
-            </form>
+            <th>ID</th>
+            <th>Amount</th>
+            <th>Price</th>
           </tr>
-        </c:forEach>
-      </table>
+          <c:forEach var="item" items="${order.items}">
+            <c:url var="itemURL" value="/controller">
+              <c:param name="action" value="showItem"/>
+              <c:param name="id" value="${item.key.id}"/>
+            </c:url>
+            <tr>
+              <td><a href="${itemURL}">${item.key.id}</a></td>
+              <td>${item.value}</td>
+              <td>${item.key.price * item.value} ${item.key.currency}</td>
+              <td><input type="submit" name="${item.key.id}" value="Drop item"></td></td>
+            </tr>
+          </c:forEach>
+        </table>
+      </form>
       Receipt:<br>
       <c:forEach var="price" items="${order.receipt}">
         ${price.value} ${price.key}<br>
@@ -44,35 +46,38 @@
         <input type="hidden" name="action" value="newOrder">
         <input type="submit" value="Make order">
       </form>
+      <form action="${customerController}" method="post">
+        <input type="hidden" name="action" value="declineOrder">
+        <input type="submit" value="Decline order">
+      </form>
     </c:if>
 
     <c:if test="${items ne null}">
-      <table>
-        <tr>
-          <th>ID</th>
-          <th>Category</th>
-          <th>Price</th>
-          <th>Left</th>
-        </tr>
-        <c:forEach var="item" items="${items}">
-          <c:url var="itemURL" value="/controller">
-            <c:param name="action" value="showItem"/>
-            <c:param name="id" value="${item.id}"/>
-          </c:url>
+      <form action="${customerController}" method="POST">
+        <input type="hidden" name="action" value="addOrderItems">
+        <table>
           <tr>
-            <td><a href="${itemURL}">${item.id}</a></td>
-            <td>${item.category}</td>
-            <td>${item.price} ${item.currency}</td>
-            <td>${item.status.stocked}</td>
-            <form action="${customerController}" method="post">
-              <input type="hidden" name="action" value="addOrderItem">
-              <input type="hidden" name="id" value="${item.id}">
-              <td><input type="number" name="quantity" placeholder="How much?"></td>
-              <td><input type="submit" value="Add item"></td>
-            </form>
+            <th>ID</th>
+            <th>Category</th>
+            <th>Price</th>
+            <th>Left</th>
           </tr>
-        </c:forEach>
-      </table>
+          <c:forEach var="item" items="${items}">
+            <c:url var="itemURL" value="/controller">
+              <c:param name="action" value="showItem"/>
+              <c:param name="id" value="${item.id}"/>
+            </c:url>
+            <tr>
+              <td><a href="${itemURL}">${item.id}</a></td>
+              <td>${item.category}</td>
+              <td>${item.price} ${item.currency}</td>
+              <td>${item.status.stocked}</td>
+              <td><input type="number" name="${item.id}" placeholder="How much?"></td>
+            </tr>
+          </c:forEach>
+        </table>
+        <input type="submit" value="Add items to order">
+      </form>
     </c:if>
   </jsp:body>
 </t:genericpage>

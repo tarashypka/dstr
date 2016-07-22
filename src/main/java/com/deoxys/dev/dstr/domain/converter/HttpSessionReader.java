@@ -8,5 +8,5 @@ import javax.servlet.http.HttpSession;
 
 public interface HttpSessionReader<T> {
 
-    public T read(HttpSession ses);
+    T read(HttpSession ses);
 }

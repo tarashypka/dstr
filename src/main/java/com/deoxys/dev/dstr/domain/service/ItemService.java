@@ -71,9 +71,14 @@ public class ItemService extends MongoService<Item> {
      *
      * @param orderItems items that weren't actually sold
      */
-    void takeOrderItemsFromSold(Map<Item, Integer> orderItems) {
+    public void takeOrderItemsFromSold(Map<Item, Integer> orderItems) {
         for (Item item : orderItems.keySet())
-            itemDao.changeSoldStatus(item, - orderItems.get(item));
+            takeOrderItemFromSold(item, orderItems.get(item));
+    }
+
+    public void takeOrderItemFromSold(Item item, int quantity) {
+        itemDao.changeSoldStatus(item, -quantity);
+        item.getStatus().changeSold(-quantity);
     }
 
     /**
@@ -85,9 +90,14 @@ public class ItemService extends MongoService<Item> {
      *
      * @param orderItems items that were sold
      */
-    void addOrderItemsToSold(Map<Item, Integer> orderItems) {
+    public void addOrderItemsToSold(Map<Item, Integer> orderItems) {
         for (Item item : orderItems.keySet())
-            itemDao.changeSoldStatus(item, + orderItems.get(item));
+            addOrderItemToSold(item, orderItems.get(item));
+    }
+
+    public void addOrderItemToSold(Item item, int quantity) {
+        itemDao.changeSoldStatus(item, quantity);
+        item.getStatus().changeSold(quantity);
     }
 
     /**
@@ -99,9 +109,14 @@ public class ItemService extends MongoService<Item> {
      *
      * @param orderItems items that shouldn't be in stock
      */
-    void takeOrderItemsFromStock(Map<Item, Integer> orderItems) {
+    public void takeOrderItemsFromStock(Map<Item, Integer> orderItems) {
         for (Item item : orderItems.keySet())
-            itemDao.changeStockedStatus(item, - orderItems.get(item));
+            takeOrderItemFromStock(item, orderItems.get(item));
+    }
+
+    public void takeOrderItemFromStock(Item item, int quantity) {
+        itemDao.changeStockedStatus(item, -quantity);
+        item.getStatus().changeStocked(-quantity);
     }
 
     /**
@@ -113,9 +128,14 @@ public class ItemService extends MongoService<Item> {
      *
      * @param orderItems items that should be in stock
      */
-    void addOrderItemsToStock(Map<Item, Integer> orderItems) {
+    public void addOrderItemsToStock(Map<Item, Integer> orderItems) {
         for (Item item : orderItems.keySet())
-            itemDao.changeStockedStatus(item, + orderItems.get(item));
+            addOrderItemToStock(item, orderItems.get(item));
+    }
+
+    public void addOrderItemToStock(Item item, int quantity) {
+        itemDao.changeStockedStatus(item, quantity);
+        item.getStatus().changeStocked(quantity);
     }
 
     /**
@@ -127,9 +147,14 @@ public class ItemService extends MongoService<Item> {
      *
      * @param orderItems items that shouldn't be in reserve
      */
-    void takeOrderItemsFromReserve(Map<Item, Integer> orderItems) {
+    public void takeOrderItemsFromReserve(Map<Item, Integer> orderItems) {
         for (Item item : orderItems.keySet())
-            itemDao.changeReservedStatus(item, -orderItems.get(item));
+            takeOrderItemFromReserve(item, orderItems.get(item));
+    }
+
+    public void takeOrderItemFromReserve(Item item, int quantity) {
+        itemDao.changeReservedStatus(item, -quantity);
+        item.getStatus().changeReserved(-quantity);
     }
 
     /**
@@ -141,8 +166,13 @@ public class ItemService extends MongoService<Item> {
      *
      * @param orderItems items that should be in reserve
      */
-    void addOrderItemsToReserve(Map<Item, Integer> orderItems) {
+    public void addOrderItemsToReserve(Map<Item, Integer> orderItems) {
         for (Item item : orderItems.keySet())
-            itemDao.changeReservedStatus(item, +orderItems.get(item));
+            addOrderItemToReserve(item, orderItems.get(item));
+    }
+
+    public void addOrderItemToReserve(Item item, int quantity) {
+        itemDao.changeReservedStatus(item, quantity);
+        item.getStatus().changeReserved(quantity);
     }
 }

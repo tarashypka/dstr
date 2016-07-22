@@ -8,5 +8,5 @@ import javax.servlet.http.HttpServletRequest;
 
 public interface HttpRequestReader<T> {
 
-    public T read(HttpServletRequest req);
+    T read(HttpServletRequest req);
 }

@@ -8,7 +8,7 @@
 <html>
 <head>
     <link rel="shortcut icon"
-          href="<c:out value='${pageContext.request.contextPath}'/>/resources/favicon.ico"/>
+          href="${pageContext.request.contextPath}/resources/favicon.ico"/>
     <title><jsp:invoke fragment="title"/></title>
 </head>
 <body>
