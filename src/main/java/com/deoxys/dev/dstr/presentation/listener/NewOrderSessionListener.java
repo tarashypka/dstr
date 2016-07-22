@@ -1,4 +1,6 @@
-package com.deoxys.dev.dstr.presentation.listener; /**
+package com.deoxys.dev.dstr.presentation.listener;
+
+/**
  * Created by deoxys on 22.07.16.
  */
 
@@ -13,12 +15,11 @@ public class NewOrderSessionListener implements HttpSessionListener {
 
     public NewOrderSessionListener() { }
 
-    @Override
-    public void sessionCreated(HttpSessionEvent httpSessionEvent) { }
-
     /**
-     * When session with unfinished order was destroyed or expired
-     * database should be returned to the state without this order
+     * When session with unfinished order was destroyed
+     * database should be returned to the state before that order.
+     *
+     * It could happen if user session expired or he logged out.
      */
     @Override
     public void sessionDestroyed(HttpSessionEvent se) {
@@ -29,4 +30,6 @@ public class NewOrderSessionListener implements HttpSessionListener {
             itemService.addOrderItemsToStock(order.getItems());
         }
     }
+
+    public void sessionCreated(HttpSessionEvent httpSessionEvent) { }
 }

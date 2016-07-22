@@ -29,25 +29,17 @@
         <welcome-file>/WEB-INF/jsp/home.jsp</welcome-file>
     </welcome-file-list>
 
-    <!-- Run listeners in order, as Hz uses Mongo connection -->
-    <listener>
-        <listener-class>com.deoxys.dev.dstr.presentation.listener.MongoContextListener</listener-class>
-    </listener>
-    <listener>
-        <listener-class>com.deoxys.dev.dstr.presentation.listener.HzContextListener</listener-class>
-    </listener>
-
-    <!-- Distributed session with Hazelcast -->
+    <!-- Distributed session with Hazelcast
     <filter>
         <filter-name>hazelcast-filter</filter-name>
         <filter-class>com.hazelcast.web.WebFilter</filter-class>
 
-        <!-- Name of the distributed map storing for web session objects -->
+        Name of the distributed map storing for web session objects
         <init-param>
             <param-name>map-name</param-name>
             <param-value>my-sessions</param-value>
         </init-param>
-        <!-- Name of session id cookie -->
+        Name of session id cookie
         <init-param>
             <param-name>cookie-name</param-name>
             <param-value>hazelcast.sessionId</param-value>
@@ -62,7 +54,7 @@
     </filter-mapping>
     <listener>
         <listener-class>com.hazelcast.web.SessionListener</listener-class>
-    </listener>
+    </listener> -->
 
     <!-- Hazelcast context params -->
     <context-param>
