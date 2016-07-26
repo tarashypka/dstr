@@ -6,7 +6,10 @@
 
     <display-name>dstr</display-name>
 
-    <distributable/>
+    <!-- Files to load on home -->
+    <welcome-file-list>
+        <welcome-file>/WEB-INF/jsp/home.jsp</welcome-file>
+    </welcome-file-list>
 
     <!-- JNDI configuration for Postgres -->
     <resource-ref>
@@ -23,38 +26,6 @@
         <res-type>com.mongodb.MongoClient</res-type>
         <res-auth>Container</res-auth>
     </resource-ref>
-
-    <!-- Files to load on home -->
-    <welcome-file-list>
-        <welcome-file>/WEB-INF/jsp/home.jsp</welcome-file>
-    </welcome-file-list>
-
-    <!-- Distributed session with Hazelcast
-    <filter>
-        <filter-name>hazelcast-filter</filter-name>
-        <filter-class>com.hazelcast.web.WebFilter</filter-class>
-
-        Name of the distributed map storing for web session objects
-        <init-param>
-            <param-name>map-name</param-name>
-            <param-value>my-sessions</param-value>
-        </init-param>
-        Name of session id cookie
-        <init-param>
-            <param-name>cookie-name</param-name>
-            <param-value>hazelcast.sessionId</param-value>
-        </init-param>
-    </filter>
-    <filter-mapping>
-        <filter-name>hazelcast-filter</filter-name>
-        <url-pattern>/*</url-pattern>
-        <dispatcher>FORWARD</dispatcher>
-        <dispatcher>INCLUDE</dispatcher>
-        <dispatcher>REQUEST</dispatcher>
-    </filter-mapping>
-    <listener>
-        <listener-class>com.hazelcast.web.SessionListener</listener-class>
-    </listener> -->
 
     <!-- Hazelcast context params -->
     <context-param>
@@ -164,6 +135,31 @@
         <filter-name>EncodingFilter</filter-name>
         <url-pattern>/*</url-pattern>
     </filter-mapping>
+
+    <!-- Distributed session replication with Hazelcast -->
+    <distributable/>
+    <filter>
+        <filter-name>hazelcast-filter</filter-name>
+        <filter-class>com.hazelcast.web.WebFilter</filter-class>
+        <init-param>
+            <param-name>map-name</param-name>
+            <param-value>my-sessions</param-value>
+        </init-param>
+        <init-param>
+            <param-name>cookie-name</param-name>
+            <param-value>hazelcast.sessionId</param-value>
+        </init-param>
+    </filter>
+    <filter-mapping>
+        <filter-name>hazelcast-filter</filter-name>
+        <url-pattern>/*</url-pattern>
+        <dispatcher>FORWARD</dispatcher>
+        <dispatcher>INCLUDE</dispatcher>
+        <dispatcher>REQUEST</dispatcher>
+    </filter-mapping>
+    <listener>
+        <listener-class>com.hazelcast.web.SessionListener</listener-class>
+    </listener>
 
     <!-- Filter all incoming requests to validate the session -->
     <filter>

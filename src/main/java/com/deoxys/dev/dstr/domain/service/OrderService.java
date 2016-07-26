@@ -89,9 +89,6 @@ public class OrderService extends MongoService<Order> {
     }
 
     public void addItemsToOrder(HttpServletRequest req) {
-
-        System.out.println("session ID = " + req.getSession().getId());
-
         HttpSession ses = req.getSession();
         Order order = sessionReader.read(ses);
         Enumeration<String> params = req.getParameterNames();

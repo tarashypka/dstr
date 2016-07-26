@@ -6,14 +6,16 @@ package com.deoxys.dev.dstr.presentation.listener;
 
 import com.deoxys.dev.dstr.domain.model.Order;
 import com.deoxys.dev.dstr.domain.service.ItemService;
+import com.hazelcast.core.EntryEvent;
+import com.hazelcast.map.listener.*;
+import com.hazelcast.nio.serialization.Data;
+import com.hazelcast.web.SessionState;
 
 import javax.servlet.annotation.WebListener;
-import javax.servlet.http.*;
+import java.util.Map;
 
 @WebListener()
-public class NewOrderSessionListener implements HttpSessionListener {
-
-    public NewOrderSessionListener() { }
+public class NewOrderSessionListener implements EntryRemovedListener<String, SessionState> {
 
     /**
      * When session with unfinished order was destroyed
@@ -22,14 +24,20 @@ public class NewOrderSessionListener implements HttpSessionListener {
      * It could happen if user session expired or he logged out.
      */
     @Override
-    public void sessionDestroyed(HttpSessionEvent se) {
-        Order order = (Order) se.getSession().getAttribute("order");
-        if (order != null) {
-            ItemService itemService = new ItemService();
-            itemService.takeOrderItemsFromReserve(order.getItems());
-            itemService.addOrderItemsToStock(order.getItems());
+    public void entryRemoved(EntryEvent<String, SessionState> event) {
+        SessionState state = event.getOldValue();
+        Map<String, Data> map = state.getAttributes();
+        Data orderData = map.get("order");
+        if (orderData != null) {
+            // Deserialize orderData into order
+            Order order = null;
+            if (order != null) {
+                ItemService itemService = new ItemService();
+                itemService.takeOrderItemsFromReserve(order.getItems());
+                itemService.addOrderItemsToStock(order.getItems());
+            }
         }
     }
 
-    public void sessionCreated(HttpSessionEvent httpSessionEvent) { }
+    public NewOrderSessionListener() { }
 }
