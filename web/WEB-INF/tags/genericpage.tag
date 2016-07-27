@@ -1,15 +1,17 @@
 <%@ tag description="Overall Page template" pageEncoding="UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ attribute name="title" fragment="true" %>
-<%@ attribute name="style" fragment="true" %>
+<%@ attribute name="js" fragment="true" %>
 <%@ attribute name="bar" fragment="true" %>
-<%@ attribute name="error" fragment="true" %>
 
 <html>
 <head>
     <link rel="shortcut icon"
           href="${pageContext.request.contextPath}/resources/favicon.ico"/>
     <title><jsp:invoke fragment="title"/></title>
+    <script type="text/javascript"
+            src="${pageContext.request.contextPath}/resources/js/<jsp:invoke fragment="js"/>">
+    </script>
 </head>
 <body>
 

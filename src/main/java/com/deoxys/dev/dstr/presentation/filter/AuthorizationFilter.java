@@ -130,8 +130,8 @@ public class AuthorizationFilter implements Filter {
     private boolean allowedResource(Customer customer, String resource) {
         logger.info("Requested Resource::" + resource);
         resource = resource.split("/resources", 2)[1];
-        if (customer.isAdmin()) return resource.startsWith("/admin");
-        return ! customer.isCustomer() || resource.startsWith("/customer");
+        if (resource.startsWith("/admin")) return customer.isAdmin();
+        return ! resource.startsWith("/customer") || customer.isCustomer();
     }
 
     private boolean allowedUri(Customer customer, String uri) {
