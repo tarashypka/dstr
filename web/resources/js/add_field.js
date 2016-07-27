@@ -13,12 +13,12 @@ function addField() {
     var name_inp = document.createElement("input");
     name_inp.type = "text";
     name_inp.id = "field" + next;
-    name_inp.name = "field_name" + next;
+    name_inp.name = "field" + next + "_name";
     name_inp.placeholder = "Name?";
     container.appendChild(name_inp);
     var val_inp = document.createElement("input");
     val_inp.type = "text";
-    val_inp.name = "field_val" + next;
+    val_inp.name = "field" + next + "_val";
     val_inp.placeholder = "Value?";
     container.appendChild(val_inp);
 

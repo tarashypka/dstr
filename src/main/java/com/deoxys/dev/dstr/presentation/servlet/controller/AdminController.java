@@ -96,13 +96,13 @@ public class AdminController extends HttpServlet {
         switch (action) {
             case "newItem":
                 itemService.addItem(req);
-                if (req.getParameter("error") == null)
+                if (req.getAttribute("error") == null)
                     req.getRequestDispatcher(ITEM_JSP).forward(req, resp);
                 else req.getRequestDispatcher(NEW_ITEM_JSP).forward(req, resp);
                 break;
             case "editItem":
                 itemService.editItem(req);
-                if (req.getParameter("error") == null)
+                if (req.getAttribute("error") == null)
                     req.getRequestDispatcher(ITEM_JSP).forward(req, resp);
                 else req.getRequestDispatcher(EDIT_ITEM_JSP).forward(req, resp);
                 break;

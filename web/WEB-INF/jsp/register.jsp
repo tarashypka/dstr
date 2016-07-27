@@ -11,7 +11,7 @@
 --%>
 
 <t:genericpage>
-    <jsp:attribute name="title">Registration</jsp:attribute>
+  <jsp:attribute name="title">Registration</jsp:attribute>
 
   <jsp:body>
     <c:url var="controller" value="/controller"/>

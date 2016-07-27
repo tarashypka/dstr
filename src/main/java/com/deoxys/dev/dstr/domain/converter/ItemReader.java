@@ -52,6 +52,8 @@ implements HttpRequestReader<Item>, HttpSessionReader<Item> {
         if (stocked == null || stocked.equals("")) {
             if (error == null) error = "How many in stock?";
         } else status.setStocked(Integer.parseInt(stocked));
+        req.setAttribute("error", error);
+
         if (reserved == null || reserved.equals(""))
             status.setReserved(0);
         else status.setReserved(Integer.parseInt(reserved));

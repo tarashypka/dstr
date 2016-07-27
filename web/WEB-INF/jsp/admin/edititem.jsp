@@ -16,10 +16,10 @@
   <jsp:body>
     <c:url var="customerController" value="/controller/admin"/>
     <c:set var="status" value="${item.status}"/>
-    <c:set var="price" value="${(item.price ge 0.0) ? item.price : ''}"/>
-    <c:set var="stocked" value="${(status.stocked ge 0) ? status.stocked : ''}"/>
-    <c:set var="reserved" value="${(status.reserved ge 0) ? status.reserved : ''}"/>
-    <c:set var="sold" value="${(status.sold ge 0) ? status.sold : ''}"/>
+    <c:set var="price" value="${(item.price gt 0.0) ? item.price : null}"/>
+    <c:set var="stocked" value="${(status.stocked gt 0) ? status.stocked : null}"/>
+    <c:set var="reserved" value="${(status.reserved gt 0) ? status.reserved : null}"/>
+    <c:set var="sold" value="${(status.sold gt 0) ? status.sold : ''}"/>
     <form action="${customerController}" method="post">
       <input type="hidden" name="action" value="editItem"/>
       <input type="hidden" name="id" value="${item.id}">
