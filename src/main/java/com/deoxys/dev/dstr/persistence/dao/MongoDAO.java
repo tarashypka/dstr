@@ -65,7 +65,7 @@ public abstract class MongoDAO<T> {
     public void update(T obj) {
         Document doc = converter.toDocument(obj);
         Bson filter = eq("_id", doc.getObjectId("_id"));
-        collection.updateOne(filter, new Document("$set", doc));
+        collection.replaceOne(filter, doc);
     }
 
     public void delete(String id) {

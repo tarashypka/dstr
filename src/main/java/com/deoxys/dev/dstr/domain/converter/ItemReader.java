@@ -5,6 +5,7 @@ import com.deoxys.dev.dstr.domain.model.ItemStatus;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.util.Enumeration;
 
 /**
  * Created by deoxys on 11.07.16.
@@ -62,6 +63,18 @@ implements HttpRequestReader<Item>, HttpSessionReader<Item> {
         else status.setSold(Integer.parseInt(sold));
 
         item.setStatus(status);
+
+        // Read extended fields
+        Enumeration<String> params = req.getParameterNames();
+        while (params.hasMoreElements()) {
+            String curr = params.nextElement();
+            if (curr.matches("field[0-9]+_name")) {
+                String name = req.getParameter(curr);
+                String n = curr.substring(5, curr.indexOf("_name"));
+                String val = req.getParameter("field" + n + "_val");
+                item.addField(name, val);
+            }
+        }
         return item;
     }
 

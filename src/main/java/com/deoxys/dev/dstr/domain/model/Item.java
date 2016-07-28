@@ -2,6 +2,7 @@ package com.deoxys.dev.dstr.domain.model;
 
 import java.io.Serializable;
 import java.util.Currency;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class Item implements Serializable {
@@ -10,7 +11,7 @@ public class Item implements Serializable {
     private double price;
     private Currency currency;
     private ItemStatus status;
-    private Map<String, String> extendedFields;
+    private Map<String, String> extendedFields = new LinkedHashMap<>();
 
     public Item() { }
 
@@ -91,6 +92,11 @@ public class Item implements Serializable {
 
     public void setExtendedFields(Map<String, String> extendedFields) {
         this.extendedFields = extendedFields;
+    }
+
+    public void addField(String k, String v) {
+        if (k != null && ! k.equals("") && v != null && ! v.equals(""))
+            extendedFields.put(k, v);
     }
 
     @Override

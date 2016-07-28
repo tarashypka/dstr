@@ -12,7 +12,7 @@
 
 <t:genericpage>
   <jsp:attribute name="title">New item</jsp:attribute>
-  <jsp:attribute name="js">add_field.js</jsp:attribute>
+  <jsp:attribute name="js">admin/js/item_ext_field.js</jsp:attribute>
 
   <jsp:body>
     <c:url var="customerController" value="/controller/admin"/>
@@ -34,7 +34,11 @@
       <input type="number" name="stocked" value="${stocked}" placeholder="Left?"><br>
       <input type="number" name="reserved" value="${reserved}" placeholder="Reserved?"><br>
       <input type="number" name="sold" value="${sold}" placeholder="Sold?"><br>
-      <div id="container"></div>
+      <c:forEach var="field" items="${item.extendedFields}" varStatus="loop">
+        <input type="text" name="field${loop.index}_name" value="${field.key}">
+        <input type="text" name="field${loop.index}_val" value="${field.value}"><br>
+      </c:forEach>
+      <div id="field_container"></div>
       <input type="button" onclick="addField()" value="Add field">
       <input type="submit" value="Add item">
     </form>

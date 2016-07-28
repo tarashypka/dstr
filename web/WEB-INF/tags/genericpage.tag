@@ -10,7 +10,7 @@
           href="${pageContext.request.contextPath}/resources/favicon.ico"/>
     <title><jsp:invoke fragment="title"/></title>
     <script type="text/javascript"
-            src="${pageContext.request.contextPath}/resources/js/<jsp:invoke fragment="js"/>">
+            src="${pageContext.request.contextPath}/resources/<jsp:invoke fragment="js"/>">
     </script>
 </head>
 <body>

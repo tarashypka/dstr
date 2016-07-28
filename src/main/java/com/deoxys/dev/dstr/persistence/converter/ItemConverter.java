@@ -2,12 +2,9 @@ package com.deoxys.dev.dstr.persistence.converter;
 
 import com.deoxys.dev.dstr.domain.model.Item;
 import com.deoxys.dev.dstr.domain.model.ItemStatus;
-import com.mongodb.BasicDBObject;
-import com.mongodb.DBObject;
 import org.bson.Document;
 import org.bson.types.ObjectId;
 
-import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -19,13 +16,10 @@ public class ItemConverter implements MongoConverter<Item> {
     @Override
     public Item toObject(Document doc) {
 
-        if (doc == null) {
-            return null;
-        }
+        if (doc == null) return null;
 
         Item item = new Item();
         item.setId(doc.get("_id").toString());
-
         doc.remove("_id");
 
         String category = (String) doc.get("category");
@@ -46,12 +40,9 @@ public class ItemConverter implements MongoConverter<Item> {
         item.setStatus(new ItemStatus(stocked, reserved, sold));
         doc.remove("status");
 
-        Map<String, String> extFields = new HashMap<>();
-        for (String extKey : doc.keySet()) {
-            extFields.put(extKey, (String) doc.get(extKey));
-        }
+        for (String fname : doc.keySet())
+            item.addField(fname, doc.getString(fname));
 
-        item.setExtendedFields(extFields);
         return item;
     }
 
@@ -59,9 +50,7 @@ public class ItemConverter implements MongoConverter<Item> {
     public Document toDocument(Item item) {
         Document doc = new Document();
 
-        if (item.getId() != null) {
-            doc.put("_id", new ObjectId(item.getId()));
-        }
+        if (item.getId() != null) doc.put("_id", new ObjectId(item.getId()));
 
         doc.put("category", item.getCategory());
         doc.put("price", item.getPrice());
@@ -74,11 +63,9 @@ public class ItemConverter implements MongoConverter<Item> {
         doc.put("status", statusDoc);
 
         Map<String, String> extFields = item.getExtendedFields();
-        if (extFields != null) {
-            for (String fieldKey: extFields.keySet()) {
-                doc.put(fieldKey, extFields.get(fieldKey));
-            }
-        }
+        for (String name: extFields.keySet())
+            doc.put(name, extFields.get(name));
+
         return doc;
     }
 }
