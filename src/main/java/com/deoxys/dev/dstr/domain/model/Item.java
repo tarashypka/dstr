@@ -1,16 +1,15 @@
 package com.deoxys.dev.dstr.domain.model;
 
 import java.io.Serializable;
-import java.util.Currency;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.*;
 
 public class Item implements Serializable {
     private String id;
-    private String category;
+    private String name;
     private double price;
     private Currency currency;
     private ItemStatus status;
+    private List<String> tags = new ArrayList<>();
     private Map<String, String> extendedFields = new LinkedHashMap<>();
 
     public Item() { }
@@ -19,8 +18,13 @@ public class Item implements Serializable {
         this.id = id;
     }
 
-    public Item(String category, double price, Currency currency, ItemStatus status) {
-        this.category = category;
+    public Item(String id, String name) {
+        this.id = id;
+        this.name = name;
+    }
+
+    public Item(String name, double price, Currency currency, ItemStatus status) {
+        this.name = name;
         this.price = price;
         this.currency = currency;
         this.status = status;
@@ -34,12 +38,12 @@ public class Item implements Serializable {
         this.id = id;
     }
 
-    public String getCategory() {
-        return category;
+    public String getName() {
+        return name;
     }
 
-    public void setCategory(String category) {
-        this.category = category;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public double getPrice() {
@@ -86,6 +90,25 @@ public class Item implements Serializable {
         return status.getSold();
     }
 
+    public List<String> getTags() {
+        return tags;
+    }
+
+    public void setTags(List<String> tags) {
+        this.tags = tags;
+    }
+
+    public void setTags(String tagsInp) {
+        // Often tags are in form [tag1, tag2, ...]
+        tagsInp = tagsInp.replace("[", "");
+        tagsInp = tagsInp.replace("]", "");
+        Arrays.asList(tagsInp.split(",")).forEach(this::addTag);
+    }
+
+    public void addTag(String tag) {
+        tags.add(tag);
+    }
+
     public Map<String, String> getExtendedFields() {
         return extendedFields;
     }
@@ -102,11 +125,12 @@ public class Item implements Serializable {
     @Override
     public String toString() {
         return  "{ id='" + id + '\'' +
-                ", category='" + category + '\'' +
+                ", name='" + name + '\'' +
                 ", price=" + price +
                 ", currency=" + currency +
                 ", status=" + status +
-                ", extendedFields=" + extendedFields + " }";
+                ", extendedFields=" + extendedFields +
+                ", tags=" + tags + " }";
     }
 
     @Override

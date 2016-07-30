@@ -36,7 +36,8 @@ public class OrderConverter implements MongoConverter<Order> {
         for (Document itemDoc : itemsL) {
             DBRef dbRef = (DBRef) itemDoc.get("id");
             String id = dbRef.getId().toString();
-            items.put(new Item(id), (Integer) itemDoc.get("quantity"));
+            String name = itemDoc.getString("name");
+            items.put(new Item(id, name), itemDoc.getInteger("quantity"));
         }
         order.setItems(items);
 
@@ -76,6 +77,7 @@ public class OrderConverter implements MongoConverter<Order> {
             DBRef dbRef = new DBRef("items", _itemId);
             DBObject orderItemsDoc = new BasicDBObject();
             orderItemsDoc.put("id", dbRef);
+            orderItemsDoc.put("name", item.getName());
             orderItemsDoc.put("quantity", orderItems.get(item));
             itemsDbl.add(orderItemsDoc);
         }

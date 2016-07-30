@@ -27,7 +27,6 @@ public class AdminController extends HttpServlet {
             CUSTOMERS_JSP,
             ITEM_JSP,
             NEW_ITEM_JSP,
-            EDIT_ITEM_JSP,
             ORDER_JSP,
             ORDERS_JSP;
 
@@ -39,7 +38,6 @@ public class AdminController extends HttpServlet {
         CUSTOMERS_JSP = "/WEB-INF/jsp/admin/customers.jsp";
         ITEM_JSP = "/WEB-INF/jsp/item.jsp";
         NEW_ITEM_JSP = "/WEB-INF/jsp/admin/newitem.jsp";
-        EDIT_ITEM_JSP = "/WEB-INF/jsp/admin/edititem.jsp";
         ORDER_JSP = "/WEB-INF/jsp/customer/order.jsp";
         ORDERS_JSP = "/WEB-INF/jsp/admin/orders.jsp";
     }
@@ -61,7 +59,7 @@ public class AdminController extends HttpServlet {
                 break;
             case "editItem":
                 itemService.loadItem(req);
-                req.getRequestDispatcher(EDIT_ITEM_JSP).forward(req, resp);
+                req.getRequestDispatcher(NEW_ITEM_JSP).forward(req, resp);
                 break;
             case "deleteItem":
                 itemService.deleteItem(req);
@@ -104,7 +102,7 @@ public class AdminController extends HttpServlet {
                 itemService.editItem(req);
                 if (req.getAttribute("error") == null)
                     req.getRequestDispatcher(ITEM_JSP).forward(req, resp);
-                else req.getRequestDispatcher(EDIT_ITEM_JSP).forward(req, resp);
+                else req.getRequestDispatcher(NEW_ITEM_JSP).forward(req, resp);
                 break;
             default:
                 throw new ServletException("Wrong action");

@@ -20,11 +20,7 @@
         <c:param name="action" value="showCustomer"/>
         <c:param name="id" value="${customer.id}"/>
       </c:url>
-      <table>
-        <tr>
-          <th>ID</th>
-          <td>${order.id}</td>
-        </tr>
+      <table class="table table-bordered table-striped">
         <tr>
           <th>Order №</th>
           <td>${order.orderNumber}</td>
@@ -48,7 +44,7 @@
                 <c:param name="action" value="showItem"/>
                 <c:param name="id" value="${item.key.id}"/>
               </c:url>
-              ${item.value} <a href="${itemURL}">${item.key.id}</a><br>
+              ${item.value} <a href="${itemURL}">${item.key.name}</a><br>
             </c:forEach>
           </td>
         </tr>

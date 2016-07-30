@@ -34,16 +34,16 @@ implements HttpRequestReader<Customer>, HttpSessionReader<Customer> {
         } else if (action.equals("register")) {
             String error = null;
             if (email == null || ! email.matches("\\S+@\\w+\\.\\w+")) {
-                error = "Wrong email";
+                error = "wrong_email";
             } else customer.setEmail(email);
             if (password == null || password.length() < 8) {
-                if (error == null) error = "Password is weak";
+                if (error == null) error = "weak_password";
             } else customer.setPassword(password);
             if (name == null || name.equals("")) {
-                if (error == null) error = "Pick a name";
+                if (error == null) error = "empty_name";
             } else customer.setName(name);
             if (surname == null || surname.equals("")) {
-                if (error == null) error = "Pick a surname";
+                if (error == null) error = "empty_surname";
             } else customer.setSurname(surname);
             req.setAttribute("error", error);
         }

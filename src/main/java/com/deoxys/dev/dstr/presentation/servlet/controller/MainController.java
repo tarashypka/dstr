@@ -25,7 +25,6 @@ public class MainController extends HttpServlet {
     private static final String
             LOGIN_JSP,
             REGISTER_JSP,
-            LOGOUT_JSP,
             ITEM_JSP,
             ITEMS_JSP;
 
@@ -35,7 +34,6 @@ public class MainController extends HttpServlet {
         itemService = new ItemService();
         LOGIN_JSP = "/WEB-INF/jsp/login.jsp";
         REGISTER_JSP = "/WEB-INF/jsp/register.jsp";
-        LOGOUT_JSP = "/WEB-INF/jsp/logout.jsp";
         ITEM_JSP = "/WEB-INF/jsp/item.jsp";
         ITEMS_JSP = "/WEB-INF/jsp/items.jsp";
     }
@@ -52,9 +50,6 @@ public class MainController extends HttpServlet {
                 break;
             case "register":
                 req.getRequestDispatcher(REGISTER_JSP).forward(req, resp);
-                break;
-            case "logout":
-                req.getRequestDispatcher(LOGOUT_JSP).forward(req, resp);
                 break;
             case "showItem":
                 itemService.loadItem(req);

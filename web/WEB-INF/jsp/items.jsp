@@ -15,10 +15,9 @@
 
   <jsp:body>
     <c:if test="${items ne null}">
-      <table>
+      <table class="table table-bordered table-striped">
         <tr>
-          <th>ID</th>
-          <th>Category</th>
+          <th>Name</th>
           <th>Price</th>
           <th>Left</th>
           <c:if test="${sessionScope.customer.role eq 'admin'}">
@@ -33,8 +32,7 @@
             <c:param name="id" value="${item.id}"/>
           </c:url>
           <tr>
-            <td><a href="${showItemURL}">${item.id}</a></td>
-            <td>${item.category}</td>
+            <td><a href="${showItemURL}">${item.name}</a></td>
             <td>${item.price} ${item.currency}</td>
             <td>${status.stocked}</td>
             <c:if test="${sessionScope.customer.role eq 'admin'}">

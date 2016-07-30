@@ -5,6 +5,7 @@ import com.deoxys.dev.dstr.domain.model.ItemStatus;
 import org.bson.Document;
 import org.bson.types.ObjectId;
 
+import java.util.ArrayList;
 import java.util.Map;
 
 /**
@@ -22,9 +23,9 @@ public class ItemConverter implements MongoConverter<Item> {
         item.setId(doc.get("_id").toString());
         doc.remove("_id");
 
-        String category = (String) doc.get("category");
-        item.setCategory(category);
-        doc.remove("category");
+        String category = (String) doc.get("name");
+        item.setName(category);
+        doc.remove("name");
 
         item.setPrice((Double) doc.get("price"));
         doc.remove("price");
@@ -40,6 +41,9 @@ public class ItemConverter implements MongoConverter<Item> {
         item.setStatus(new ItemStatus(stocked, reserved, sold));
         doc.remove("status");
 
+        item.setTags((ArrayList) doc.get("tags"));
+        doc.remove("tags");
+
         for (String fname : doc.keySet())
             item.addField(fname, doc.getString(fname));
 
@@ -52,7 +56,7 @@ public class ItemConverter implements MongoConverter<Item> {
 
         if (item.getId() != null) doc.put("_id", new ObjectId(item.getId()));
 
-        doc.put("category", item.getCategory());
+        doc.put("name", item.getName());
         doc.put("price", item.getPrice());
         doc.put("currency", item.getCurrency().toString());
 
@@ -61,6 +65,7 @@ public class ItemConverter implements MongoConverter<Item> {
         statusDoc.put("reserved", item.reserved());
         statusDoc.put("sold", item.sold());
         doc.put("status", statusDoc);
+        doc.put("tags", item.getTags());
 
         Map<String, String> extFields = item.getExtendedFields();
         for (String name: extFields.keySet())

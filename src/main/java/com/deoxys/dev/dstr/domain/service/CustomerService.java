@@ -53,11 +53,11 @@ public class CustomerService extends PostgresService<Customer> {
         }
         String error = null;
         if (shouldBe == null)
-            error = "Email doesn't match";
+            error = "wrong_email";
         else if ( ! customer.validPassword(shouldBe.getPassword()))
-            error = "Password doesn't match";
+            error = "wrong_password";
         else if ( ! shouldBe.isEnabled())
-            error = "Account was closed";
+            error = "account_closed";
         if (error != null) req.setAttribute("error", error);
         else req.getSession().setAttribute("customer", shouldBe);
     }
@@ -66,7 +66,7 @@ public class CustomerService extends PostgresService<Customer> {
         Customer customer = requestReader.read(req);
         if (req.getAttribute("error") == null) try {
             if (customerDao.exists(customer)) {
-                req.setAttribute("error", "Email is already reserved");
+                req.setAttribute("error", "email_dup");
                 req.setAttribute("_customer", customer);
             } else {
                 customerDao.add(customer);

@@ -15,7 +15,7 @@
 
   <jsp:body>
     <c:if test="${items ne null}">
-      <table>
+      <table class="table table-bordered">
         <tr>
           <th>ID</th>
           <th>Category</th>
@@ -30,7 +30,7 @@
           </c:url>
           <tr>
             <td><a href="${itemURL}">${item.key.id}</a></td>
-            <td>${item.key.category}</td>
+            <td>${item.key.name}</td>
             <td>${item.key.price} ${item.key.currency}</td>
             <td>${item.value}</td>
             <td>${item.value * item.key.price}</td>

@@ -18,49 +18,65 @@
     <c:if test="${order ne null and order.items ne null}">
       <form action="${customerController}" method="POST">
         <input type="hidden" name="action" value="dropOrderItem">
-        <table>
+        <table class="table table-bordered table-striped">
           <tr>
-            <th>ID</th>
+            <th>#</th>
+            <th>Name</th>
             <th>Amount</th>
             <th>Price</th>
           </tr>
-          <c:forEach var="item" items="${order.items}">
+          <tbody>
+          <c:forEach var="item" items="${order.items}" varStatus="loop">
             <c:url var="itemURL" value="/controller">
               <c:param name="action" value="showItem"/>
               <c:param name="id" value="${item.key.id}"/>
             </c:url>
             <tr>
-              <td><a href="${itemURL}">${item.key.id}</a></td>
+              <th scope="row">${loop.index}</th>
+              <td><a href="${itemURL}">${item.key.name}</a></td>
               <td>${item.value}</td>
               <td>${item.key.price * item.value} ${item.key.currency}</td>
-              <td><input type="submit" name="${item.key.id}" value="Drop item"></td></td>
+              <td><button type="submit" name="${item.key.id}" class="btn btn-default btn-sm">X</button></td>
             </tr>
           </c:forEach>
+          </tbody>
         </table>
       </form>
-      Receipt:<br>
-      <c:forEach var="price" items="${order.receipt}">
-        ${price.value} ${price.key}<br>
-      </c:forEach>
-      <form action="${customerController}" method="post">
-        <input type="hidden" name="action" value="newOrder">
-        <input type="submit" value="Make order">
-      </form>
-      <form action="${customerController}" method="post">
-        <input type="hidden" name="action" value="declineOrder">
-        <input type="submit" value="Decline order">
+
+      <div class="container-fluid">
+        <table class="table table-bordered table-striped table-nonfluid">
+          <c:forEach var="price" items="${order.receipt}">
+            <tr><td>${price.value}</td><td>${price.key}</td></tr>
+          </c:forEach>
+          <tr>
+            <td>
+              <form action="${customerController}" method="POST">
+                <input type="hidden" name="action" value="newOrder">
+                <button type="submit" class="btn btn-default">Make order</button>
+              </form>
+            </td>
+            <td>
+              <form action="${customerController}" method="POST">
+                <input type="hidden" name="action" value="declineOrder">
+                <button type="submit" class="btn btn-default">Decline order</button>
+              </form>
+            </td>
+          </tr>
+        </table>
+      </div>
       </form>
     </c:if>
 
     <c:if test="${items ne null}">
       <form action="${customerController}" method="POST">
         <input type="hidden" name="action" value="addOrderItems">
-        <table>
+        <table class="table table-bordered table-striped">
           <tr>
             <th>ID</th>
             <th>Category</th>
             <th>Price</th>
             <th>Left</th>
+            <th><button type="submit" class="btn btn-default">Add items to order</button></th>
           </tr>
           <c:forEach var="item" items="${items}">
             <c:url var="itemURL" value="/controller">
@@ -69,14 +85,13 @@
             </c:url>
             <tr>
               <td><a href="${itemURL}">${item.id}</a></td>
-              <td>${item.category}</td>
+              <td>${item.name}</td>
               <td>${item.price} ${item.currency}</td>
               <td>${item.status.stocked}</td>
               <td><input type="number" name="${item.id}" placeholder="How much?"></td>
             </tr>
           </c:forEach>
         </table>
-        <input type="submit" value="Add items to order">
       </form>
     </c:if>
   </jsp:body>

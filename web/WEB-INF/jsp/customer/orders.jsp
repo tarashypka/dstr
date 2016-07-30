@@ -15,7 +15,7 @@
 
   <jsp:body>
     <c:if test="${orders ne null}">
-      <table>
+      <table class="table table-bordered table-striped">
         <tr>
           <th>Order №</th>
           <th>Date</th>
@@ -41,7 +41,7 @@
                   <c:param name="action" value="showItem"/>
                   <c:param name="id" value="${item.key.id}"/>
                 </c:url>
-                ${item.value} <a href="${itemURL}">${item.key.id}</a><br>
+                ${item.value} <a href="${itemURL}">${item.key.name}</a><br>
               </c:forEach>
             </td>
             <td>
@@ -52,10 +52,10 @@
             <td>${order.status.name}</td>
             <c:choose>
               <c:when test="${order.status.value eq -1}">
-                <td><a href="${changeStatusURL}">Put in process</a></td>
+                <td><a href="${changeStatusURL}" class="btn btn-default">Put in process</a></td>
               </c:when>
               <c:when test="${order.status.value eq 0}">
-                <td><a href="${changeStatusURL}">Reject</a></td>
+                <td><a href="${changeStatusURL}" class="btn btn-default">Reject</a></td>
               </c:when>
             </c:choose>
           </tr>

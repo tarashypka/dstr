@@ -19,15 +19,21 @@
   <jsp:body>
     <fmt:formatDate var="today" value="${today}" pattern="yyyy-MM-dd"/>
     <c:url var="controller" value="/controller/admin"/>
-    <form action="${controller}" method="get">
+    <form action="${controller}" method="get" class="form-inline col-xs-offset-1" role="form">
       <input type="hidden" name="action" value="showOrders">
       <input type="hidden" name="filter" value="date"/>
-      <input type="date" name="from" value="${today}"/>
-      <input type="date" name="till" value="${today}"/>
-      <input type="submit" value="Show"/>
+      <div class="form-group">
+        <label for="from-inp">from</label>
+        <input id="from-inp" type="date" name="from" value="${today}" class="form-control"/>
+      </div>
+      <div class="form-group">
+        <label for="till-inp">till</label>
+        <input id="till-inp" type="date" name="till" value="${today}" class="form-control"/>
+      </div>
+      <button type="submit" class="btn btn-default">Show</button>
     </form>
     <c:if test="${orders ne null}">
-      <table>
+      <table class="table table-bordered table-striped">
         <tr>
           <th>Order №</th>
           <th>Date</th>
@@ -72,9 +78,9 @@
               </c:forEach>
             </td>
             <td>${order.status.name}</td>
-            <td><a href="${changeStatusURL}&status=REJECTED">Reject</a></td>
-            <td><a href="${changeStatusURL}&status=IN_PROCESS">Put in process</a></td>
-            <td><a href="${changeStatusURL}&status=PROCESSED">Process</a></td>
+            <td><a href="${changeStatusURL}&status=REJECTED" class="btn btn-default">Reject</a></td>
+            <td><a href="${changeStatusURL}&status=IN_PROCESS" class="btn btn-default">Put in process</a></td>
+            <td><a href="${changeStatusURL}&status=PROCESSED" class="btn btn-default">Process</a></td>
           </tr>
         </c:forEach>
       </table>

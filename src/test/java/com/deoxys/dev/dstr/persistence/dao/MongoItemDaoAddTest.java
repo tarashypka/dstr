@@ -41,7 +41,7 @@ public class MongoItemDaoAddTest {
          * Item equals() will consider only an id
          */
         assertEquals("Wrong id", watch.getId(), shouldBeWatch.getId());
-        assertEquals("Wrong category", watch.getCategory(), shouldBeWatch.getCategory());
+        assertEquals("Wrong category", watch.getName(), shouldBeWatch.getName());
         assertEquals("Wrong price", watch.getPrice(), shouldBeWatch.getPrice(), 0.01);
         assertEquals("Wrong currency", watch.getCurrency(), shouldBeWatch.getCurrency());
         assertEquals("Wrong status", watch.getStatus(), shouldBeWatch.getStatus());

@@ -1,92 +1,82 @@
 <%@ tag description="Overall Page template" pageEncoding="UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ attribute name="title" fragment="true" %>
+<%@ attribute name="css" fragment="true" %>
 <%@ attribute name="js" fragment="true" %>
-<%@ attribute name="bar" fragment="true" %>
+<%@ include file="/WEB-INF/jsp/genericurls.jsp"%>
+
+<c:set var="resources" value="${pageContext.request.contextPath}/resources"/>
 
 <html>
 <head>
-    <link rel="shortcut icon"
-          href="${pageContext.request.contextPath}/resources/favicon.ico"/>
-    <title><jsp:invoke fragment="title"/></title>
-    <script type="text/javascript"
-            src="${pageContext.request.contextPath}/resources/<jsp:invoke fragment="js"/>">
-    </script>
+  <title><jsp:invoke fragment="title"/></title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="shortcut icon" href="${resources}/img/distributed24.png"/>
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="${resources}/bootstrap/css/bootstrap.min.css">
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="${resources}/bootstrap/css/bootstrap-tagsinput.css">
+  <link rel="stylesheet" href="${resources}/css/generic.css">
+  <jsp:invoke fragment="css"/>
+  <link rel="stylesheet" href="${resources}/">
+  <!-- jQuery -->
+  <script src="${resources}/jquery/jquery.min.js"></script>
+  <!-- Bootstrap JS -->
+  <script src="${resources}/bootstrap/js/bootstrap.min.js"></script>
+  <script src="${resources}/bootstrap/js/bootstrap-tagsinput.js"></script>
+  <!-- Custom JS -->
+  <jsp:invoke fragment="js"/>
 </head>
+
 <body>
 
     <!-- header -->
-    <c:url var="homeURL" value="/"/>
-    <a href="${homeURL}">Customers&Orders</a>
     <c:url var="controller" value="/controller"/>
-    <form action="${controller}" method="get">
-        <input type="hidden" name="action" value="showItems">
-        <input type="submit" value="All items">
-    </form>
-    <c:set var="customer" value="${sessionScope.customer}"/>
-    <c:choose>
-        <c:when test="${customer eq null}">
-            <form action="${controller}" method="get">
-                <input type="hidden" name="action" value="login">
-                <input type="submit" value="Login">
-            </form>
-            <form action="${controller}" method="get">
-                <input type="hidden" name="action" value="register">
-                <input type="submit" value="Register">
-            </form>
-        </c:when>
-        <c:otherwise>
-            <c:choose>
-                <c:when test="${customer.role eq 'admin'}">
-                    <c:url var="adminController" value="/controller/admin"/>
-                    <form action="${adminController}" method="get">
-                        <input type="hidden" name="action" value="showOrders">
-                        <input type="submit" value="All orders">
-                    </form>
-                    <form action="${adminController}" method="get">
-                        <input type="hidden" name="action" value="showCustomers">
-                        <input type="submit" value="All customers">
-                    </form>
-                    <form action="${adminController}" method="get">
-                        <input type="hidden" name="action" value="newItem">
-                        <input type="submit" value="Add item">
-                    </form>
+
+    <div class="container-fluid no-padding">
+      <nav class="navbar navbar-default navbar-static-top">
+        <div class="container-fluid">
+          <div class="navbar-header">
+            <a href="${homeGET}" class="btn btn-default">
+              <img alt="Brand" src="${resources}/img/distributed24.png">
+            </a>
+            <a href="${showItemsGET}" class="btn btn-default navbar-btn">All items</a>
+            <c:set var="customer" value="${sessionScope.customer}"/>
+            <c:choose><c:when test="${customer eq null}">
+              <a href="${loginGET}" class="btn btn-default navbar-btn pull-right">Sign in</a>
+              <a href="${registerGET}" class="btn btn-default navbar-btn pull-right">New account</a>
+            </c:when>
+              <c:otherwise>
+                <c:choose><c:when test="${customer.role eq 'admin'}">
+                  <a href="${showOrdersGET}" class="btn btn-default navbar-btn">All orders</a>
+                  <a href="${showCustomersGET}" class="btn btn-default navbar-btn">All customers</a>
+                  <a href="${newItemGET}" class="btn btn-default navbar-btn">Add item</a>
                 </c:when>
-                <c:otherwise>
-                    <c:url var="customerController" value="/controller/customer"/>
-                    <form action="${customerController}" method="get">
-                        <input type="hidden" name="action" value="showCustomer">
-                        <input type="submit" value="My account">
-                    </form>
-                    <form action="${customerController}" method="get">
-                        <input type="hidden" name="action" value="showItems">
-                        <input type="submit" value="My items">
-                    </form>
-                    <form action="${customerController}" method="get">
-                        <input type="hidden" name="action" value="showOrders">
-                        <input type="submit" value="My orders">
-                    </form>
-                    <form action="${customerController}" method="get">
-                        <input type="hidden" name="action" value="newOrder">
-                        <input type="submit" value="New order">
-                    </form>
-                </c:otherwise>
+                  <c:otherwise>
+                    <a href="${myAccountGET}" class="btn btn-default navbar-btn">My account</a>
+                    <a href="${myItemsGET}" class="btn btn-default navbar-btn">My items</a>
+                    <a href="${myOrdersGET}" class="btn btn-default navbar-btn">My orders</a>
+                    <a href="${newOrderGET}" class="btn btn-default navbar-btn">New order</a>
+                  </c:otherwise>
+                </c:choose>
+                <form action="${logoutPOST}" method="post" class="navbar-form navbar-right">
+                  <button type="submit" class="btn btn-default">Sign out</button>
+                </form>
+              </c:otherwise>
             </c:choose>
-            <form action="${controller}" method="post">
-                <input type="hidden" name="action" value="logout">
-                <input type="submit" value="Logout">
-            </form>
-        </c:otherwise>
-    </c:choose>
+          </div>
+        </div>
+      </nav>
 
-    <jsp:invoke fragment="bar"/>
-
-    <!-- page -->
-    <c:if test="${requestScope.error ne null}">${requestScope.error}</c:if>
-    <jsp:doBody/>
+      <!-- page -->
+      <jsp:doBody/>
+    </div>
 
     <!-- footer -->
-    <div id="host">localhost</div>
-    <div id="session"><%= request.getSession().getId() %></div>
+    <div id="footer">
+      <div class="container text-center">
+        Contact <a href="mailto:tarashypka@gmail.com">me</a> at anytime<br>2016
+      </div>
+    </div>
 </body>
 </html>

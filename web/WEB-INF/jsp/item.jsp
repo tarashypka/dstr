@@ -16,14 +16,22 @@
   <jsp:body>
     <c:if test="${item ne null}">
       <c:set var="status" value="${item.status}"/>
-      <table>
+      <table class="table table-bordered table-striped">
         <tr>
-          <th>ID</th>
-          <td>${item.id}</td>
+          <th>Name</th>
+          <td>${item.name}</td>
         </tr>
         <tr>
-          <th>Category</th>
-          <td>${requestScope.item.category}</td>
+          <th>Tags</th>
+          <td>
+            <c:forEach var="tag" items="${item.tags}">
+              <c:url var="itemsWithTagURL" value="/controller">
+                <c:param name="action" value="showItemsWithTag"/>
+                <c:param name="tag" value="${tag}"/>
+              </c:url>
+              <a href="${itemsWithTagURL}">${tag}</a>
+            </c:forEach>
+          </td>
         </tr>
         <tr>
           <th>Price</th>
@@ -59,8 +67,8 @@
         <c:param name="action" value="deleteItem"/>
         <c:param name="id" value="${item.id}"/>
       </c:url>
-      <a href="${editItemURL}">Edit</a>
-      <a href="${deleteItemURL}">Delete</a>
+      <a href="${editItemURL}" class="btn btn-default">Edit</a>
+      <a href="${deleteItemURL}" class="btn btn-default">Delete</a>
     </c:if>
     </c:if>
   </jsp:body>

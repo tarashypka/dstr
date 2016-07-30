@@ -18,7 +18,7 @@
       <c:url var="customerController" value="/controller/customer">
         <c:param name="id" value="${customer.id}"/>
       </c:url>
-      <table>
+      <table class="table table-bordered table-striped">
         <tr>
           <th>Name</th>
           <td>${customer.name}</td>

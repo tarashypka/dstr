@@ -161,7 +161,7 @@
         <listener-class>com.hazelcast.web.SessionListener</listener-class>
     </listener>
 
-    <!-- Filter all incoming requests to validate the session -->
+    <!-- Filter all incoming requests to process the session -->
     <filter>
         <filter-name>AuthenticationFilter</filter-name>
         <filter-class>com.deoxys.dev.dstr.presentation.filter.AuthorizationFilter</filter-class>

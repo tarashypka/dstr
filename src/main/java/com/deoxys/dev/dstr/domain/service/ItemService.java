@@ -45,7 +45,7 @@ public class ItemService extends MongoService<Item> {
 
     public void editItem(HttpServletRequest req) {
         Item item = requestReader.read(req);
-        itemDao.update(item);
+        if (req.getAttribute("error") == null) itemDao.update(item);
         req.setAttribute("item", item);
     }
 

@@ -15,7 +15,7 @@
 
   <jsp:body>
     <c:if test="${customers ne null}">
-      <table>
+      <table class="table table-bordered table-striped">
         <tr>
           <th>Initials</th>
           <th>Email</th>
