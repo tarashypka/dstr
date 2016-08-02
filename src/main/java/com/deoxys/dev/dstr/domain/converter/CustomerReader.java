@@ -20,34 +20,32 @@ implements HttpRequestReader<Customer>, HttpSessionReader<Customer> {
      */
     @Override
     public Customer read(HttpServletRequest req) {
-        Customer customer = new Customer();
-        String action = req.getParameter("action");
-
         String email = req.getParameter("email");
-        String password = req.getParameter("password");
+        String psswd = req.getParameter("psswd");
+        String psswd2 = req.getParameter("psswd2");
         String name = req.getParameter("name");
-        String surname = req.getParameter("surname");
+        String sname = req.getParameter("sname");
+        String validated = req.getParameter("validated");
 
-        if (action.equals("login")) {
-            customer.setEmail(email);
-            customer.setPassword(password);
-        } else if (action.equals("register")) {
-            String error = null;
-            if (email == null || ! email.matches("\\S+@\\w+\\.\\w+")) {
-                error = "wrong_email";
-            } else customer.setEmail(email);
-            if (password == null || password.length() < 8) {
-                if (error == null) error = "weak_password";
-            } else customer.setPassword(password);
-            if (name == null || name.equals("")) {
-                if (error == null) error = "empty_name";
-            } else customer.setName(name);
-            if (surname == null || surname.equals("")) {
-                if (error == null) error = "empty_surname";
-            } else customer.setSurname(surname);
-            req.setAttribute("error", error);
+        if (! Boolean.parseBoolean(validated)) {
+            System.out.println("VALIDATION WITH CR");
+            // Input fields were not validated with JS
+            if (email == null || email.isEmpty())
+                req.setAttribute("error", "email_empty");
+            else if (! email.matches("\\S+@\\w+\\.\\w+"))
+                req.setAttribute("error", "email_wrong");
+            else if (psswd == null || psswd.isEmpty())
+                req.setAttribute("error", "psswd_empty");
+            else if (psswd.length() < 8)
+                req.setAttribute("error", "psswd_weak");
+            else if (! psswd.equals(psswd2))
+                req.setAttribute("error", "psswd2_wrong");
+            else if (name == null || name.isEmpty())
+                req.setAttribute("error", "name_empty");
+            else if (sname == null || sname.isEmpty())
+                req.setAttribute("error", "sname_empty");
         }
-        return customer;
+        return new Customer(email, psswd, name, sname);
     }
 
     /**

@@ -2,7 +2,7 @@
  * Created by deoxys on 29.07.16.
  */
 
-function process(error) {
+function validateForm() {
     if (error) {
         const VALIDATION_STYLE = "has-warning";
         switch (error) {

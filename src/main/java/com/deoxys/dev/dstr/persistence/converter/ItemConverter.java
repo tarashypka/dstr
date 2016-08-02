@@ -23,8 +23,7 @@ public class ItemConverter implements MongoConverter<Item> {
         item.setId(doc.get("_id").toString());
         doc.remove("_id");
 
-        String category = (String) doc.get("name");
-        item.setName(category);
+        item.setName((String) doc.get("name"));
         doc.remove("name");
 
         item.setPrice((Double) doc.get("price"));

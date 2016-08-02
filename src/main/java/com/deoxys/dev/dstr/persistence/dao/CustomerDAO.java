@@ -13,13 +13,12 @@ import java.util.List;
 
 public class CustomerDAO extends PostgresDAO<Customer> {
 
-    private static String COLLECTION = "customers";
-
     public CustomerDAO(DataSource ds) {
         super(ds);
     }
 
     private static final String
+            COLLECTION,
             SELECT_CUSTOMER_BY_ID,
             SELECT_CUSTOMER_BY_EMAIL,
             SELECT_ALL_CUSTOMERS,
@@ -33,6 +32,8 @@ public class CustomerDAO extends PostgresDAO<Customer> {
             COUNT_CUSTOMERS_BY_EMAIL;
 
     static {
+        COLLECTION = "customers";
+
         SELECT_CUSTOMER_BY_ID =
                 "SELECT * FROM " + COLLECTION + " " +
                 "WHERE id = ?";

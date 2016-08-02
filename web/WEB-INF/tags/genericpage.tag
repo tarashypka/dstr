@@ -75,7 +75,7 @@
     <!-- footer -->
     <div id="footer">
       <div class="container text-center">
-        Contact <a href="mailto:tarashypka@gmail.com">me</a> at anytime<br>2016
+        Contact <a href="mailto:tarashypka@gmail.com">me</a> at anytime<br>May-August 2016
       </div>
     </div>
 </body>

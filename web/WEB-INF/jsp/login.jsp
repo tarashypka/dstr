@@ -43,6 +43,6 @@
         </div>
       </div>
     </form>
-    <script>process("${error}");</script>
+    <script>embedErrorMessage("${error}");</script>
   </jsp:body>
 </t:genericpage>

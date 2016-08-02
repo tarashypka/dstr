@@ -25,8 +25,8 @@
 <t:genericpage>
   <jsp:attribute name="title">${title}</jsp:attribute>
   <jsp:attribute name="js">
-    <script type="text/javascript" src="${resources}/admin/js/item-ext-field.js"></script>
-    <script type="text/javascript" src="${resources}/admin/js/process-item-error.js"></script>
+    <script type="text/javascript" src="${resources}/admin/js/item-extfield-builder.js"></script>
+    <script type="text/javascript" src="${resources}/admin/js/item-form-validator.js"></script>
     <script>
       function retainSelected(selected) {
         document.querySelectorAll('#currency option[value="' + selected + '"]')[0].defaultSelected = true;
@@ -42,7 +42,7 @@
     <c:set var="stocked" value="${(status.stocked gt 0) ? status.stocked : null}"/>
     <c:set var="reserved" value="${(status.reserved gt 0) ? status.reserved : null}"/>
     <c:set var="sold" value="${(status.sold gt 0) ? status.sold : null}"/>
-    <form action="${customerController}" method="post" class="form-horizontal" role="form">
+    <form action="${customerController}" method="post" class="form-horizontal" role="form" onsubmit="validateForm()">
       <input type="hidden" name="action" value="${param.action}">
       <c:if test="${param.action eq 'editItem'}">
         <input type="hidden" name="id" value="${item.id}">
@@ -51,7 +51,7 @@
         <div id="name" class="form-group col-sm-12">
           <label for="name-inp" class="control-label col-sm-2">Name:</label>
           <div class="col-sm-4">
-            <input id="name-inp" type="text" name="name" value="${item.name}" placeholder="Name?" class="form-control" aria-describedby="name-help">
+            <input id="name-inp" type="text" name="name" value='${item.name}' placeholder="Name?" class="form-control" aria-describedby="name-help">
             <span id="name-help" class="help-block"></span>
           </div>
         </div>
@@ -125,7 +125,6 @@
       </div>
     </form>
 
-    <script>process("${error}")</script>
     <c:if test="${item.currency ne null}">
       <script>retainSelected("${item.currency}");</script>
     </c:if>

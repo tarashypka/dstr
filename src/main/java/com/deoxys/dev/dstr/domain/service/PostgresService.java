@@ -12,13 +12,13 @@ import javax.sql.DataSource;
  * Service that uses Postgres Connection Pool
  */
 
-public abstract class PostgresService<T> {
+abstract class PostgresService<T> {
 
-    protected DataSource dataSource;
-    protected HttpRequestReader<T> requestReader;
-    protected HttpSessionReader<T> sessionReader;
+    DataSource dataSource;
+    HttpRequestReader<T> requestReader;
+    HttpSessionReader<T> sessionReader;
 
-    public <T extends HttpRequestReader & HttpSessionReader> PostgresService(T reader) {
+    <t extends HttpRequestReader & HttpSessionReader> PostgresService(t reader) {
         try {
             InitialContext ctx = new InitialContext();
             dataSource = (DataSource) ctx.lookup("java:/comp/env/jdbc/postgres");
