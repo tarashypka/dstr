@@ -1,4 +1,5 @@
 <%@ page contentType="text/html" pageEncoding="UTF-8" %>
+<%@ page trimDirectiveWhitespaces="true" %>
 <%@ taglib prefix="t" tagdir="/WEB-INF/tags" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
@@ -42,7 +43,6 @@
           </tbody>
         </table>
       </form>
-
       <div class="container-fluid">
         <table class="table table-bordered table-striped table-nonfluid">
           <c:forEach var="price" items="${order.receipt}">
@@ -66,7 +66,6 @@
       </div>
       </form>
     </c:if>
-
     <c:if test="${items ne null}">
       <form action="${customerController}" method="POST">
         <input type="hidden" name="action" value="addOrderItems">

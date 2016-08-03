@@ -1,4 +1,5 @@
 <%@ page contentType="text/html" pageEncoding="UTF-8" %>
+<%@ page trimDirectiveWhitespaces="true" %>
 <%@ taglib prefix="t" tagdir="/WEB-INF/tags" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
@@ -37,6 +38,7 @@
             </a>
           </td>
         </tr>
+        <tr>
           <th>Items</th>
           <td>
             <c:forEach var="item" items="${order.items}">

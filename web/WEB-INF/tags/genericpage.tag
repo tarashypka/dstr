@@ -1,4 +1,5 @@
 <%@ tag description="Overall Page template" pageEncoding="UTF-8" %>
+<%@ tag trimDirectiveWhitespaces="true" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ attribute name="title" fragment="true" %>
 <%@ attribute name="css" fragment="true" %>
@@ -11,28 +12,25 @@
 <head>
   <title><jsp:invoke fragment="title"/></title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="shortcut icon" href="${resources}/img/distributed24.png"/>
-  <!-- Bootstrap CSS -->
+  <link rel="shortcut icon" href="${resources}/img/distributed24.png">
+  <%-- Bootstrap CSS --%>
   <link rel="stylesheet" href="${resources}/bootstrap/css/bootstrap.min.css">
-  <!-- Custom CSS -->
+  <%-- Custom CSS --%>
   <link rel="stylesheet" href="${resources}/bootstrap/css/bootstrap-tagsinput.css">
   <link rel="stylesheet" href="${resources}/css/generic.css">
   <jsp:invoke fragment="css"/>
-  <link rel="stylesheet" href="${resources}/">
-  <!-- jQuery -->
+  <%-- jQuery --%>
   <script src="${resources}/jquery/jquery.min.js"></script>
-  <!-- Bootstrap JS -->
+  <%-- Bootstrap JS --%>
   <script src="${resources}/bootstrap/js/bootstrap.min.js"></script>
   <script src="${resources}/bootstrap/js/bootstrap-tagsinput.js"></script>
-  <!-- Custom JS -->
+  <%-- Custom JS --%>
   <jsp:invoke fragment="js"/>
 </head>
 
 <body>
-
-    <!-- header -->
+    <%-- header --%>
     <c:url var="controller" value="/controller"/>
-
     <div class="container-fluid no-padding">
       <nav class="navbar navbar-default navbar-static-top">
         <div class="container-fluid">
@@ -67,12 +65,10 @@
           </div>
         </div>
       </nav>
-
-      <!-- page -->
-      <jsp:doBody/>
     </div>
-
-    <!-- footer -->
+    <%-- page --%>
+    <jsp:doBody/>
+    <%-- footer --%>
     <div id="footer">
       <div class="container text-center">
         Contact <a href="mailto:tarashypka@gmail.com">me</a> at anytime<br>May-August 2016
