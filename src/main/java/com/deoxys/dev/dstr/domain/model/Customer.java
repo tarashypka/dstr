@@ -1,5 +1,7 @@
 package com.deoxys.dev.dstr.domain.model;
 
+import org.mindrot.jbcrypt.BCrypt;
+
 import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
@@ -26,13 +28,32 @@ public class Customer implements Serializable {
         this.email = email;
     }
 
-    public Customer(String email, String password, String name, String surname) {
+    /**
+     * Required for login purposes to fetch customer with his credentials only
+     */
+    public Customer(String password, boolean enabled) {
+        this.password = password;
+        this.enabled = enabled;
+    }
 
+    public Customer(String email, String password, String name, String surname) {
         this.email = email;
         this.password = password;
         this.name = name;
         this.surname = surname;
     }
+
+    public Customer(long id, String email, String name,
+                    String surname, String role, boolean enabled) {
+
+        this.id = id;
+        this.email = email;
+        this.name = name;
+        this.surname = surname;
+        this.role = role;
+        this.enabled = enabled;
+    }
+
 
     public Customer(long id, String email, String password, String name,
                     String surname, String role, boolean enabled) {
@@ -70,8 +91,16 @@ public class Customer implements Serializable {
         this.password = password;
     }
 
-    public boolean validPassword(String password) {
-        return this.password.equals(password);
+    public boolean hasValidPassword(String hashFromDb) {
+        return BCrypt.checkpw(password, hashFromDb);
+    }
+
+    /**
+     * Customer password is not required for view purposes
+     */
+    public Customer withoutPassword() {
+        password = null;
+        return this;
     }
 
     public String getName() {

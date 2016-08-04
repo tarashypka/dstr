@@ -1,6 +1,7 @@
 package com.deoxys.dev.dstr.persistence.dao;
 
 import com.deoxys.dev.dstr.domain.model.Customer;
+import org.mindrot.jbcrypt.BCrypt;
 
 import javax.sql.DataSource;
 import java.sql.*;
@@ -20,7 +21,7 @@ public class CustomerDAO extends PostgresDAO<Customer> {
     private static final String
             COLLECTION,
             SELECT_CUSTOMER_BY_ID,
-            SELECT_CUSTOMER_BY_EMAIL,
+            SELECT_CREDENTIALS_BY_EMAIL,
             SELECT_ALL_CUSTOMERS,
             SELECT_ID_BY_EMAIL,
             SELECT_STATUS_BY_ID,
@@ -38,8 +39,8 @@ public class CustomerDAO extends PostgresDAO<Customer> {
                 "SELECT * FROM " + COLLECTION + " " +
                 "WHERE id = ?";
 
-        SELECT_CUSTOMER_BY_EMAIL =
-                "SELECT * FROM " + COLLECTION + " " +
+        SELECT_CREDENTIALS_BY_EMAIL =
+                "SELECT password, role FROM " + COLLECTION + " " +
                  "WHERE email = ?";
 
         SELECT_ALL_CUSTOMERS =
@@ -79,6 +80,10 @@ public class CustomerDAO extends PostgresDAO<Customer> {
                 "WHERE email = ?";
     }
 
+    /**
+     * Return user without password
+     * Password is required only on login for
+     */
     @Override
     public Customer get(long id) throws SQLException {
         try (Connection conn = dataSource.getConnection();
@@ -90,7 +95,6 @@ public class CustomerDAO extends PostgresDAO<Customer> {
                         ? new Customer(
                                 id,
                                 rs.getString("email"),
-                                rs.getString("password"),
                                 rs.getString("name"),
                                 rs.getString("surname"),
                                 rs.getString("role"),
@@ -101,26 +105,20 @@ public class CustomerDAO extends PostgresDAO<Customer> {
     }
 
     /**
-     * Required on user login when id is not known yet
-     * to verify if user with such an email already exists.
+     * Required on user login only to verify Customer credentials (password, enabled).
      *
      * It's better to use get(email) with 1 connection to database,
      * than get(getId(email)) with 2 connections to database.
      */
     public Customer get(String email) throws SQLException {
         try (Connection conn = dataSource.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(SELECT_CUSTOMER_BY_EMAIL)) {
+             PreparedStatement stmt = conn.prepareStatement(SELECT_CREDENTIALS_BY_EMAIL)) {
 
             stmt.setString(1, email);
             try (ResultSet rs = stmt.executeQuery()) {
                 return rs.next()
                         ? new Customer(
-                                rs.getLong("id"),
-                                rs.getString("email"),
                                 rs.getString("password"),
-                                rs.getString("name"),
-                                rs.getString("surname"),
-                                rs.getString("role"),
                                 rs.getBoolean("enabled"))
                         : null;
             }
@@ -153,7 +151,7 @@ public class CustomerDAO extends PostgresDAO<Customer> {
              PreparedStatement stmt = conn.prepareStatement(INSERT_CUSTOMER)) {
 
             stmt.setString(1, customer.getEmail());
-            stmt.setString(2, customer.getPassword());
+            stmt.setString(2, BCrypt.hashpw(customer.getPassword(), BCrypt.gensalt()));
             stmt.setString(3, customer.getName());
             stmt.setString(4, customer.getSurname());
             if (stmt.executeUpdate() != 1) return false;
