@@ -40,7 +40,7 @@ public class CustomerDAO extends PostgresDAO<Customer> {
                 "WHERE id = ?";
 
         SELECT_CREDENTIALS_BY_EMAIL =
-                "SELECT password, role FROM " + COLLECTION + " " +
+                "SELECT password, enabled FROM " + COLLECTION + " " +
                  "WHERE email = ?";
 
         SELECT_ALL_CUSTOMERS =

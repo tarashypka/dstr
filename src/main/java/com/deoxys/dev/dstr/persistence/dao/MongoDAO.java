@@ -51,6 +51,7 @@ public abstract class MongoDAO<T> {
             while (cursor.hasNext())
                 objects.add(converter.toObject(cursor.next()));
         }
+
         return objects;
     }
 

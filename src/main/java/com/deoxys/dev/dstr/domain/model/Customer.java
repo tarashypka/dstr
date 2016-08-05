@@ -28,6 +28,11 @@ public class Customer implements Serializable {
         this.email = email;
     }
 
+    public Customer(String email, String password) {
+        this.email = email;
+        this.password = password;
+    }
+
     /**
      * Required for login purposes to fetch customer with his credentials only
      */

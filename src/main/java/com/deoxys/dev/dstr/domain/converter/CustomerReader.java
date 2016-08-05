@@ -22,14 +22,16 @@ implements HttpRequestReader<Customer>, HttpSessionReader<Customer> {
     public Customer read(HttpServletRequest req) {
         String email = req.getParameter("email");
         String psswd = req.getParameter("psswd");
-        String psswd2 = req.getParameter("psswd2");
+        String action = req.getParameter("action");
+        if ("login".equals(action)) return new Customer(email, psswd);
+
         String name = req.getParameter("name");
         String sname = req.getParameter("sname");
         String validated = req.getParameter("validated");
 
         if (! Boolean.parseBoolean(validated)) {
-            System.out.println("VALIDATION WITH CR");
             // Input fields were not validated with JS
+            String psswd2 = req.getParameter("psswd2");
             if (email == null || email.isEmpty())
                 req.setAttribute("error", "email_empty");
             else if (! email.matches("\\S+@\\w+\\.\\w+"))

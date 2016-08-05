@@ -52,18 +52,17 @@ public class CustomerService extends PostgresService<Customer> {
             ex.printStackTrace();
         }
         String error = null;
-        if (shouldBe == null)
-            error = "wrong_email";
-        else if ( ! customer.hasValidPassword(shouldBe.getPassword()))
-            error = "wrong_password";
+        if (shouldBe == null || ! customer.hasValidPassword(shouldBe.getPassword()))
+            error = "cred_wrong";
         else if ( ! shouldBe.isEnabled())
-            error = "account_closed";
+            error = "acc_closed";
         if (error != null) req.setAttribute("error", error);
         else req.getSession().setAttribute("customer", shouldBe.withoutPassword());
     }
 
     public void register(HttpServletRequest req) {
         Customer customer = requestReader.read(req);
+
         if (req.getAttribute("error") == null) try {
             if (customerDao.exists(customer)) {
                 req.setAttribute("error", "email_dup");
