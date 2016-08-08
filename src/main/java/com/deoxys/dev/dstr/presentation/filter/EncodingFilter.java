@@ -5,10 +5,6 @@ import org.apache.log4j.Logger;
 import javax.servlet.*;
 import java.io.IOException;
 
-/**
- * Created by deoxys on 01.06.16.
- */
-
 public class EncodingFilter implements Filter {
     private Logger logger = Logger.getLogger(EncodingFilter.class);
 

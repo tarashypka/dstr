@@ -42,7 +42,7 @@
                   <c:param name="action" value="showItem"/>
                   <c:param name="id" value="${item.key.id}"/>
                 </c:url>
-                ${item.value} <a href="${itemURL}">${item.key.name}</a><br>
+                ${item.value} of <a href="${itemURL}">${item.key.name}</a><br>
               </c:forEach>
             </td>
             <td>

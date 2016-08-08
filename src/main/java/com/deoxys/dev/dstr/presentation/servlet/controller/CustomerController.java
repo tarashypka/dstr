@@ -11,10 +11,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-/**
- * Created by deoxys on 11.07.16.
- */
-
 @WebServlet(name = "CustomerController", urlPatterns = "/controller/customer")
 public class CustomerController extends HttpServlet {
 

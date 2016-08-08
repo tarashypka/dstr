@@ -34,7 +34,7 @@
           <th>Customer</th>
           <td>
             <a href="${customerURL}">
-              ${customer.name} ${customer.surname}
+              ${customer.name}, ${customer.surname}
             </a>
           </td>
         </tr>
@@ -46,7 +46,7 @@
                 <c:param name="action" value="showItem"/>
                 <c:param name="id" value="${item.key.id}"/>
               </c:url>
-              ${item.value} <a href="${itemURL}">${item.key.name}</a><br>
+              ${item.value} of <a href="${itemURL}">${item.key.name}</a><br>
             </c:forEach>
           </td>
         </tr>

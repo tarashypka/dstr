@@ -14,10 +14,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
-/**
- * Created by deoxys on 07.07.16.
- */
-
 public class OrderService extends MongoService<Order> {
     Logger logger = Logger.getLogger(OrderService.class);
 
@@ -97,7 +93,7 @@ public class OrderService extends MongoService<Order> {
             String value = req.getParameter(param);
             if (! value.isEmpty() && param.matches("^[0-9a-fA-F]{24}$")) {
                 /**
-                 * Better to access Database once and get the whole Item,
+                 * Better to access DB once and get the whole Item,
                  * then to access it twice getting Item stocked status first,
                  * and then (not always, but in most cases) the whole Item.
                  */
@@ -107,6 +103,12 @@ public class OrderService extends MongoService<Order> {
                     ItemService itemService = new ItemService();
                     itemService.takeOrderItemFromStock(item, quantity);
                     itemService.addOrderItemToReserve(item, quantity);
+
+                    /**
+                     * receipt should be updated before new item was added,
+                     * since updateReceipt() checks whether such item already exists in order
+                     */
+                    order.updateReceipt(item, quantity);
                     order.addItem(item, quantity);
                     ses.setAttribute("order", order);
                 } else {
@@ -129,6 +131,12 @@ public class OrderService extends MongoService<Order> {
                 ItemService itemService = new ItemService();
                 itemService.takeOrderItemFromReserve(item, quantity);
                 itemService.addOrderItemToStock(item, quantity);
+
+                /**
+                 * receipt should be updated before new item was removed,
+                 * since updateReceipt() checks whether such item exists in order
+                 */
+                order.updateReceipt(item, 0);
                 order.removeItem(item, quantity);
                 if (order.getItems().size() == 0) ses.removeAttribute("order");
                 else ses.setAttribute("order", order);
@@ -153,7 +161,6 @@ public class OrderService extends MongoService<Order> {
             orderDao.add(order);
             ses.removeAttribute("order");
             req.setAttribute("order", order);
-            logger.info("New order=" + order + " has been made");
         } else {
             /**
              * Customer would like to know, which Item is a problem.

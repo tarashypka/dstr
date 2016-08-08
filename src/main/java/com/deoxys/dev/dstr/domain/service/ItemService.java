@@ -9,10 +9,6 @@ import org.apache.log4j.Logger;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
 
-/**
- * Created by deoxys on 07.07.16.
- */
-
 public class ItemService extends MongoService<Item> {
     Logger logger = Logger.getLogger(ItemService.class);
 
@@ -39,13 +35,13 @@ public class ItemService extends MongoService<Item> {
 
     public void addItem(HttpServletRequest req) {
         Item item = requestReader.read(req);
-        if (req.getAttribute("error") == null) itemDao.add(item);
+        itemDao.add(item);
         req.setAttribute("item", item);
     }
 
     public void editItem(HttpServletRequest req) {
         Item item = requestReader.read(req);
-        if (req.getAttribute("error") == null) itemDao.update(item);
+        itemDao.update(item);
         req.setAttribute("item", item);
     }
 

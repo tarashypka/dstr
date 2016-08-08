@@ -8,7 +8,7 @@ function isValidEmail(email) {
 }
 
 // @param style: Bootstrap validation style 
-// could be has-warning, has-success, ...
+// could be has-error, has-warning, has-success, ...
 function validateForm(style) {
     // Since some browsers may have Js disabled,
     // it's required by server-side to know if form was already validated with Js.
@@ -51,22 +51,19 @@ function validateForm(style) {
         return false;
     }
 
-    var psswd2 = $("#psswd2-inp").val();
-    if (psswd2 !== psswd) {
+    if ($("#psswd2-inp").val() !== psswd) {
         $("#psswd2").addClass(style);
         $("#psswd2-help").text("Passwords do not match");
         return false;
     }
 
-    var name = $("#name-inp").val();
-    if (! name) {
+    if (! $("#name-inp").val()) {
         $("#name").addClass(style);
         $("#name-help").text("Enter name");
         return false;
     }
 
-    var surname = $("#sname-inp").val();
-    if (! surname) {
+    if (! $("#sname-inp").val()) {
         $("#sname").addClass(style);
         $("#sname-help").text("Enter surname");
         return false;

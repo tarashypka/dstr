@@ -7,8 +7,6 @@ import com.mongodb.MongoClient;
 import javax.naming.InitialContext;
 
 /**
- * Created by deoxys on 08.07.16.
- *
  * Service that uses Mongo Connection Pool
  */
 

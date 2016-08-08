@@ -5,10 +5,6 @@ import com.deoxys.dev.dstr.domain.model.Customer;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-/**
- * Created by deoxys on 11.07.16.
- */
-
 public class CustomerReader
 implements HttpRequestReader<Customer>, HttpSessionReader<Customer> {
 
@@ -20,34 +16,12 @@ implements HttpRequestReader<Customer>, HttpSessionReader<Customer> {
      */
     @Override
     public Customer read(HttpServletRequest req) {
-        String email = req.getParameter("email");
-        String psswd = req.getParameter("psswd");
-        String action = req.getParameter("action");
-        if ("login".equals(action)) return new Customer(email, psswd);
-
-        String name = req.getParameter("name");
-        String sname = req.getParameter("sname");
-        String validated = req.getParameter("validated");
-
-        if (! Boolean.parseBoolean(validated)) {
-            // Input fields were not validated with JS
-            String psswd2 = req.getParameter("psswd2");
-            if (email == null || email.isEmpty())
-                req.setAttribute("error", "email_empty");
-            else if (! email.matches("\\S+@\\w+\\.\\w+"))
-                req.setAttribute("error", "email_wrong");
-            else if (psswd == null || psswd.isEmpty())
-                req.setAttribute("error", "psswd_empty");
-            else if (psswd.length() < 8)
-                req.setAttribute("error", "psswd_weak");
-            else if (! psswd.equals(psswd2))
-                req.setAttribute("error", "psswd2_wrong");
-            else if (name == null || name.isEmpty())
-                req.setAttribute("error", "name_empty");
-            else if (sname == null || sname.isEmpty())
-                req.setAttribute("error", "sname_empty");
-        }
-        return new Customer(email, psswd, name, sname);
+        return new Customer(
+                req.getParameter("email"),
+                req.getParameter("psswd"),
+                req.getParameter("name"),
+                req.getParameter("sname")
+        );
     }
 
     /**

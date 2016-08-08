@@ -16,6 +16,11 @@
 <%-- Bootstrap validation style could be has-warning, has-success, ... --%>
 <c:set var="validationStyle" value="has-error"/>
 
+<%--
+It's not assumed that every customer has Js enabled,
+thus server-side validation will be performed if it's disabled
+ --%>
+
 <%-- Server-side validation results (if Js is disabled) --%>
 <c:if test="${error ne null}">
   <c:choose>
@@ -63,9 +68,9 @@
 
   <jsp:body>
     <c:url var="controller" value="/controller"/>
-    <form action="${controller}" method="post" id="register-form" class="form-horizontal" role="form" onsubmit="return validateForm('${validationStyle}')">
+    <form action="${controller}" method="post" id="register-form" class="form-horizontal" role="form" onsubmit="return validateForm('${validationStyle}');">
+      <input type="hidden" name="validated" value="false">
       <input type="hidden" name="action" value="register">
-      <input type="hidden" name="validated" value="false" id="validated">
       <div id="email" class="form-group col-sm-12 ${emailWarn}">
         <label for="email-inp" class="control-label col-sm-2">Email:</label>
         <div class="controls col-sm-4">

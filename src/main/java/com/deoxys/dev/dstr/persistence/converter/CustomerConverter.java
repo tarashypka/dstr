@@ -3,10 +3,6 @@ package com.deoxys.dev.dstr.persistence.converter;
 import com.deoxys.dev.dstr.domain.model.Customer;
 import org.bson.Document;
 
-/**
- * Created by deoxys on 27.05.16.
- */
-
 public class CustomerConverter implements MongoConverter<Customer> {
 
     @Override
@@ -21,10 +17,10 @@ public class CustomerConverter implements MongoConverter<Customer> {
     @Override
     public Customer toObject(Document doc) {
         Customer customer = new Customer();
-        customer.setId((Long) doc.get("id"));
-        customer.setEmail((String) doc.get("email"));
-        customer.setName((String) doc.get("name"));
-        customer.setSurname((String) doc.get("surname"));
+        customer.setId(doc.getLong("id"));
+        customer.setEmail(doc.getString("email"));
+        customer.setName(doc.getString("name"));
+        customer.setSurname(doc.getString("surname"));
         return customer;
     }
 }

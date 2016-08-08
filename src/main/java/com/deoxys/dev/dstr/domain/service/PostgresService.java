@@ -7,8 +7,6 @@ import javax.naming.InitialContext;
 import javax.sql.DataSource;
 
 /**
- * Created by deoxys on 08.07.16.
- *
  * Service that uses Postgres Connection Pool
  */
 

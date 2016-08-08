@@ -7,53 +7,50 @@ import com.mongodb.BasicDBList;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 import com.mongodb.DBRef;
-import com.mongodb.client.MongoIterable;
 import org.bson.Document;
-import org.bson.LazyBSONList;
 import org.bson.types.ObjectId;
 
 import java.util.*;
-
-/**
- * Created by deoxys on 27.05.16.
- */
+import java.util.stream.Collectors;
 
 public class OrderConverter implements MongoConverter<Order> {
 
     @Override
+    @SuppressWarnings("unchecked")
     public Order toObject(Document doc) {
+
+        if (doc == null) return null;
+
         Order order = new Order();
         order.setId(doc.get("_id").toString());
-        order.setOrderNumber((Long) doc.get("orderNumber"));
-        order.setDate((Date) doc.get("date"));
+        order.setOrderNumber(doc.getLong("orderNumber"));
+        order.setDate(doc.getDate("date"));
 
         Document customerDoc = (Document) doc.get("customer");
-        CustomerConverter customerConverter = new CustomerConverter();
-        order.setCustomer(customerConverter.toObject(customerDoc));
+        order.setCustomer(new CustomerConverter().toObject(customerDoc));
 
-        Map<Item, Integer> items = new HashMap<>();
-        List<Document> itemsL = (ArrayList) doc.get("items");
-        for (Document itemDoc : itemsL) {
+        List<Document> items = (ArrayList) doc.get("items");
+
+        items.forEach(itemDoc -> {
             DBRef dbRef = (DBRef) itemDoc.get("id");
             String id = dbRef.getId().toString();
             String name = itemDoc.getString("name");
-            items.put(new Item(id, name), itemDoc.getInteger("quantity"));
-        }
-        order.setItems(items);
+            order.addItem(new Item(id, name), itemDoc.getInteger("quantity"));
+        });
 
-        Map<Currency, Double> receipt = new HashMap<>();
-        List<Document> receiptL = (ArrayList) doc.get("receipt");
-        for (Document priceDoc : receiptL) {
-            Double price = (Double) priceDoc.get("price");
-            Currency currency = Currency.getInstance((String) priceDoc.get("currency"));
-            receipt.put(currency, price);
-        }
-        order.setReceipt(receipt);
+        List<Document> receipt = (ArrayList) doc.get("receipt");
+        receipt.stream().collect(Collectors.toMap(
+                k -> convertCurrency(k.getString("currency")),
+                k -> k.getDouble("price")
+        )).forEach(order::addPrice);
 
-        int status = (Integer) doc.get("status");
-        order.setStatus(Order.OrderStatus.getStatus(status));
+        order.setStatus(Order.OrderStatus.getStatus(doc.getInteger("status")));
 
         return order;
+    }
+
+    private Currency convertCurrency(String code) {
+        return code != null ? Currency.getInstance(code) : null;
     }
 
     @Override
@@ -71,26 +68,23 @@ public class OrderConverter implements MongoConverter<Order> {
         doc.put("customer", customerConverter.toDocument(customer));
 
         BasicDBList itemsDbl = new BasicDBList();
-        Map<Item, Integer> orderItems = order.getItems();
-        for (Item item : orderItems.keySet()) {
-            ObjectId _itemId = new ObjectId(item.getId());
-            DBRef dbRef = new DBRef("items", _itemId);
+        order.getItems().forEach((item, amount) -> {
+            DBRef dbRef = new DBRef("items", new ObjectId(item.getId()));
             DBObject orderItemsDoc = new BasicDBObject();
             orderItemsDoc.put("id", dbRef);
             orderItemsDoc.put("name", item.getName());
-            orderItemsDoc.put("quantity", orderItems.get(item));
+            orderItemsDoc.put("quantity", amount);
             itemsDbl.add(orderItemsDoc);
-        }
+        });
         doc.put("items", itemsDbl);
 
-        Map<Currency, Double> receipt = order.getReceipt();
         List<DBObject> receiptList = new ArrayList<>();
-        for (Currency currency : receipt.keySet()) {
+        order.getReceipt().forEach((currency, price) -> {
             DBObject receiptItemDoc = new BasicDBObject();
             receiptItemDoc.put("currency", currency.toString());
-            receiptItemDoc.put("price", receipt.get(currency));
+            receiptItemDoc.put("price", price);
             receiptList.add(receiptItemDoc);
-        }
+        });
         doc.put("receipt", receiptList);
 
         String status = order.getStatus().name();

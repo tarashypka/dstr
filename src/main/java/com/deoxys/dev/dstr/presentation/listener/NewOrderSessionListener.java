@@ -1,9 +1,5 @@
 package com.deoxys.dev.dstr.presentation.listener;
 
-/**
- * Created by deoxys on 22.07.16.
- */
-
 import com.deoxys.dev.dstr.domain.model.Order;
 import com.deoxys.dev.dstr.domain.service.ItemService;
 import com.hazelcast.core.EntryEvent;

@@ -4,10 +4,6 @@ import javax.sql.DataSource;
 import java.sql.*;
 import java.util.List;
 
-/**
- * Created by deoxys on 09.07.16.
- */
-
 public abstract class PostgresDAO<T> {
 
     DataSource dataSource;

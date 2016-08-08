@@ -9,10 +9,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-/**
- * Created by deoxys on 30.05.16.
- */
-
 @WebServlet(name = "ErrorHandler", urlPatterns = "/error")
 public class ErrorHandlerServlet extends HttpServlet {
     final static Logger logger = Logger.getLogger(ErrorHandlerServlet.class);

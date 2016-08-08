@@ -1,63 +1,78 @@
-/**
- * Created by deoxys on 29.07.16.
- */
+// @param style: Bootstrap validation style 
+// could be has-error, has-warning, has-success, ...
+function validateForm(style) {
+    // Since some browsers may have Js disabled,
+    // it's required by server-side to know if form was already validated with Js.
+    // Default value is false, meaning validation should be performed on the server.
+    $("input[name=validated]").val(true);
 
-function validateForm() {
-    if (error) {
-        const VALIDATION_STYLE = "has-warning";
-        switch (error) {
-            case "empty_name":
-                document.getElementById("name").classList.add(VALIDATION_STYLE);
-                document.getElementById("name-help").innerHTML = "Pick a name";
+    // Remove previous validation error messages
+    $("#name").removeClass(style);
+    $("#tags").removeClass(style);
+    $("#price").removeClass(style);
+    $("#currency").removeClass(style);
+    $("#stocked").removeClass(style);
+    $("#name-help").text("");
+    $("#tags-help").text("");
+    $("#price-help").text("");
+    $("#currency-help").text("");
+    $("#stocked-help").text("");
+    
+    for (i = 0; i < $("#extFields").val(); i++) {
+        $("#field" + i + "-name").removeClass(style);
+        $("#field" + i + "-val").removeClass(style);
+        $("#field" + i + "-name-help").text("");
+        $("#field" + i + "-val-help").text("");
+    }
 
-                // Remove old errors
-                document.getElementById("tags").classList.remove(VALIDATION_STYLE);
-                document.getElementById("price").classList.remove(VALIDATION_STYLE);
-                document.getElementById("currency").classList.remove(VALIDATION_STYLE);
-                document.getElementById("stocked").classList.remove(VALIDATION_STYLE);
-                break;
-            case "empty_tags":
-                document.getElementById("tags").classList.add(VALIDATION_STYLE);
-                document.getElementById("tags-help").innerHTML = "Choose some tags";
+    if (! $("#name-inp").val()) {
+        $("#name").addClass(style);
+        $("#name-help").text("Pick the name");
+        $("#name").scrollView();
+        return false;
+    }
 
-                // Remove old errors
-                document.getElementById("name").classList.remove(VALIDATION_STYLE);
-                document.getElementById("price").classList.remove(VALIDATION_STYLE);
-                document.getElementById("currency").classList.remove(VALIDATION_STYLE);
-                document.getElementById("stocked").classList.remove(VALIDATION_STYLE);
-                break;
-            case "empty_price":
-                document.getElementById("price").classList.add(VALIDATION_STYLE);
-                document.getElementById("price-help").innerHTML = "How much it will cost?";
+    if (! $("#tags-inp").val()) {
+        $("#tags").addClass(style);
+        $("#tags-help").text("Choose some tags");
+        $("#tags").scrollView();
+        return false;
+    }
 
-                // Remove old errors
-                document.getElementById("name").classList.remove(VALIDATION_STYLE);
-                document.getElementById("tags").classList.remove(VALIDATION_STYLE);
-                document.getElementById("currency").classList.remove(VALIDATION_STYLE);
-                document.getElementById("stocked").classList.remove(VALIDATION_STYLE);
-                break;
-            case "empty_currency":
-                document.getElementById("currency").classList.add(VALIDATION_STYLE);
-                document.getElementById("currency-help").innerHTML = "What is the currency?";
+    if (! $("#price-inp").val()) {
+        $("#price").addClass(style);
+        $("#price-help").text("How much it will cost?");
+        $("#price").scrollView();
+        return false;
+    }
 
-                // Remove old errors
-                document.getElementById("name").classList.remove(VALIDATION_STYLE);
-                document.getElementById("tags").classList.remove(VALIDATION_STYLE);
-                document.getElementById("price").classList.remove(VALIDATION_STYLE);
-                document.getElementById("stocked").classList.remove(VALIDATION_STYLE);
-                break;
-            case "empty_stocked":
-                document.getElementById("stocked").classList.add(VALIDATION_STYLE);
-                document.getElementById("stocked-help").innerHTML = "How many left?";
+    if (! $("#currency-inp").val()) {
+        $("#currency").addClass(style);
+        $("#currency-help").text("Select currency");
+        $("#currency").scrollView();
+        return false;
+    }
 
-                // Remove old errors
-                document.getElementById("name").classList.remove(VALIDATION_STYLE);
-                document.getElementById("tags").classList.remove(VALIDATION_STYLE);
-                document.getElementById("price").classList.remove(VALIDATION_STYLE);
-                document.getElementById("currency").classList.remove(VALIDATION_STYLE);
-                break;
-            default:
-                break;
+    if (! $("#stocked-inp").val()) {
+        $("#stocked").addClass(style);
+        $("#stocked-help").text("How many in stock?");
+        $("#stocked").scrollView();
+        return false;
+    }
+    
+    // Validate ext fields names / values
+    for (i = 0; i < $("#extFields").val(); i++) {
+        if (! $("#field" + i + "-name-inp").val()) {
+            $("#field" + i + "-name").addClass(style);
+            $("#field" + i + "-name-help").text("Enter name or delete this field");
+            $("#field" + i).scrollView();
+            return false;
+        }
+        if (! $("#field" + i + "-val-inp").val()) {
+            $("#field" + i + "-val").addClass(style);
+            $("#field" + i + "-val-help").text("Enter value or delete this field");
+            $("#field" + i).scrollView();
+            return false;
         }
     }
 }

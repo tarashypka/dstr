@@ -2,32 +2,40 @@
     margin-left: 10px;
     width: 100%;
 }
+
 .navbar-btn {
     margin-left: 5px;
 }
 
-html {
-    position: relative;
-    min-height: 100%;
-}
 body {
-    /* Margin bottom by footer height */
-    margin-bottom: 50px;
+    position: relative;
 }
-#footer {
+
+#container {
     position: absolute;
+    width: 100%;
+    margin-bottom: 75px;   /* footer height + 25px */
+}
+
+#footer {
     bottom: 0;
     width: 100%;
-    /* Set the fixed height of the footer here */
     height: 50px;
     background-color: #f5f5f5;
 }
+
 #footer div.container {
     margin-top: 5px;
 }
+
 .no-padding {
     padding: 0px;
 }
+
 .table-nonfluid {
     width: auto !important;
+}
+
+.bootstrap-tagsinput {
+    width: 100% !important;
 }

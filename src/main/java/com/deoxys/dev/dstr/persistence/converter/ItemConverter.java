@@ -6,15 +6,12 @@ import org.bson.Document;
 import org.bson.types.ObjectId;
 
 import java.util.ArrayList;
-import java.util.Map;
-
-/**
- * Created by deoxys on 27.05.16.
- */
+import java.util.Currency;
 
 public class ItemConverter implements MongoConverter<Item> {
 
     @Override
+    @SuppressWarnings("unchecked")
     public Item toObject(Document doc) {
 
         if (doc == null) return null;
@@ -23,30 +20,32 @@ public class ItemConverter implements MongoConverter<Item> {
         item.setId(doc.get("_id").toString());
         doc.remove("_id");
 
-        item.setName((String) doc.get("name"));
+        item.setName(doc.getString("name"));
         doc.remove("name");
 
-        item.setPrice((Double) doc.get("price"));
+        item.setPrice(doc.getDouble("price"));
         doc.remove("price");
 
-        item.setCurrency((String) doc.get("currency"));
+        item.setCurrency(convertCurrency(doc.getString("currency")));
         doc.remove("currency");
 
         Document statusDoc = (Document) doc.get("status");
-        int stocked = (Integer) statusDoc.get("stocked");
-        int reserved = (Integer) statusDoc.get("reserved");
-        int sold = (Integer) statusDoc.get("sold");
-
-        item.setStatus(new ItemStatus(stocked, reserved, sold));
+        item.setStatus(new ItemStatus(
+                statusDoc.getInteger("stocked"),
+                statusDoc.getInteger("reserved"),
+                statusDoc.getInteger("sold")
+        ));
         doc.remove("status");
-
         item.setTags((ArrayList) doc.get("tags"));
         doc.remove("tags");
 
-        for (String fname : doc.keySet())
-            item.addField(fname, doc.getString(fname));
+        doc.keySet().forEach(k -> item.addField(k, doc.getString(k)));
 
         return item;
+    }
+
+    private Currency convertCurrency(String code) {
+        return code != null ? Currency.getInstance(code) : null;
     }
 
     @Override
@@ -66,9 +65,7 @@ public class ItemConverter implements MongoConverter<Item> {
         doc.put("status", statusDoc);
         doc.put("tags", item.getTags());
 
-        Map<String, String> extFields = item.getExtendedFields();
-        for (String name: extFields.keySet())
-            doc.put(name, extFields.get(name));
+        item.getExtendedFields().forEach(doc::put);
 
         return doc;
     }

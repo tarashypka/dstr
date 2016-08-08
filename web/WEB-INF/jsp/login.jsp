@@ -19,9 +19,13 @@
 <%-- Server-side validation results --%>
 <c:if test="${error ne null}">
   <c:choose>
-    <c:when test="${error eq 'cred_wrong'}">
-      <c:set var="credWarn" value="${validationStyle}"/>
-      <c:set var="credErrMsg" value="Account with such email and password not found"/>
+    <c:when test="${error eq 'email_wrong'}">
+      <c:set var="emailWarn" value="${validationStyle}"/>
+      <c:set var="emailErrMsg" value="Account with such email not found"/>
+    </c:when>
+    <c:when test="${error eq 'psswd_wrong'}">
+      <c:set var="psswdWarn" value="${validationStyle}"/>
+      <c:set var="psswdErrMsg" value="Account with such combination of email and password not found"/>
     </c:when>
     <c:when test="${error eq 'acc_closed'}">
       <c:set var="closedWarn" value="${validationStyle}"/>
@@ -45,13 +49,14 @@
         <label for="email-inp" class="control-label col-sm-2">Email:</label>
         <div class="col-sm-4">
           <input id="email-inp" type="text" name="email" placeholder="Email?" class="form-control" aria-describedby="email-help">
+          <span id="email-help" class="help-block">${emailErrMsg}</span>
         </div>
       </div>
-      <div id="psswd" class="form-group col-sm-12 ${credWarn} ${closedWarn}">
+      <div id="psswd" class="form-group col-sm-12 ${psswdWarn} ${closedWarn}">
         <label for="psswd-inp" class="control-label col-sm-2">Password:</label>
         <div class="col-sm-4">
           <input id="psswd-inp" type="password" name="psswd" placeholder="Password?" class="form-control" aria-describedby="password-help">
-          <span id="psswd-help" class="help-block">${credErrMsg}${closedErrMsg}</span>
+          <span id="psswd-help" class="help-block">${psswdErrMsg}${closedErrMsg}</span>
         </div>
       </div>
       <div class="form-group col-sm-12">

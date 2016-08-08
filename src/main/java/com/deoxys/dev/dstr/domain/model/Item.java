@@ -6,11 +6,21 @@ import java.util.*;
 public class Item implements Serializable {
     private String id;
     private String name;
-    private double price;
+
+    /**
+     * double vs Double
+     *   MongoDB Java driver takes and produces Double wrapper type
+     *
+     * Thus, in order to avoid redundant autoboxing, Double will be better
+     */
+    private Double price;
+
     private Currency currency;
     private ItemStatus status;
     private List<String> tags = new ArrayList<>();
     private Map<String, String> extendedFields = new LinkedHashMap<>();
+
+    private String errType;
 
     public Item() { }
 
@@ -46,11 +56,11 @@ public class Item implements Serializable {
         this.name = name;
     }
 
-    public double getPrice() {
+    public Double getPrice() {
         return price;
     }
 
-    public void setPrice(double price) {
+    public void setPrice(Double price) {
         this.price = price;
     }
 
@@ -62,10 +72,6 @@ public class Item implements Serializable {
         this.currency = currency;
     }
 
-    public void setCurrency(String currencyCode) {
-        currency = Currency.getInstance(currencyCode.toUpperCase());
-    }
-
     public ItemStatus getStatus() {
         return status;
     }
@@ -74,19 +80,15 @@ public class Item implements Serializable {
         this.status = status;
     }
 
-    public boolean enoughInStock(int required) {
-        return required <= status.getStocked();
-    }
-
-    public int stocked() {
+    public Integer stocked() {
         return status.getStocked();
     }
 
-    public int reserved() {
+    public Integer reserved() {
         return status.getReserved();
     }
 
-    public int sold() {
+    public Integer sold() {
         return status.getSold();
     }
 
@@ -98,17 +100,6 @@ public class Item implements Serializable {
         this.tags = tags;
     }
 
-    public void setTags(String tagsInp) {
-        // Often tags are in form [tag1, tag2, ...]
-        tagsInp = tagsInp.replace("[", "");
-        tagsInp = tagsInp.replace("]", "");
-        Arrays.asList(tagsInp.split(",")).forEach(this::addTag);
-    }
-
-    public void addTag(String tag) {
-        tags.add(tag);
-    }
-
     public Map<String, String> getExtendedFields() {
         return extendedFields;
     }
@@ -118,8 +109,15 @@ public class Item implements Serializable {
     }
 
     public void addField(String k, String v) {
-        if (k != null && ! k.equals("") && v != null && ! v.equals(""))
-            extendedFields.put(k, v);
+        extendedFields.put(k, v);
+    }
+
+    public String getErrType() {
+        return errType;
+    }
+
+    public void setErrType(String errType) {
+        this.errType = errType;
     }
 
     @Override
@@ -140,9 +138,8 @@ public class Item implements Serializable {
 
         Item item = (Item) o;
 
-        if (id != null ? !id.equals(item.id) : item.id != null) return false;
+        return id != null ? id.equals(item.id) : item.id == null;
 
-        return true;
     }
 
     @Override

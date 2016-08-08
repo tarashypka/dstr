@@ -6,18 +6,31 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
-/**
- * Created by deoxys on 27.05.16.
- */
-
 public class Customer implements Serializable {
+
+    /**
+     * long vs Long
+     *   JDBC methods takes and produces long primitive type
+     *   MongoDB Java driver takes and produces Long wrapper type
+     *
+     * Leave it long for now
+     * In future: unique Customer String identification (login)
+     */
     private long id;
+
     private String email;
     private String password;
     private String name;
     private String surname;
     private String role;
+
+    /**
+     * boolean vs Boolean
+     *   JDBC methods take and produce boolean primitive type
+     */
     private boolean enabled;
+
+    private String errType;
 
     List<Order> orders;
     Map<Item, Integer> items;
@@ -33,19 +46,19 @@ public class Customer implements Serializable {
         this.password = password;
     }
 
-    /**
-     * Required for login purposes to fetch customer with his credentials only
-     */
-    public Customer(String password, boolean enabled) {
-        this.password = password;
-        this.enabled = enabled;
-    }
-
     public Customer(String email, String password, String name, String surname) {
         this.email = email;
         this.password = password;
         this.name = name;
         this.surname = surname;
+    }
+
+    public Customer(String password, String name, String surname, String role, boolean enabled) {
+        this.password = password;
+        this.name = name;
+        this.surname = surname;
+        this.role = role;
+        this.enabled = enabled;
     }
 
     public Customer(long id, String email, String name,
@@ -162,6 +175,14 @@ public class Customer implements Serializable {
 
     public void setItems(Map<Item, Integer> items) {
         this.items = items;
+    }
+
+    public String getErrType() {
+        return errType;
+    }
+
+    public void setErrType(String errType) {
+        this.errType = errType;
     }
 
     @Override

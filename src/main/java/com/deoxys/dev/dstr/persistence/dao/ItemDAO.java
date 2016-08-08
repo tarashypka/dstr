@@ -15,10 +15,6 @@ import java.util.Map;
 
 import static com.mongodb.client.model.Projections.*;
 
-/**
- * Created by deoxys on 27.05.16.
- */
-
 public class ItemDAO extends MongoDAO<Item> {
 
     private final static String COLLECTION = "items";
@@ -70,9 +66,9 @@ public class ItemDAO extends MongoDAO<Item> {
         Document doc = collection.find(filter).projection(fields).first();
         if (doc == null) return null;
         Document statusDoc = (Document) doc.get("status");
-        int stocked = (Integer) statusDoc.get("stocked");
-        int reserved = (Integer) statusDoc.get("reserved");
-        int sold = (Integer) statusDoc.get("sold");
+        Integer stocked = (Integer) statusDoc.get("stocked");
+        Integer reserved = (Integer) statusDoc.get("reserved");
+        Integer sold = (Integer) statusDoc.get("sold");
         return new ItemStatus(stocked, reserved, sold);
     }
 

@@ -11,10 +11,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-/**
- * Created by deoxys on 01.07.16.
- */
-
 @WebServlet(name = "MainController", urlPatterns = "/controller")
 public class MainController extends HttpServlet {
 
@@ -74,7 +70,7 @@ public class MainController extends HttpServlet {
             case "login":
                 customerService.login(req);
                 if (req.getAttribute("error") == null)
-                    resp.sendRedirect(req.getContextPath());
+                    resp.sendRedirect(req.getContextPath());    // to home page
                 else req.getRequestDispatcher(LOGIN_JSP).forward(req, resp);
                 break;
             case "register":

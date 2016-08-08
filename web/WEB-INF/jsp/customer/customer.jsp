@@ -63,7 +63,7 @@
           <c:param name="action" value="swapCustomerStatus"/>
           <c:param name="id" value="${customer.id}"/>
         </c:url>
-        <a href="${swapStatusURL}">
+        <a href="${swapStatusURL}" class="btn btn-default">
           <c:choose>
             <c:when test="${customer.enabled}">Ban</c:when>
             <c:otherwise>Unban</c:otherwise>

@@ -71,8 +71,7 @@
         <input type="hidden" name="action" value="addOrderItems">
         <table class="table table-bordered table-striped">
           <tr>
-            <th>ID</th>
-            <th>Category</th>
+            <th>Name</th>
             <th>Price</th>
             <th>Left</th>
             <th><button type="submit" class="btn btn-default">Add items to order</button></th>
@@ -83,9 +82,8 @@
               <c:param name="id" value="${item.id}"/>
             </c:url>
             <tr>
-              <td><a href="${itemURL}">${item.id}</a></td>
-              <td>${item.name}</td>
-              <td>${item.price} ${item.currency}</td>
+              <td><a href="${itemURL}">${item.name}</a></td>
+              <td>${item.price} [${item.currency}]</td>
               <td>${item.status.stocked}</td>
               <td><input type="number" name="${item.id}" placeholder="How much?"></td>
             </tr>

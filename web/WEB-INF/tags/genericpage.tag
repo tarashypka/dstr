@@ -24,11 +24,13 @@
   <%-- Bootstrap JS --%>
   <script src="${resources}/bootstrap/js/bootstrap.min.js"></script>
   <script src="${resources}/bootstrap/js/bootstrap-tagsinput.js"></script>
+  <script src="${resources}/js/generic.js"></script>
   <%-- Custom JS --%>
   <jsp:invoke fragment="js"/>
 </head>
 
 <body>
+  <div id="container">
     <%-- header --%>
     <c:url var="controller" value="/controller"/>
     <div class="container-fluid no-padding">
@@ -68,11 +70,12 @@
     </div>
     <%-- page --%>
     <jsp:doBody/>
-    <%-- footer --%>
-    <div id="footer">
-      <div class="container text-center">
-        Contact <a href="mailto:tarashypka@gmail.com">me</a> at anytime<br>May-August 2016
-      </div>
+  </div>
+  <%-- footer --%>
+  <div id="footer" class="footer navbar-fixed-bottom">
+    <div class="container text-center">
+      Contact <a href="mailto:tarashypka@gmail.com">me</a> at anytime<br>May-August 2016
     </div>
+  </div>
 </body>
 </html>

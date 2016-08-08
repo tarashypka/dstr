@@ -3,17 +3,21 @@ package com.deoxys.dev.dstr.domain.model;
 import java.io.Serializable;
 import java.util.*;
 
-/**
- * Created by deoxys on 27.05.16.
- */
-
 public class Order implements Serializable {
     private String id;
-    private long orderNumber;
+
+    /**
+     * long vs Long
+     *   MongoDB Java driver takes and produces Long wrapper type
+     *
+     * Thus, in order to avoid redundant autoboxing, Long will be better
+     */
+    private Long orderNumber;
+
     private Date date;
     private Customer customer;
-    private Map<Item, Integer> items;
-    private Map<Currency, Double> receipt;
+    private Map<Item, Integer> items = new HashMap<>();
+    private Map<Currency, Double> receipt = new HashMap<>();
     private OrderStatus status;
 
     public Order() { }
@@ -25,14 +29,20 @@ public class Order implements Serializable {
     public enum OrderStatus {
         REJECTED(-1), IN_PROCESS(0), PROCESSED(+1);
 
-        private int value;
+        /**
+         * int vs Integer
+         *   MongoDB Java driver takes and produces Integer wrapper type
+         *
+         * Thus, in order to avoid redundant autoboxing, Integer will be better
+         */
+        private Integer value;
         private String name;    // for easy output with JSTL
 
         OrderStatus(int value) {
             this.value = value;
         }
 
-        public static OrderStatus getStatus(int value) {
+        public static OrderStatus getStatus(Integer value) {
             switch (value) {
                 case -1:
                     return OrderStatus.REJECTED;
@@ -62,11 +72,11 @@ public class Order implements Serializable {
         this.id = id;
     }
 
-    public long getOrderNumber() {
+    public Long getOrderNumber() {
         return orderNumber;
     }
 
-    public void setOrderNumber(long orderNumber) {
+    public void setOrderNumber(Long orderNumber) {
         this.orderNumber = orderNumber;
     }
 
@@ -100,13 +110,11 @@ public class Order implements Serializable {
         return null;
     }
 
-    public void addItem(Item item, int amount) {
-        updateReceipt(item, amount);
+    public void addItem(Item item, Integer amount) {
         items.put(item, amount);
     }
 
-    public void removeItem(Item item, int amount) {
-        updateReceipt(item, 0);
+    public void removeItem(Item item, Integer amount) {
         int currAmount = items.get(item);
         if (amount == currAmount) items.remove(item);
         else items.put(item, currAmount - amount);
@@ -120,11 +128,15 @@ public class Order implements Serializable {
         this.receipt = receipt;
     }
 
-    public void updateReceipt(Item item, int quantity) {
+    public void addPrice(Currency c, Double d) {
+        receipt.put(c, d);
+    }
+
+    public void updateReceipt(Item item, Integer amount) {
         Currency currency = item.getCurrency();
         Double oldTotal = receipt.get(currency);
         Double price = item.getPrice();
-        Double newTotal = quantity * price + (oldTotal == null ? 0 : oldTotal);
+        Double newTotal = amount * price + (oldTotal == null ? 0 : oldTotal);
 
         // If item was already in receipt
         if (items.containsKey(item)) newTotal -= price * items.get(item);

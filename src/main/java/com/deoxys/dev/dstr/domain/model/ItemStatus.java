@@ -2,64 +2,65 @@ package com.deoxys.dev.dstr.domain.model;
 
 import java.io.Serializable;
 
-/**
- * Created by deoxys on 12.06.16.
- */
-
 public class ItemStatus implements Serializable {
-    private int stocked;
-    private int reserved;
-    private int sold;
 
-    public ItemStatus() { }
+    /**
+     * int vs Integer
+     *   MongoDB Java driver takes and produces Integer wrapper type
+     *
+     * Thus, in order to avoid redundant autoboxing, Integer will be better
+     */
+    private Integer stocked;
+    private Integer reserved;
+    private Integer sold;
 
-    public ItemStatus(int stocked, int reserved, int sold) {
+    public ItemStatus(Integer stocked, Integer reserved, Integer sold) {
         this.stocked = stocked;
         this.reserved = reserved;
         this.sold = sold;
     }
 
-    public int getStocked() {
+    public Integer getStocked() {
         return stocked;
     }
 
-    public void setStocked(int stocked) {
+    public void setStocked(Integer stocked) {
         this.stocked = stocked;
     }
 
-    public int getReserved() {
+    public Integer getReserved() {
         return reserved;
     }
 
-    public void setReserved(int reserved) {
+    public void setReserved(Integer reserved) {
         this.reserved = reserved;
     }
 
-    public int getSold() {
+    public Integer getSold() {
         return sold;
     }
 
-    public void setSold(int sold) {
+    public void setSold(Integer sold) {
         this.sold = sold;
     }
 
-    public void changeStocked(int quantity) {
+    public void changeStocked(Integer quantity) {
         this.stocked += quantity;
     }
 
-    public void changeReserved(int quantity) {
+    public void changeReserved(Integer quantity) {
         this.reserved += quantity;
     }
 
-    public void changeSold(int quantity) {
+    public void changeSold(Integer quantity) {
         this.sold += quantity;
     }
 
     @Override
     public String toString() {
         return "{ stocked=" + stocked +
-                ", reserved=" + reserved +
-                ", sold=" + sold + " }";
+               ", reserved=" + reserved +
+               ", sold=" + sold + " }";
     }
 
     @Override
@@ -67,20 +68,19 @@ public class ItemStatus implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        ItemStatus that = (ItemStatus) o;
+        ItemStatus status = (ItemStatus) o;
 
-        if (reserved != that.reserved) return false;
-        if (sold != that.sold) return false;
-        if (stocked != that.stocked) return false;
+        if (stocked != null ? !stocked.equals(status.stocked) : status.stocked != null) return false;
+        if (reserved != null ? !reserved.equals(status.reserved) : status.reserved != null) return false;
+        return sold != null ? sold.equals(status.sold) : status.sold == null;
 
-        return true;
     }
 
     @Override
     public int hashCode() {
-        int result = stocked;
-        result = 31 * result + reserved;
-        result = 31 * result + sold;
+        int result = stocked != null ? stocked.hashCode() : 0;
+        result = 31 * result + (reserved != null ? reserved.hashCode() : 0);
+        result = 31 * result + (sold != null ? sold.hashCode() : 0);
         return result;
     }
 }

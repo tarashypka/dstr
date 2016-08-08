@@ -19,10 +19,6 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by deoxys on 12.07.16.
- */
-
 public class AuthorizationFilter implements Filter {
     private Logger logger = Logger.getLogger(AuthorizationFilter.class);
 
