@@ -28,7 +28,7 @@
             <c:param name="id" value="${customer.id}"/>
           </c:url>
           <tr>
-            <td><a href="${customerURL}">${customer.name} ${customer.surname}</a></td>
+            <td><a href="${customerURL}">${customer.name}, ${customer.surname}</a></td>
             <td>${customer.email}</td>
             <td>
               <c:choose>
@@ -36,7 +36,7 @@
                 <c:otherwise>Banned</c:otherwise>
               </c:choose>
             </td>
-            <c:if test="${sessionScope.customer.role eq 'admin'}">
+            <c:if test="${sessionScope.customer.role eq 'ADMIN'}">
               <c:url var="swapStatusURL" value="/controller/admin">
                 <c:param name="action" value="swapCustomerStatus"/>
                 <c:param name="id" value="${customer.id}"/>

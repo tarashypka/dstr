@@ -41,6 +41,51 @@ public class User implements Serializable {
 
     private Map<Item, Integer> items;
 
+    /**
+     * Validate user before login
+     */
+    public boolean hasValidCredentials(User shouldBe) {
+        if (shouldBe == null)
+            errType = "email_wrong";
+        else if (! hasValidPassword(shouldBe.getPassword()))
+            errType = "psswd_wrong";
+        else if ( ! shouldBe.isEnabled())
+            errType = "acc_closed";
+        else {
+            // Login succeeded
+            password = null;                    // password is not required anymore
+            name = shouldBe.getName();          // name is required for view
+            surname = shouldBe.getSurname();    // surname is required for view
+            role = shouldBe.getRole();          // role is required for authorization
+            enabled = shouldBe.isEnabled();     // may be of help in future
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Validate user before register
+     * in case Javascript was disabled
+     */
+    public boolean isValidForInput(String psswd2) {
+        if (email == null || email.isEmpty())
+            errType = "email_empty";
+        else if (! email.matches("\\S+@\\w+\\.\\w+"))
+            errType = "email_wrong";
+        else if (password == null || password.isEmpty())
+            errType = "psswd_empty";
+        else if (password.length() < 8)
+            errType = "psswd_weak";
+        else if (! password.equals(psswd2))
+            errType = "psswd2_wrong";
+        else if (name == null || name.isEmpty())
+            errType = "name_empty";
+        else if (surname == null || surname.isEmpty())
+            errType = "sname_empty";
+        else return true;
+        return false;
+    }
+
     public static class UserBuilder implements Builder<User> {
         // required fields
         private String email;
@@ -113,6 +158,7 @@ public class User implements Serializable {
     }
 
     private User(UserBuilder builder) {
+        id = builder.id;
         email = builder.email;
         password = builder.password;
         name = builder.name;

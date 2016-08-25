@@ -32,7 +32,8 @@ public class CustomerService extends PostgresService<User> {
 
     public void login(HttpServletRequest req) {
         User user = requestReader.read(req);
-        if (customerDao.hasValidCredentials(user))
+        User shouldBe = customerDao.get(user.getEmail());
+        if (user.hasValidCredentials(shouldBe))
             req.getSession().setAttribute("user", user.withoutPassword());
         else req.setAttribute("error", user.getErrType());
     }
@@ -41,7 +42,7 @@ public class CustomerService extends PostgresService<User> {
         User user = requestReader.read(req);
         // If customer input was already validated with Js
         boolean validated = Boolean.parseBoolean(req.getParameter("validated"));
-        if (validated || customerDao.isValidForInput(user, req.getParameter("psswd2"))) {
+        if (validated || user.isValidForInput(req.getParameter("psswd2"))) {
             if (! customerDao.exists(user)) {
                 customerDao.add(user);
                 // Automatically login after registration

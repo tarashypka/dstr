@@ -30,6 +30,6 @@ implements HttpRequestReader<User>, HttpSessionReader<User> {
      */
     @Override
     public User read(HttpSession ses) {
-        return (User) ses.getAttribute("customer");
+        return (User) ses.getAttribute("user");
     }
 }

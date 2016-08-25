@@ -82,7 +82,7 @@ public class OrderService extends MongoService<Order> {
     }
 
     public void loadCustomerActivity(HttpServletRequest req) {
-        User user = (User) req.getSession().getAttribute("customer");
+        User user = (User) req.getSession().getAttribute("user");
         long id = user.isAdmin()
                 ? Long.parseLong(req.getParameter("id"))
                 : user.getId();
