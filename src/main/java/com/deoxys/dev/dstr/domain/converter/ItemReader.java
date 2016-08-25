@@ -2,6 +2,7 @@ package com.deoxys.dev.dstr.domain.converter;
 
 import com.deoxys.dev.dstr.domain.model.Item;
 import com.deoxys.dev.dstr.domain.model.ItemStatus;
+import com.deoxys.dev.dstr.domain.model.Price;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -23,20 +24,24 @@ implements HttpRequestReader<Item>, HttpSessionReader<Item> {
      */
     @Override
     public Item read(HttpServletRequest req) {
-        Item item = new Item();
+        Price price = new Price(
+                Double.parseDouble(req.getParameter("price")),
+                Currency.getInstance(req.getParameter("currency"))
+        );
 
-        item.setId(req.getParameter("id"));
-        item.setName(req.getParameter("name"));
-        item.setTags(convertTags(req.getParameter("tags")));
-        item.setPrice(Double.parseDouble(req.getParameter("price")));
-        item.setCurrency(Currency.getInstance(req.getParameter("currency")));
-        item.setStatus(new ItemStatus(
+        ItemStatus status = new ItemStatus(
                 Integer.parseInt(req.getParameter("stocked")),
                 Integer.parseInt(req.getParameter("reserved")),
                 Integer.parseInt(req.getParameter("sold"))
-        ));
-        item.setExtendedFields(fetchExtFields(req));
-        return item;
+        );
+
+        return new Item.ItemBuilder(req.getParameter("name"))
+                .withId(req.getParameter("id"))
+                .withTags(convertTags(req.getParameter("tags")))
+                .withPrice(price)
+                .withStatus(status)
+                .withExtFields(fetchExtFields(req))
+                .build();
     }
 
     private List<String> convertTags(String tags) {

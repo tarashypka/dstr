@@ -1,6 +1,7 @@
 package com.deoxys.dev.dstr.persistence.dao;
 
-import com.deoxys.dev.dstr.domain.model.Customer;
+import com.deoxys.dev.dstr.domain.model.User;
+import com.deoxys.dev.dstr.domain.model.UserRoles;
 import org.mindrot.jbcrypt.BCrypt;
 
 import javax.sql.DataSource;
@@ -8,7 +9,7 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CustomerDAO extends PostgresDAO<Customer> {
+public class CustomerDAO extends PostgresDAO<User> {
 
     public CustomerDAO(DataSource ds) {
         super(ds);
@@ -81,20 +82,17 @@ public class CustomerDAO extends PostgresDAO<Customer> {
      * Password is required only on login for validation purposes
      */
     @Override
-    public Customer get(long id) {
+    public User get(long id) {
         try (Connection conn = dataSource.getConnection();
              PreparedStatement stmt = conn.prepareStatement(SELECT_CUSTOMER_BY_ID)) {
 
             stmt.setLong(1, id);
             try (ResultSet rs = stmt.executeQuery()) {
-                if (rs.next()) return new Customer(
-                        id,
-                        rs.getString("email"),
-                        rs.getString("name"),
-                        rs.getString("surname"),
-                        rs.getString("role"),
-                        rs.getBoolean("enabled")
-                );
+                if (rs.next()) return new User.UserBuilder(rs.getString("email"))
+                        .withName(rs.getString("name"), rs.getString("surname"))
+                        .withRole(UserRoles.roleOf(rs.getString("role")))
+                        .enabled(rs.getBoolean("enabled"))
+                        .build();
             }
         } catch (SQLException ex) {
             ex.printStackTrace();
@@ -108,19 +106,18 @@ public class CustomerDAO extends PostgresDAO<Customer> {
      * It's better to use get(email) with 1 connection to database,
      * than get(getId(email)) with 2 connections to database.
      */
-    public Customer get(String email) {
+    public User get(String email) {
         try (Connection conn = dataSource.getConnection();
              PreparedStatement stmt = conn.prepareStatement(SELECT_CUSTOMER_BY_EMAIL)) {
 
             stmt.setString(1, email);
             try (ResultSet rs = stmt.executeQuery()) {
-                if (rs.next()) return new Customer(
-                        rs.getString("password"),
-                        rs.getString("name"),
-                        rs.getString("surname"),
-                        rs.getString("role"),
-                        rs.getBoolean("enabled")
-                );
+                if (rs.next()) return new User.UserBuilder(email)
+                        .withPassword(rs.getString("password"))
+                        .withName(rs.getString("name"), rs.getString("surname"))
+                        .withRole(UserRoles.roleOf(rs.getString("role")))
+                        .enabled(rs.getBoolean("enabled"))
+                        .build();
             }
         } catch (SQLException ex) {
             ex.printStackTrace();
@@ -129,40 +126,40 @@ public class CustomerDAO extends PostgresDAO<Customer> {
     }
 
     @Override
-    public List<Customer> getAll() {
-        List<Customer> customers = new ArrayList<>();
+    public List<User> getAll() {
+        List<User> users = new ArrayList<>();
         try (Connection conn = dataSource.getConnection();
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(SELECT_ALL_CUSTOMERS)) {
 
-            while (rs.next())
-                customers.add(new Customer(
-                        rs.getLong("id"),
-                        rs.getString("email"),
-                        rs.getString("password"),
-                        rs.getString("name"),
-                        rs.getString("surname"),
-                        rs.getString("role"),
-                        rs.getBoolean("enabled")));
+            while (rs.next()) users.add(
+                    new User.UserBuilder(rs.getString("email"))
+                            .withId(rs.getLong("id"))
+                            .withPassword(rs.getString("password"))
+                            .withName(rs.getString("name"), rs.getString("surname"))
+                            .withRole(UserRoles.roleOf(rs.getString("role")))
+                            .enabled(rs.getBoolean("enabled"))
+                            .build()
+            );
         } catch (SQLException ex) {
             ex.printStackTrace();
         }
-        return customers;
+        return users;
     }
 
     @Override
-    public boolean add(Customer customer) {
+    public boolean add(User user) {
         try (Connection conn = dataSource.getConnection();
              PreparedStatement stmt = conn.prepareStatement(INSERT_CUSTOMER)) {
 
-            stmt.setString(1, customer.getEmail());
-            stmt.setString(2, BCrypt.hashpw(customer.getPassword(), BCrypt.gensalt()));
-            stmt.setString(3, customer.getName());
-            stmt.setString(4, customer.getSurname());
+            stmt.setString(1, user.getEmail());
+            stmt.setString(2, BCrypt.hashpw(user.getPassword(), BCrypt.gensalt()));
+            stmt.setString(3, user.getName());
+            stmt.setString(4, user.getSurname());
             if (stmt.executeUpdate() != 1) return false;
-            long id = getId(customer);
+            long id = getId(user);
             if (id < 0) return false;
-            customer.setId(id);
+            user.setId(id);
             return true;
         } catch (SQLException ex) {
             ex.printStackTrace();
@@ -171,15 +168,15 @@ public class CustomerDAO extends PostgresDAO<Customer> {
     }
 
     @Override
-    public boolean update(Customer customer) {
+    public boolean update(User user) {
         try (Connection conn = dataSource.getConnection();
              PreparedStatement stmt = conn.prepareStatement(UPDATE_CUSTOMER_BY_ID)) {
 
-            stmt.setLong(1, customer.getId());
-            stmt.setString(2, customer.getPassword());
-            stmt.setString(3, customer.getName());
-            stmt.setString(4, customer.getSurname());
-            stmt.setString(5, customer.getEmail());
+            stmt.setLong(1, user.getId());
+            stmt.setString(2, user.getPassword());
+            stmt.setString(3, user.getName());
+            stmt.setString(4, user.getSurname());
+            stmt.setString(5, user.getEmail());
             return stmt.executeUpdate() == 1;
         } catch (SQLException ex) {
             ex.printStackTrace();
@@ -200,11 +197,11 @@ public class CustomerDAO extends PostgresDAO<Customer> {
         }
     }
 
-    public boolean exists(Customer customer) {
+    public boolean exists(User user) {
         try (Connection conn = dataSource.getConnection();
              PreparedStatement stmt = conn.prepareStatement(COUNT_CUSTOMERS_BY_EMAIL)) {
 
-            stmt.setString(1, customer.getEmail());
+            stmt.setString(1, user.getEmail());
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) return rs.getLong("count") > 0;
             }
@@ -227,11 +224,11 @@ public class CustomerDAO extends PostgresDAO<Customer> {
         return -1;
     }
 
-    private long getId(Customer customer) {
+    private long getId(User user) {
         try (Connection conn = dataSource.getConnection();
              PreparedStatement stmt = conn.prepareStatement(SELECT_ID_BY_EMAIL)) {
 
-            stmt.setString(1, customer.getEmail());
+            stmt.setString(1, user.getEmail());
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) return rs.getLong("id");
             }
@@ -261,29 +258,29 @@ public class CustomerDAO extends PostgresDAO<Customer> {
     }
 
     /**
-     * Validate customer before login
+     * Validate user before login
      */
-    public boolean hasValidCredentials(Customer customer) {
-        Customer shouldBe = get(customer.getEmail());
+    public boolean hasValidCredentials(User user) {
+        User shouldBe = get(user.getEmail());
         if (shouldBe == null)
-            customer.setErrType("email_wrong");
-        else if (! customer.hasValidPassword(shouldBe.getPassword()))
-            customer.setErrType("psswd_wrong");
+            user.setErrType("email_wrong");
+        else if (! user.hasValidPassword(shouldBe.getPassword()))
+            user.setErrType("psswd_wrong");
         else if ( ! shouldBe.isEnabled())
-            customer.setErrType("acc_closed");
+            user.setErrType("acc_closed");
         else {
             // Login succeeded
-            customer.setPassword(null);     // password is not required anymore
-            customer.setName(shouldBe.getName());   // name is required for view
-            customer.setSurname(shouldBe.getSurname()); // surname is required for view
-            customer.setRole(shouldBe.getRole());   // role is required for authorization
-            customer.setEnabled(shouldBe.isEnabled());  // may be of help in future
+            user.setPassword(null);     // password is not required anymore
+            user.setName(shouldBe.getName());   // name is required for view
+            user.setSurname(shouldBe.getSurname()); // surname is required for view
+            user.setRole(shouldBe.getRole());   // role is required for authorization
+            user.setEnabled(shouldBe.isEnabled());  // may be of help in future
             return true;
         }
         return false;
     }
 
-    public boolean isValidForInput(Customer customer, String psswd2) {
+    public boolean isValidForInput(User customer, String psswd2) {
         String email = customer.getEmail();
         String psswd = customer.getPassword();
         String name = customer.getName();

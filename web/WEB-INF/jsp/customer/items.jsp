@@ -22,7 +22,7 @@
           <th>Category</th>
           <th>Price</th>
           <th>Amount</th>
-          <th>Total price</th>
+          <th>Total cash</th>
         </tr>
         <c:forEach var="item" items="${items}">
           <c:url var="itemURL" value="/controller/customer">
@@ -32,9 +32,9 @@
           <tr>
             <td><a href="${itemURL}">${item.key.id}</a></td>
             <td>${item.key.name}</td>
-            <td>${item.key.price} ${item.key.currency}</td>
+            <td>${item.key.cash} ${item.key.currency}</td>
             <td>${item.value}</td>
-            <td>${item.value * item.key.price}</td>
+            <td>${item.value * item.key.cash}</td>
           </tr>
         </c:forEach>
       </table>

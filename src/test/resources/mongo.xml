@@ -2,7 +2,7 @@
 
 <replica>
     <dbName>testdstr</dbName>
-    <user>testdstrDbAdmin</user>
+    <customer>testdstrDbAdmin</customer>
     <password>1234</password>
     <shards>
         <shard>

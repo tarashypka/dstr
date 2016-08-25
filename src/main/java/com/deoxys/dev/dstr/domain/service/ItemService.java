@@ -1,7 +1,7 @@
 package com.deoxys.dev.dstr.domain.service;
 
 import com.deoxys.dev.dstr.domain.converter.ItemReader;
-import com.deoxys.dev.dstr.domain.model.Customer;
+import com.deoxys.dev.dstr.domain.model.User;
 import com.deoxys.dev.dstr.domain.model.Item;
 import com.deoxys.dev.dstr.persistence.dao.ItemDAO;
 import org.apache.log4j.Logger;
@@ -51,10 +51,10 @@ public class ItemService extends MongoService<Item> {
     }
 
     public void loadCustomerItems(HttpServletRequest req) {
-        Customer customer = (Customer) req.getSession().getAttribute("customer");
-        long id = customer.isAdmin()
+        User user = (User) req.getSession().getAttribute("customer");
+        long id = user.isAdmin()
                 ? Long.parseLong(req.getParameter("id"))
-                : customer.getId();
+                : user.getId();
         req.setAttribute("items", itemDao.getAllForCustomer(id));
     }
 

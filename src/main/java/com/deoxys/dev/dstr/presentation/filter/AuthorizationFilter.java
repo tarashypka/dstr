@@ -1,6 +1,6 @@
 package com.deoxys.dev.dstr.presentation.filter;
 
-import com.deoxys.dev.dstr.domain.model.Customer;
+import com.deoxys.dev.dstr.domain.model.User;
 import org.apache.log4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -99,19 +99,19 @@ public class AuthorizationFilter implements Filter {
             req.getRequestDispatcher(HOME_LINK).forward(req, resp);
         }
         HttpSession session = req.getSession(false);
-        Customer customer = (Customer) session.getAttribute("customer");
+        User user = (User) session.getAttribute("user");
         String action = req.getParameter("action");
-        if ( ! allowed(customer, uri, action)) {
+        if ( ! allowed(user, uri, action)) {
             logger.error("Unauthorized access request");
-            if (customer == null) {
+            if (user == null) {
                 req.getRequestDispatcher(LOGIN_LINK).forward(req, resp);
             } else throw new ServletException("Unauthorized access");
         } else chain.doFilter(req, resp);
     }
 
-    private boolean allowed(Customer customer, String uri, String action) {
-        if (isResource(uri)) return allowedResource(customer, uri);
-        return allowedUri(customer, uri) && allowedAction(customer, action);
+    private boolean allowed(User user, String uri, String action) {
+        if (isResource(uri)) return allowedResource(user, uri);
+        return allowedUri(user, uri) && allowedAction(user, action);
     }
 
     private boolean isResource(String uri) {
@@ -123,29 +123,29 @@ public class AuthorizationFilter implements Filter {
      *      /resources/admin    admin resources
      *      /resources/customer customer resources
      **/
-    private boolean allowedResource(Customer customer, String resource) {
+    private boolean allowedResource(User user, String resource) {
         logger.info("Requested Resource::" + resource);
         resource = resource.split("/resources", 2)[1];
-        if (resource.startsWith("/admin")) return customer.isAdmin();
-        return ! resource.startsWith("/customer") || customer.isCustomer();
+        if (resource.startsWith("/admin")) return user.isAdmin();
+        return ! resource.startsWith("/customer") || user.isCustomer();
     }
 
-    private boolean allowedUri(Customer customer, String uri) {
+    private boolean allowedUri(User user, String uri) {
         logger.info("Requested URI::" + uri);
         if (uri.equals("/") || uri.equals("home")) return true;
         if (uri.equals(MAIN_CONTROLLER)) return true;
-        if (customer == null) return false;
-        if (customer.isCustomer()) return uri.equals(CUSTOMER_CONTROLLER);
+        if (user == null) return false;
+        if (user.isCustomer()) return uri.equals(CUSTOMER_CONTROLLER);
         return uri.equals(ADMIN_CONTROLLER) || uri.equals(CUSTOMER_CONTROLLER);
     }
 
-    private boolean allowedAction(Customer customer, String action) {
+    private boolean allowedAction(User user, String action) {
         logger.info("Requested Action::" + action);
         if (action == null || publicActions.contains(action)) return true;
-        if (customer == null) return notAuthActions.contains(action);
+        if (user == null) return notAuthActions.contains(action);
         if (authActions.contains(action)) return true;
-        if (customer.isCustomer()) return customerActions.contains(action);
-        if (customer.isAdmin()) return adminActions.contains(action);
+        if (user.isCustomer()) return customerActions.contains(action);
+        if (user.isAdmin()) return adminActions.contains(action);
         return false;
     }
 

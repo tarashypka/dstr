@@ -36,7 +36,7 @@
               <th scope="row">${loop.index}</th>
               <td><a href="${itemURL}">${item.key.name}</a></td>
               <td>${item.value}</td>
-              <td>${item.key.price * item.value} ${item.key.currency}</td>
+              <td>${item.key.cash * item.value} ${item.key.currency}</td>
               <td><button type="submit" name="${item.key.id}" class="btn btn-default btn-sm">X</button></td>
             </tr>
           </c:forEach>
@@ -45,8 +45,8 @@
       </form>
       <div class="container-fluid">
         <table class="table table-bordered table-striped table-nonfluid">
-          <c:forEach var="price" items="${order.receipt}">
-            <tr><td>${price.value}</td><td>${price.key}</td></tr>
+          <c:forEach var="cash" items="${order.receipt}">
+            <tr><td>${cash.value}</td><td>${cash.key}</td></tr>
           </c:forEach>
           <tr>
             <td>
@@ -83,7 +83,7 @@
             </c:url>
             <tr>
               <td><a href="${itemURL}">${item.name}</a></td>
-              <td>${item.price} [${item.currency}]</td>
+              <td>${item.cash} [${item.currency}]</td>
               <td>${item.status.stocked}</td>
               <td><input type="number" name="${item.id}" placeholder="How much?"></td>
             </tr>

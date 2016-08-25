@@ -53,8 +53,8 @@
         <tr>
           <th>Receipt</th>
           <td>
-            <c:forEach var="price" items="${order.receipt}">
-              ${price.value} ${price.key}<br>
+            <c:forEach var="cash" items="${order.receipt}">
+              ${cash.value} ${cash.key}<br>
             </c:forEach>
           </td>
         </tr>

@@ -1,20 +1,23 @@
 package com.deoxys.dev.dstr.persistence.dao;
 
-import com.deoxys.dev.dstr.persistence.converter.OrderConverter;
 import com.deoxys.dev.dstr.domain.model.Item;
 import com.deoxys.dev.dstr.domain.model.Order;
-import com.mongodb.*;
+import com.deoxys.dev.dstr.domain.model.OrderStatus;
+import com.deoxys.dev.dstr.persistence.converter.OrderConverter;
+import com.mongodb.BasicDBObject;
+import com.mongodb.MongoClient;
 import com.mongodb.client.MongoCursor;
 import org.bson.*;
 import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 import static com.mongodb.client.model.Filters.*;
-import static com.mongodb.client.model.Projections.excludeId;
-import static com.mongodb.client.model.Projections.fields;
-import static com.mongodb.client.model.Projections.include;
+import static com.mongodb.client.model.Projections.*;
 
 public class OrderDAO extends MongoDAO<Order> {
 
@@ -82,7 +85,7 @@ public class OrderDAO extends MongoDAO<Order> {
     public int countCustomerItems(long id) {
         int nItems = 0;
         BsonDocument filter = new BsonDocument("customer.id", new BsonInt64(id));
-        filter.put("status", new BsonInt32(Order.OrderStatus.PROCESSED.getValue()));
+        filter.put("status", new BsonInt32(OrderStatus.PROCESSED.getValue()));
         try (MongoCursor<Document> cursor = collection.mapReduce(
                 N_ITEMS_MAP_FUNC, N_ITEMS_REDUCE_FUNC).filter(filter).iterator()) {
 
@@ -99,17 +102,17 @@ public class OrderDAO extends MongoDAO<Order> {
         return (int) collection.count(filter);
     }
 
-    public Order.OrderStatus getStatus(String id) {
+    public OrderStatus getStatus(String id) {
         ObjectId _id = new ObjectId(id);
         Bson filter = new BsonDocument("_id", new BsonObjectId(_id));
         Bson fields = fields(include("status"), excludeId());
         Document doc = collection.find(filter).projection(fields).first();
         int statusVal = (Integer) doc.get("status");
-        return Order.OrderStatus.getStatus(statusVal);
+        return OrderStatus.getStatus(statusVal);
     }
 
     // Without $set operator, order document will be not updated, but replaced
-    public void updateStatus(String id, Order.OrderStatus newStatus) {
+    public void updateStatus(String id, OrderStatus newStatus) {
         ObjectId _id = new ObjectId(id);
         Bson filter = new BsonDocument("_id", new BsonObjectId(_id));
         Bson set  = new BsonDocument("status", new BsonInt32(newStatus.getValue()));

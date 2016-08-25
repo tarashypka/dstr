@@ -2,11 +2,15 @@ package com.deoxys.dev.dstr.persistence.converter;
 
 import com.deoxys.dev.dstr.domain.model.Item;
 import com.deoxys.dev.dstr.domain.model.ItemStatus;
+import com.deoxys.dev.dstr.domain.model.Price;
 import org.bson.Document;
 import org.bson.types.ObjectId;
 
 import java.util.ArrayList;
 import java.util.Currency;
+import java.util.function.Function;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 public class ItemConverter implements MongoConverter<Item> {
 
@@ -16,32 +20,34 @@ public class ItemConverter implements MongoConverter<Item> {
 
         if (doc == null) return null;
 
-        Item item = new Item();
-        item.setId(doc.get("_id").toString());
-        doc.remove("_id");
-
-        item.setName(doc.getString("name"));
-        doc.remove("name");
-
-        item.setPrice(doc.getDouble("price"));
-        doc.remove("price");
-
-        item.setCurrency(convertCurrency(doc.getString("currency")));
-        doc.remove("currency");
+        Price price = new Price(
+                doc.getDouble("price"),
+                convertCurrency(doc.getString("currency"))
+        );
 
         Document statusDoc = (Document) doc.get("status");
-        item.setStatus(new ItemStatus(
+        ItemStatus status = new ItemStatus(
                 statusDoc.getInteger("stocked"),
                 statusDoc.getInteger("reserved"),
                 statusDoc.getInteger("sold")
-        ));
+        );
+
+        Item.ItemBuilder builder = new Item.ItemBuilder(doc.getString("name"))
+                .withId(doc.getObjectId("_id").toString())
+                .withPrice(price)
+                .withStatus(status)
+                .withTags((ArrayList) doc.get("tags"));
+
+        doc.remove("_id");
+        doc.remove("name");
+        doc.remove("price");
+        doc.remove("currency");
         doc.remove("status");
-        item.setTags((ArrayList) doc.get("tags"));
         doc.remove("tags");
 
-        doc.keySet().forEach(k -> item.addField(k, doc.getString(k)));
-
-        return item;
+        return builder.withExtFields(doc.keySet().stream().collect(
+                Collectors.toMap(Function.identity(), doc::getString))
+        ).build();
     }
 
     private Currency convertCurrency(String code) {
@@ -54,9 +60,11 @@ public class ItemConverter implements MongoConverter<Item> {
 
         if (item.getId() != null) doc.put("_id", new ObjectId(item.getId()));
 
+        Price price = item.getPrice();
+
         doc.put("name", item.getName());
-        doc.put("price", item.getPrice());
-        doc.put("currency", item.getCurrency().toString());
+        doc.put("price", price.getCash());
+        doc.put("currency", price.getCurrency().toString());
 
         Document statusDoc = new Document();
         statusDoc.put("stocked", item.stocked());

@@ -1,9 +1,10 @@
 package com.deoxys.dev.dstr.domain.service;
 
 import com.deoxys.dev.dstr.domain.converter.OrderReader;
-import com.deoxys.dev.dstr.domain.model.Customer;
 import com.deoxys.dev.dstr.domain.model.Item;
 import com.deoxys.dev.dstr.domain.model.Order;
+import com.deoxys.dev.dstr.domain.model.OrderStatus;
+import com.deoxys.dev.dstr.domain.model.User;
 import com.deoxys.dev.dstr.persistence.dao.ItemDAO;
 import com.deoxys.dev.dstr.persistence.dao.OrderDAO;
 import org.apache.log4j.Logger;
@@ -12,7 +13,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.Date;
+import java.util.Enumeration;
 
 public class OrderService extends MongoService<Order> {
     Logger logger = Logger.getLogger(OrderService.class);
@@ -51,14 +53,14 @@ public class OrderService extends MongoService<Order> {
                 default:
                     break;
             }
-        } else req.setAttribute("orders", orderDao.getAll());
+        } else loadAllOrders(req);
     }
 
     public void loadCustomerOrders(HttpServletRequest req) {
-        Customer customer = (Customer) req.getSession().getAttribute("customer");
-        long id = customer.isAdmin()
+        User user = (User) req.getSession().getAttribute("customer");
+        long id = user.isAdmin()
                 ? Long.parseLong(req.getParameter("id"))
-                : customer.getId();
+                : user.getId();
         req.setAttribute("orders", orderDao.getAllForCustomer(id));
     }
 
@@ -75,11 +77,15 @@ public class OrderService extends MongoService<Order> {
         }
     }
 
+    private void loadAllOrders(HttpServletRequest req) {
+        req.setAttribute("orders", orderDao.getAll());
+    }
+
     public void loadCustomerActivity(HttpServletRequest req) {
-        Customer customer = (Customer) req.getSession().getAttribute("customer");
-        long id = customer.isAdmin()
+        User user = (User) req.getSession().getAttribute("customer");
+        long id = user.isAdmin()
                 ? Long.parseLong(req.getParameter("id"))
-                : customer.getId();
+                : user.getId();
         req.setAttribute("nItems", orderDao.countCustomerItems(id));
         req.setAttribute("nOrders", orderDao.countCustomerOrders(id));
     }
@@ -157,7 +163,7 @@ public class OrderService extends MongoService<Order> {
         if (itemDao.enoughItems(order.getItems())) {
             order.setOrderNumber(orderDao.getNextSequence("orderNumber"));
             order.setDate(new Date());
-            order.setStatus(Order.OrderStatus.IN_PROCESS);
+            order.setStatus(OrderStatus.IN_PROCESS);
             orderDao.add(order);
             ses.removeAttribute("order");
             req.setAttribute("order", order);
@@ -188,10 +194,10 @@ public class OrderService extends MongoService<Order> {
          *      load Order
          */
         Order order = orderDao.get(id);
-        Order.OrderStatus oldStatus = order.getStatus();
-        Order.OrderStatus newStatus = oldStatus.equals(Order.OrderStatus.REJECTED)
-                        ? Order.OrderStatus.IN_PROCESS
-                        : Order.OrderStatus.REJECTED;
+        OrderStatus oldStatus = order.getStatus();
+        OrderStatus newStatus = oldStatus.equals(OrderStatus.REJECTED)
+                        ? OrderStatus.IN_PROCESS
+                        : OrderStatus.REJECTED;
 
         /**
          * To change order status, items statuses should be changed
@@ -222,7 +228,7 @@ public class OrderService extends MongoService<Order> {
     public void changeOrderStatus(HttpServletRequest req) {
         String id = req.getParameter("id");
         String status = req.getParameter("status");
-        Order.OrderStatus newStatus = Order.OrderStatus.valueOf(status);
+        OrderStatus newStatus = OrderStatus.valueOf(status);
 
         /**
          * Possible solutions:
@@ -230,7 +236,7 @@ public class OrderService extends MongoService<Order> {
          *      load Order
          */
         Order order = orderDao.get(id);
-        Order.OrderStatus oldStatus = order.getStatus();
+        OrderStatus oldStatus = order.getStatus();
         if (newStatus.equals(oldStatus)) {
             req.setAttribute("order", order);
             return;

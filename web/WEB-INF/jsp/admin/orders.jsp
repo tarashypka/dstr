@@ -70,12 +70,12 @@
                   <c:param name="action" value="showItem"/>
                   <c:param name="id" value="${item.key.id}"/>
                 </c:url>
-                ${item.value} <a href="${itemURL}">${item.key.name}</a><br>
+                ${item.value} of <a href="${itemURL}">${item.key.name}</a><br>
               </c:forEach>
             </td>
             <td>
-              <c:forEach var="price" items="${order.receipt}">
-                ${price.value} ${price.key}<br>
+              <c:forEach var="cash" items="${order.receipt}">
+                ${cash.value} ${cash.key}<br>
               </c:forEach>
             </td>
             <td>${order.status.name}</td>

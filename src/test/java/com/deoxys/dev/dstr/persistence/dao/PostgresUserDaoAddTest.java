@@ -1,7 +1,10 @@
 package com.deoxys.dev.dstr.persistence.dao;
 
-import com.deoxys.dev.dstr.domain.model.Customer;
-import org.junit.*;
+import com.deoxys.dev.dstr.domain.model.User;
+import org.junit.After;
+import org.junit.BeforeClass;
+import org.junit.Rule;
+import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.postgresql.util.PSQLException;
 
@@ -10,10 +13,11 @@ import java.sql.SQLException;
 import static org.hamcrest.Matchers.containsString;
 import static org.junit.Assert.*;
 
-public final class PostgresCustomerDaoAddTest {
+public final class PostgresUserDaoAddTest {
 
     private static CustomerDAO customerDAO;
-    private Customer mike = new Customer("mike@gmail.com", "1234", "Mike", "Mort");
+    private User mike = new User.UserBuilder("mike@gmail.com")
+            .withPassword("1234").withName("Mike", "Mort").build();
 
     @Rule
     public ExpectedException thrown = ExpectedException.none();
@@ -43,7 +47,7 @@ public final class PostgresCustomerDaoAddTest {
     @Test
     public void testAdd_thereAreNoMike_properMikeWasInserted() throws SQLException {
         assertTrue(customerDAO.add(mike));
-        Customer shouldBeMike = customerDAO.get(mike.getId());
+        User shouldBeMike = customerDAO.get(mike.getId());
         assertNotNull(shouldBeMike);
 
         /**

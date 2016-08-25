@@ -16,7 +16,7 @@ since this page flow strongly depends on JavaScript:
   extend item with new fields
   remove extended fields
   input validation
-  user-friendly bootstrap tags
+  customer-friendly bootstrap tags
 
  --%>
 
@@ -47,7 +47,7 @@ since this page flow strongly depends on JavaScript:
     <c:url var="customerController" value="/controller/admin"/>
     <c:set var="tags" value="${(item.tags ne '[]') ? item.tags : null}"/>
     <c:set var="status" value="${item.status}"/>
-    <c:set var="price" value="${(item.price gt 0.0) ? item.price : null}"/>
+    <c:set var="cash" value="${(item.cash gt 0.0) ? item.cash : null}"/>
     <c:set var="currency" value="${item.currency}"/>
 
     <%--
@@ -84,11 +84,11 @@ since this page flow strongly depends on JavaScript:
             <span id="tags-help" class="help-block"></span>
           </div>
         </div>
-        <div id="price" class="form-group col-sm-12">
-          <label for="price-inp" class="control-label col-sm-2">Price:</label>
+        <div id="cash" class="form-group col-sm-12">
+          <label for="cash-inp" class="control-label col-sm-2">Price:</label>
           <div class="col-sm-4">
-            <input id="price-inp" type="number" name="price" value="${price}" step="0.01" placeholder="Price?" class="form-control" aria-describedby="price-help">
-            <span id="price-help" class="help-block"></span>
+            <input id="cash-inp" type="number" name="cash" value="${cash}" step="0.01" placeholder="Price?" class="form-control" aria-describedby="cash-help">
+            <span id="cash-help" class="help-block"></span>
           </div>
         </div>
         <div id="currency" class="form-group col-sm-12">

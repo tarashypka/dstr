@@ -4,40 +4,74 @@ import java.io.Serializable;
 import java.util.*;
 
 public class Item implements Serializable {
+
     private String id;
     private String name;
-
-    /**
-     * double vs Double
-     *   MongoDB Java driver takes and produces Double wrapper type
-     *
-     * Thus, in order to avoid redundant autoboxing, Double will be better
-     */
-    private Double price;
-
-    private Currency currency;
+    private Price price;
     private ItemStatus status;
-    private List<String> tags = new ArrayList<>();
-    private Map<String, String> extendedFields = new LinkedHashMap<>();
-
     private String errType;
 
-    public Item() { }
+    private List<String> tags;
 
-    public Item(String id) {
-        this.id = id;
+    private Map<String, String> extendedFields = new LinkedHashMap<>();
+
+    public static class ItemBuilder implements Builder<Item> {
+        // required fields
+        private String name;
+
+        // optional fields
+        private String id;
+        private Price price;
+        private ItemStatus status;
+        private String errType;
+
+        private List<String> tags = new ArrayList<>();
+
+        private Map<String, String> extendedFields = new LinkedHashMap<>();
+
+        public ItemBuilder(String name) {
+            this.name = name;
+        }
+
+        public ItemBuilder withId(String id) {
+            this.id = id;
+            return this;
+        }
+        public ItemBuilder withPrice(Price price) {
+            this.price = price;
+            return this;
+        }
+        public ItemBuilder withStatus(ItemStatus status) {
+            this.status = status;
+            return this;
+        }
+        public ItemBuilder withErrType(String errType) {
+            this.errType = errType;
+            return this;
+        }
+        public ItemBuilder withTags(List<String> tags) {
+            this.tags = tags;
+            return this;
+        }
+        public ItemBuilder withExtFields(Map<String, String> extFields) {
+            this.extendedFields = extFields;
+            return this;
+        }
+
+        @Override
+        public Item build() {
+            return new Item(this);
+        }
     }
 
-    public Item(String id, String name) {
-        this.id = id;
-        this.name = name;
-    }
-
-    public Item(String name, double price, Currency currency, ItemStatus status) {
-        this.name = name;
-        this.price = price;
-        this.currency = currency;
-        this.status = status;
+    private Item(ItemBuilder builder) {
+        id = builder.id;
+        name = builder.name;
+        price = builder.price;
+        status = builder.status;
+        errType = builder.errType;
+        tags = builder.tags;
+        extendedFields = builder.extendedFields;
     }
 
     public String getId() {
@@ -56,20 +90,12 @@ public class Item implements Serializable {
         this.name = name;
     }
 
-    public Double getPrice() {
+    public Price getPrice() {
         return price;
     }
 
-    public void setPrice(Double price) {
+    public void setPrice(Price price) {
         this.price = price;
-    }
-
-    public Currency getCurrency() {
-        return currency;
-    }
-
-    public void setCurrency(Currency currency) {
-        this.currency = currency;
     }
 
     public ItemStatus getStatus() {
@@ -125,7 +151,6 @@ public class Item implements Serializable {
         return  "{ id='" + id + '\'' +
                 ", name='" + name + '\'' +
                 ", price=" + price +
-                ", currency=" + currency +
                 ", status=" + status +
                 ", extendedFields=" + extendedFields +
                 ", tags=" + tags + " }";

@@ -22,7 +22,7 @@ SlaveOk is configured, so Customer can read (but not write) data only with 1 sha
 
 Tomcat is pre-configured with Load Balancer redirecting to 1 of 3 instances.  
 Customer session is saved in distributed in-memory cache (Hazelcast).  
-Sticky session & session replication against loss of user's sensitive data.  
+Sticky session & session replication against loss of customer's sensitive data.
 
 
 ### Software and Tools used
@@ -93,7 +93,7 @@ $ psql -d dstr -U dstrdbadmin -a -f ../dstr/conf/postgres/customers-create.sql
 $ psql -d dstr -U dstrdbadmin -a -f ../dstr/conf/postgres/admin-create.sql
 $ psql -d testdstr -U testdstrdbadmin -a -f ../dstr/conf/postgres/customers-create.sql
 ```
-To use schemas manually user can connect with:
+To use schemas manually customer can connect with:
 ```
 $ psql -d dstr -U dstrdbadmin -h thinkpad -p 5432 -W
 ```
@@ -134,11 +134,11 @@ $ psql -d dstr -U dstrdbadmin -h thinkpad -p 5432 -W
 
 ```
 $ mongo admin  
-> db.createUser( { user: "siteUserAdmin", pwd: "1234", roles: [ { role: "userAdminAnyDatabase", db: "admin" } ] } );  
+> db.createUser( { customer: "siteUserAdmin", pwd: "1234", roles: [ { role: "userAdminAnyDatabase", db: "admin" } ] } );
 > exit;  
 $ mongo admin -u siteUserAdmin -p 1234  
 > use dstr;
-> db.createUser( { user: "dstrDbAdmin", pwd: "1234", roles: [ { role: "dbOwner", db: "dstr" } ] } );  
+> db.createUser( { customer: "dstrDbAdmin", pwd: "1234", roles: [ { role: "dbOwner", db: "dstr" } ] } );
 > exit;  
 $ mongo dstr -u dstrDbAdmin -p 1234  
 > db.users.insert( { "name" : "Taras", "email" : "tarashypka@gmail.com", "password" : "1234" } );  

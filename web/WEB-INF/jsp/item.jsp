@@ -36,7 +36,7 @@
         </tr>
         <tr>
           <th>Price</th>
-          <td>${item.price} ${item.currency}</td>
+          <td>${item.price.cash} [${item.price.currency}]</td>
         </tr>
         <tr>
           <th>Left</th>

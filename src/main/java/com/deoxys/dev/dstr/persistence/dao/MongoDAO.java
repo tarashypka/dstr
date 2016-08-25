@@ -48,10 +48,8 @@ public abstract class MongoDAO<T> {
         // Exclude sequences
         Bson filter = exists("seq", false);
         try (MongoCursor<Document> cursor = collection.find(filter).iterator()) {
-            while (cursor.hasNext())
-                objects.add(converter.toObject(cursor.next()));
+            while (cursor.hasNext()) objects.add(converter.toObject(cursor.next()));
         }
-
         return objects;
     }
 

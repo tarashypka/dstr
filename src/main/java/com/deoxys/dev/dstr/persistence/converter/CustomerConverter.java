@@ -1,26 +1,17 @@
 package com.deoxys.dev.dstr.persistence.converter;
 
-import com.deoxys.dev.dstr.domain.model.Customer;
+import com.deoxys.dev.dstr.domain.model.User;
 import org.bson.Document;
 
-public class CustomerConverter implements MongoConverter<Customer> {
+public class CustomerConverter implements MongoConverter<User> {
 
     @Override
-    public Document toDocument(Customer customer) {
-        Document doc = new Document("id", customer.getId());
-        doc.put("email", customer.getEmail());
-        doc.put("name", customer.getName());
-        doc.put("surname", customer.getSurname());
-        return doc;
+    public Document toDocument(User user) {
+        return new Document("email", user.getEmail());
     }
 
     @Override
-    public Customer toObject(Document doc) {
-        Customer customer = new Customer();
-        customer.setId(doc.getLong("id"));
-        customer.setEmail(doc.getString("email"));
-        customer.setName(doc.getString("name"));
-        customer.setSurname(doc.getString("surname"));
-        return customer;
+    public User toObject(Document doc) {
+        return new User.UserBuilder(doc.getString("email")).build();
     }
 }

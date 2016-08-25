@@ -41,17 +41,19 @@
               <img alt="Brand" src="${resources}/img/distributed24.png">
             </a>
             <a href="${showItemsGET}" class="btn btn-default navbar-btn">All items</a>
-            <c:set var="customer" value="${sessionScope.customer}"/>
-            <c:choose><c:when test="${customer eq null}">
-              <a href="${loginGET}" class="btn btn-default navbar-btn pull-right">Sign in</a>
-              <a href="${registerGET}" class="btn btn-default navbar-btn pull-right">New account</a>
-            </c:when>
+            <c:set var="user" value="${sessionScope.user}"/>
+            <c:choose>
+              <c:when test="${user eq null}">
+                <a href="${loginGET}" class="btn btn-default navbar-btn pull-right">Sign in</a>
+                <a href="${registerGET}" class="btn btn-default navbar-btn pull-right">New account</a>
+              </c:when>
               <c:otherwise>
-                <c:choose><c:when test="${customer.role eq 'admin'}">
-                  <a href="${showOrdersGET}" class="btn btn-default navbar-btn">All orders</a>
-                  <a href="${showCustomersGET}" class="btn btn-default navbar-btn">All customers</a>
-                  <a href="${newItemGET}" class="btn btn-default navbar-btn">Add item</a>
-                </c:when>
+                <c:choose>
+                  <c:when test="${user.role eq 'ADMIN'}">
+                    <a href="${showOrdersGET}" class="btn btn-default navbar-btn">All orders</a>
+                    <a href="${showCustomersGET}" class="btn btn-default navbar-btn">All customers</a>
+                    <a href="${newItemGET}" class="btn btn-default navbar-btn">Add item</a>
+                  </c:when>
                   <c:otherwise>
                     <a href="${myAccountGET}" class="btn btn-default navbar-btn">My account</a>
                     <a href="${myItemsGET}" class="btn btn-default navbar-btn">My items</a>

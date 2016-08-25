@@ -1,8 +1,9 @@
 package com.deoxys.dev.dstr.persistence.converter;
 
-import com.deoxys.dev.dstr.domain.model.Customer;
 import com.deoxys.dev.dstr.domain.model.Item;
 import com.deoxys.dev.dstr.domain.model.Order;
+import com.deoxys.dev.dstr.domain.model.OrderStatus;
+import com.deoxys.dev.dstr.domain.model.User;
 import com.mongodb.BasicDBList;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
@@ -10,7 +11,9 @@ import com.mongodb.DBRef;
 import org.bson.Document;
 import org.bson.types.ObjectId;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Currency;
+import java.util.List;
 import java.util.stream.Collectors;
 
 public class OrderConverter implements MongoConverter<Order> {
@@ -35,7 +38,10 @@ public class OrderConverter implements MongoConverter<Order> {
             DBRef dbRef = (DBRef) itemDoc.get("id");
             String id = dbRef.getId().toString();
             String name = itemDoc.getString("name");
-            order.addItem(new Item(id, name), itemDoc.getInteger("quantity"));
+            order.addItem(
+                    new Item.ItemBuilder(name).withId(id).build(),
+                    itemDoc.getInteger("quantity")
+            );
         });
 
         List<Document> receipt = (ArrayList) doc.get("receipt");
@@ -44,7 +50,7 @@ public class OrderConverter implements MongoConverter<Order> {
                 k -> k.getDouble("price")
         )).forEach(order::addPrice);
 
-        order.setStatus(Order.OrderStatus.getStatus(doc.getInteger("status")));
+        order.setStatus(OrderStatus.getStatus(doc.getInteger("status")));
 
         return order;
     }
@@ -63,9 +69,9 @@ public class OrderConverter implements MongoConverter<Order> {
         doc.put("orderNumber", order.getOrderNumber());
         doc.put("date", order.getDate());
 
-        Customer customer = order.getCustomer();
+        User user = order.getCustomer();
         CustomerConverter customerConverter = new CustomerConverter();
-        doc.put("customer", customerConverter.toDocument(customer));
+        doc.put("customer", customerConverter.toDocument(user));
 
         BasicDBList itemsDbl = new BasicDBList();
         order.getItems().forEach((item, amount) -> {
@@ -88,7 +94,7 @@ public class OrderConverter implements MongoConverter<Order> {
         doc.put("receipt", receiptList);
 
         String status = order.getStatus().name();
-        doc.put("status", Order.OrderStatus.valueOf(status).getValue());
+        doc.put("status", OrderStatus.valueOf(status).getValue());
 
         return doc;
     }

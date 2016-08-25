@@ -15,7 +15,7 @@ public class Order implements Serializable {
     private Long orderNumber;
 
     private Date date;
-    private Customer customer;
+    private User customer;
     private Map<Item, Integer> items = new HashMap<>();
     private Map<Currency, Double> receipt = new HashMap<>();
     private OrderStatus status;
@@ -24,44 +24,6 @@ public class Order implements Serializable {
 
     public Order(String id) {
         this.id = id;
-    }
-
-    public enum OrderStatus {
-        REJECTED(-1), IN_PROCESS(0), PROCESSED(+1);
-
-        /**
-         * int vs Integer
-         *   MongoDB Java driver takes and produces Integer wrapper type
-         *
-         * Thus, in order to avoid redundant autoboxing, Integer will be better
-         */
-        private Integer value;
-        private String name;    // for easy output with JSTL
-
-        OrderStatus(int value) {
-            this.value = value;
-        }
-
-        public static OrderStatus getStatus(Integer value) {
-            switch (value) {
-                case -1:
-                    return OrderStatus.REJECTED;
-                case 0:
-                    return OrderStatus.IN_PROCESS;
-                case +1:
-                    return OrderStatus.PROCESSED;
-                default:
-                    return null;
-            }
-        }
-
-        public int getValue() {
-            return value;
-        }
-
-        public String getName() {
-            return value == -1 ? "Rejected" : (value == 0 ? "In process" : "Processed");
-        }
     }
 
     public String getId() {
@@ -88,11 +50,11 @@ public class Order implements Serializable {
         this.date = date;
     }
 
-    public Customer getCustomer() {
+    public User getCustomer() {
         return customer;
     }
 
-    public void setCustomer(Customer customer) {
+    public void setCustomer(User customer) {
         this.customer = customer;
     }
 
@@ -133,13 +95,15 @@ public class Order implements Serializable {
     }
 
     public void updateReceipt(Item item, Integer amount) {
-        Currency currency = item.getCurrency();
+        Price price = item.getPrice();
+        Double cash = price.getCash();
+        Currency currency = price.getCurrency();
+
         Double oldTotal = receipt.get(currency);
-        Double price = item.getPrice();
-        Double newTotal = amount * price + (oldTotal == null ? 0 : oldTotal);
+        Double newTotal = amount * cash + (oldTotal == null ? 0 : oldTotal);
 
         // If item was already in receipt
-        if (items.containsKey(item)) newTotal -= price * items.get(item);
+        if (items.containsKey(item)) newTotal -= cash * items.get(item);
 
         if (newTotal == 0) receipt.remove(currency);
         else receipt.put(currency, newTotal);

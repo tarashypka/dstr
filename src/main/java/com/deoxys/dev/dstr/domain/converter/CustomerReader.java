@@ -1,12 +1,12 @@
 package com.deoxys.dev.dstr.domain.converter;
 
-import com.deoxys.dev.dstr.domain.model.Customer;
+import com.deoxys.dev.dstr.domain.model.User;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 public class CustomerReader
-implements HttpRequestReader<Customer>, HttpSessionReader<Customer> {
+implements HttpRequestReader<User>, HttpSessionReader<User> {
 
     /**
      * Read Customer from request.
@@ -15,13 +15,11 @@ implements HttpRequestReader<Customer>, HttpSessionReader<Customer> {
      * or Customer trying to register.
      */
     @Override
-    public Customer read(HttpServletRequest req) {
-        return new Customer(
-                req.getParameter("email"),
-                req.getParameter("psswd"),
-                req.getParameter("name"),
-                req.getParameter("sname")
-        );
+    public User read(HttpServletRequest req) {
+        return new User.UserBuilder(req.getParameter("email"))
+                .withPassword(req.getParameter("psswd"))
+                .withName(req.getParameter("name"), req.getParameter("sname"))
+                .build();
     }
 
     /**
@@ -31,7 +29,7 @@ implements HttpRequestReader<Customer>, HttpSessionReader<Customer> {
      * or Admin requesting any Customer's info.
      */
     @Override
-    public Customer read(HttpSession ses) {
-        return (Customer) ses.getAttribute("customer");
+    public User read(HttpSession ses) {
+        return (User) ses.getAttribute("customer");
     }
 }

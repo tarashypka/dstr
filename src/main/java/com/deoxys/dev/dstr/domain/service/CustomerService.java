@@ -1,14 +1,14 @@
 package com.deoxys.dev.dstr.domain.service;
 
 import com.deoxys.dev.dstr.domain.converter.CustomerReader;
-import com.deoxys.dev.dstr.domain.model.Customer;
+import com.deoxys.dev.dstr.domain.model.User;
 import com.deoxys.dev.dstr.persistence.dao.CustomerDAO;
 import org.apache.log4j.Logger;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-public class CustomerService extends PostgresService<Customer> {
+public class CustomerService extends PostgresService<User> {
     Logger logger = Logger.getLogger(CustomerService.class);
 
     private CustomerDAO customerDao;
@@ -19,10 +19,10 @@ public class CustomerService extends PostgresService<Customer> {
     }
 
     public void loadCustomer(HttpServletRequest req) {
-        Customer customer = sessionReader.read(req.getSession());
-        long id = customer.isAdmin()
+        User user = sessionReader.read(req.getSession());
+        long id = user.isAdmin()
                 ? Long.parseLong(req.getParameter("id"))
-                : customer.getId();
+                : user.getId();
         req.setAttribute("customer", customerDao.get(id));
     }
 
@@ -31,26 +31,26 @@ public class CustomerService extends PostgresService<Customer> {
     }
 
     public void login(HttpServletRequest req) {
-        Customer customer = requestReader.read(req);
-        if (customerDao.hasValidCredentials(customer))
-            req.getSession().setAttribute("customer", customer.withoutPassword());
-        else req.setAttribute("error", customer.getErrType());
+        User user = requestReader.read(req);
+        if (customerDao.hasValidCredentials(user))
+            req.getSession().setAttribute("user", user.withoutPassword());
+        else req.setAttribute("error", user.getErrType());
     }
 
     public void register(HttpServletRequest req) {
-        Customer customer = requestReader.read(req);
+        User user = requestReader.read(req);
         // If customer input was already validated with Js
         boolean validated = Boolean.parseBoolean(req.getParameter("validated"));
-        if (validated || customerDao.isValidForInput(customer, req.getParameter("psswd2"))) {
-            if (! customerDao.exists(customer)) {
-                customerDao.add(customer);
+        if (validated || customerDao.isValidForInput(user, req.getParameter("psswd2"))) {
+            if (! customerDao.exists(user)) {
+                customerDao.add(user);
                 // Automatically login after registration
-                req.getSession().setAttribute("customer", customer);
+                req.getSession().setAttribute("user", user);
                 return;
-            } else customer.setErrType("email_dup");
+            } else user.setErrType("email_dup");
         }
-        req.setAttribute("error", customer.getErrType());
-        req.setAttribute("_customer", customer);
+        req.setAttribute("error", user.getErrType());
+        req.setAttribute("_user", user);
     }
 
     public void logout(HttpServletRequest req) {

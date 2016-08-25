@@ -3,8 +3,9 @@ package com.deoxys.dev.dstr.persistence.dao;
 import com.deoxys.dev.dstr.domain.model.Item;
 import com.deoxys.dev.dstr.domain.model.ItemStatus;
 import com.deoxys.dev.dstr.domain.model.Order;
-import com.mongodb.*;
+import com.deoxys.dev.dstr.domain.model.OrderStatus;
 import com.deoxys.dev.dstr.persistence.converter.ItemConverter;
+import com.mongodb.*;
 import com.mongodb.client.MongoCursor;
 import org.bson.*;
 import org.bson.conversions.Bson;
@@ -35,7 +36,7 @@ public class ItemDAO extends MongoDAO<Item> {
 
         OrderDAO orderDAO = new OrderDAO(client);
         BsonDocument filter = new BsonDocument("customer.id", new BsonInt64(id));
-        filter.put("status", new BsonInt32(Order.OrderStatus.PROCESSED.getValue()));
+        filter.put("status", new BsonInt32(OrderStatus.PROCESSED.getValue()));
         try (MongoCursor<Document> cursor = orderDAO.collection.find(filter).iterator()) {
             while (cursor.hasNext()) {
                 Document orderDoc = cursor.next();

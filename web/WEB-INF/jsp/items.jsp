@@ -34,7 +34,7 @@
           </c:url>
           <tr>
             <td><a href="${showItemURL}">${item.name}</a></td>
-            <td>${item.price} ${item.currency}</td>
+            <td>${item.price.cash} [${item.price.currency}]</td>
             <td>${status.stocked}</td>
             <c:if test="${sessionScope.customer.role eq 'admin'}">
               <td>${status.reserved}</td>
