@@ -1,6 +1,3 @@
-/**
- * Created by deoxys on 29.07.16.
- */
 
 function isValidEmail(email) {
     var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
@@ -24,8 +21,6 @@ function validateForm(style) {
     $("#email-help").text("");
     $("#psswd-help").text("");
     $("#psswd2-help").text("");
-    $("#name-help").text("");
-    $("#sname-help").text("");
 
     var email = $("#email-inp").val();
     if (! email) {
@@ -54,18 +49,6 @@ function validateForm(style) {
     if ($("#psswd2-inp").val() !== psswd) {
         $("#psswd2").addClass(style);
         $("#psswd2-help").text("Passwords do not match");
-        return false;
-    }
-
-    if (! $("#name-inp").val()) {
-        $("#name").addClass(style);
-        $("#name-help").text("Enter name");
-        return false;
-    }
-
-    if (! $("#sname-inp").val()) {
-        $("#sname").addClass(style);
-        $("#sname-help").text("Enter surname");
         return false;
     }
 

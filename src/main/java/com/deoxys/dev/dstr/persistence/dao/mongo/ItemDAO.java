@@ -1,9 +1,9 @@
-package com.deoxys.dev.dstr.persistence.dao;
+package com.deoxys.dev.dstr.persistence.dao.mongo;
 
-import com.deoxys.dev.dstr.domain.model.Item;
-import com.deoxys.dev.dstr.domain.model.ItemStatus;
-import com.deoxys.dev.dstr.domain.model.Order;
-import com.deoxys.dev.dstr.domain.model.OrderStatus;
+import com.deoxys.dev.dstr.domain.model.item.Item;
+import com.deoxys.dev.dstr.domain.model.item.ItemStatus;
+import com.deoxys.dev.dstr.domain.model.order.Order;
+import com.deoxys.dev.dstr.domain.model.order.OrderStatus;
 import com.deoxys.dev.dstr.persistence.converter.ItemConverter;
 import com.mongodb.*;
 import com.mongodb.client.MongoCursor;

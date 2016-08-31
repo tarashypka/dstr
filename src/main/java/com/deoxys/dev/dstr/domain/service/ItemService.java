@@ -1,9 +1,9 @@
 package com.deoxys.dev.dstr.domain.service;
 
 import com.deoxys.dev.dstr.domain.converter.ItemReader;
-import com.deoxys.dev.dstr.domain.model.User;
-import com.deoxys.dev.dstr.domain.model.Item;
-import com.deoxys.dev.dstr.persistence.dao.ItemDAO;
+import com.deoxys.dev.dstr.domain.model.user.User;
+import com.deoxys.dev.dstr.domain.model.item.Item;
+import com.deoxys.dev.dstr.persistence.dao.mongo.ItemDAO;
 import org.apache.log4j.Logger;
 
 import javax.servlet.http.HttpServletRequest;

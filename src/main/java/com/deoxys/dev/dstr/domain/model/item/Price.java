@@ -1,15 +1,13 @@
-package com.deoxys.dev.dstr.domain.model;
+package com.deoxys.dev.dstr.domain.model.item;
 
 import java.util.Currency;
 
-public class Price {
+public final class Price {
 
     /**
      * double vs Double
-     *   MongoDB Java driver takes and produces Double wrapper type
-     *
-     * Thus, in order to avoid redundant autoboxing,
-     * Double will be better then double.
+     *   MongoDB Java driver takes and produces Double wrapper type,
+     *   thus, Double will avoid unnecessary autoboxing
      *
      * Further, in case of heavy computations (taxes, discounts)
      * Double type could be changed into preferable for it BigDecimal
@@ -52,15 +50,12 @@ public class Price {
 
         Price price = (Price) o;
 
-        if (cash != null ? !cash.equals(price.cash) : price.cash != null) return false;
-        return currency != null ? currency.equals(price.currency) : price.currency == null;
+        return currency.equals(price.currency);
 
     }
 
     @Override
     public int hashCode() {
-        int result = cash != null ? cash.hashCode() : 0;
-        result = 31 * result + (currency != null ? currency.hashCode() : 0);
-        return result;
+        return currency.hashCode();
     }
 }

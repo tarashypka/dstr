@@ -1,6 +1,7 @@
 package com.deoxys.dev.dstr.persistence.dao;
 
-import com.deoxys.dev.dstr.domain.model.User;
+import com.deoxys.dev.dstr.domain.model.user.User;
+import com.deoxys.dev.dstr.persistence.dao.postgres.UserDAO;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -11,32 +12,32 @@ import static org.junit.Assert.*;
 
 public final class PostgresUserDaoDeleteTest extends PostgresTestDataSource {
 
-    private static CustomerDAO customerDAO;
+    private static UserDAO userDAO;
     private User mike = new User.UserBuilder("mike@gmail.com")
-            .withPassword("1234").withName("Mike", "Mort").build();
+            .withPassword("1234").build();
 
     @BeforeClass
     public static void setUpClass() {
-        customerDAO = new CustomerDAO(PostgresTestDataSource.getDataSource());
+        userDAO = new UserDAO(PostgresTestDataSource.getDataSource());
     }
 
     @Before
     public void setUp() throws Exception {
-        assertTrue(customerDAO.add(mike));
+        assertTrue(userDAO.add(mike));
     }
 
     @Test
     public void testDeleteMike_thereAreNoMike_methodReturnsFalse() throws SQLException {
         long id = mike.getId();
-        assertTrue(customerDAO.delete(id));
-        assertFalse(customerDAO.delete(id));
+        assertTrue(userDAO.delete(id));
+        assertFalse(userDAO.delete(id));
     }
 
     @Test
     public void testDeleteMike_thereIsMike_onlyMikeWasDeleted() throws SQLException {
-        long nCustomersOld = customerDAO.count();
-        assertTrue(customerDAO.delete(mike.getId()));
-        long nCustomersNew = customerDAO.count();
+        long nCustomersOld = userDAO.count();
+        assertTrue(userDAO.delete(mike.getId()));
+        long nCustomersNew = userDAO.count();
         assertEquals(nCustomersNew, nCustomersOld - 1);
     }
 }

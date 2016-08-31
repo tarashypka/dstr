@@ -1,6 +1,6 @@
 package com.deoxys.dev.dstr.persistence.converter;
 
-import com.deoxys.dev.dstr.domain.model.User;
+import com.deoxys.dev.dstr.domain.model.user.User;
 import org.bson.Document;
 
 public class CustomerConverter implements MongoConverter<User> {

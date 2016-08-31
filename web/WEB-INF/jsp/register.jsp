@@ -3,14 +3,6 @@
 <%@ taglib prefix="t" tagdir="/WEB-INF/tags" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
-<%--
-  Created by IntelliJ IDEA.
-  User: deoxys
-  Date: 29.05.16
-  Time: 7:48
-  To change this template use File | Settings | File Templates.
---%>
-
 <c:set var="resources" value="${pageContext.request.contextPath}/resources"/>
 
 <%-- Bootstrap validation style could be has-warning, has-success, ... --%>
@@ -48,14 +40,6 @@ thus server-side validation will be performed if it's disabled
       <c:set var="psswd2Warn" value="${validationStyle}"/>
       <c:set var="psswd2ErrMsg" value="Passwords do not match"/>
     </c:when>
-    <c:when test="${error eq 'name_empty'}">
-      <c:set var="nameWarn" value="${validationStyle}"/>
-      <c:set var="nameErrMsg" value="Enter name"/>
-    </c:when>
-    <c:when test="${error eq 'sname_empty'}">
-      <c:set var="snameWarn" value="${validationStyle}"/>
-      <c:set var="snameErrMsg" value="Enter surname"/>
-    </c:when>
   </c:choose>
 </c:if>
 
@@ -90,20 +74,6 @@ thus server-side validation will be performed if it's disabled
         <div class="col-sm-4">
           <input id="psswd2-inp" type="password" name="psswd2" placeholder="Password?" class="form-control" aria-describedby="password-help">
           <span id="psswd2-help" class="help-block">${psswd2ErrMsg}</span>
-        </div>
-      </div>
-      <div id="name" class="form-group col-sm-12 ${nameWarn}">
-        <label for="name-inp" class="control-label col-sm-2">Name:</label>
-        <div class="col-sm-4">
-          <input id="name-inp" type="text" name="name" value="${_customer.name}" placeholder="Name?" class="form-control" aria-describedby="name-help">
-          <span id="name-help" class="help-block">${nameErrMsg}</span>
-        </div>
-      </div>
-      <div id="sname" class="form-group col-sm-12 ${snameWarn}">
-        <label for="sname-inp" class="control-label col-sm-2">Surname:</label>
-        <div class="col-sm-4">
-          <input id="sname-inp" type="text" name="sname" value="${_customer.surname}" placeholder="Surname?" class="form-control" aria-describedby="surname-help">
-          <span id="sname-help" class="help-block">${snameErrMsg}</span>
         </div>
       </div>
       <div class="form-group col-sm-12">

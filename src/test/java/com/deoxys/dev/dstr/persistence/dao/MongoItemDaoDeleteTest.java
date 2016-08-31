@@ -1,8 +1,9 @@
 package com.deoxys.dev.dstr.persistence.dao;
 
-import com.deoxys.dev.dstr.domain.model.Item;
-import com.deoxys.dev.dstr.domain.model.ItemStatus;
-import com.deoxys.dev.dstr.domain.model.Price;
+import com.deoxys.dev.dstr.domain.model.item.Item;
+import com.deoxys.dev.dstr.domain.model.item.ItemStatus;
+import com.deoxys.dev.dstr.domain.model.item.Price;
+import com.deoxys.dev.dstr.persistence.dao.mongo.ItemDAO;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;

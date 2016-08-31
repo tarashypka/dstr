@@ -1,6 +1,7 @@
 package com.deoxys.dev.dstr.domain.converter;
 
-import com.deoxys.dev.dstr.domain.model.Order;
+import com.deoxys.dev.dstr.domain.model.order.Order;
+import com.deoxys.dev.dstr.domain.model.user.Customer;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -23,8 +24,8 @@ implements HttpRequestReader<Order>, HttpSessionReader<Order> {
         Order order = (Order) ses.getAttribute("order");
         if (order == null) {
             order = new Order();
-            CustomerReader customerReader = new CustomerReader();
-            order.setCustomer(customerReader.read(ses));
+            Customer customer = CustomerReaders.readerForAuthorization().read(ses);
+            order.setCustomer(customer);
         }
         return order;
     }

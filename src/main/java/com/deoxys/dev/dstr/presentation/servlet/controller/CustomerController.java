@@ -1,6 +1,7 @@
 package com.deoxys.dev.dstr.presentation.servlet.controller;
 
 import com.deoxys.dev.dstr.domain.service.CustomerService;
+import com.deoxys.dev.dstr.domain.service.UserService;
 import com.deoxys.dev.dstr.domain.service.ItemService;
 import com.deoxys.dev.dstr.domain.service.OrderService;
 
@@ -14,6 +15,7 @@ import java.io.IOException;
 @WebServlet(name = "CustomerController", urlPatterns = "/controller/customer")
 public class CustomerController extends HttpServlet {
 
+    private static UserService userService;
     private static CustomerService customerService;
     private static OrderService orderService;
     private static ItemService itemService;
@@ -26,7 +28,8 @@ public class CustomerController extends HttpServlet {
             NEW_ORDER_JSP;
 
     static {
-        customerService = new CustomerService();
+        userService = new UserService();
+        customerService = userService.createCustomerService();
         orderService = new OrderService();
         itemService = new ItemService();
         CUSTOMER_JSP = "/WEB-INF/jsp/customer/customer.jsp";

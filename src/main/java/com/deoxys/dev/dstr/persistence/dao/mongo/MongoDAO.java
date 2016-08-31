@@ -1,4 +1,4 @@
-package com.deoxys.dev.dstr.persistence.dao;
+package com.deoxys.dev.dstr.persistence.dao.mongo;
 
 import com.deoxys.dev.dstr.persistence.converter.MongoConverter;
 import com.mongodb.*;

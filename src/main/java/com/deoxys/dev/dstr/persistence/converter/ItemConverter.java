@@ -1,15 +1,14 @@
 package com.deoxys.dev.dstr.persistence.converter;
 
-import com.deoxys.dev.dstr.domain.model.Item;
-import com.deoxys.dev.dstr.domain.model.ItemStatus;
-import com.deoxys.dev.dstr.domain.model.Price;
+import com.deoxys.dev.dstr.domain.model.item.Item;
+import com.deoxys.dev.dstr.domain.model.item.ItemStatus;
+import com.deoxys.dev.dstr.domain.model.item.Price;
 import org.bson.Document;
 import org.bson.types.ObjectId;
 
 import java.util.ArrayList;
 import java.util.Currency;
 import java.util.function.Function;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 public class ItemConverter implements MongoConverter<Item> {

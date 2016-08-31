@@ -1,6 +1,7 @@
 package com.deoxys.dev.dstr.persistence.dao;
 
-import com.deoxys.dev.dstr.domain.model.User;
+import com.deoxys.dev.dstr.domain.model.user.User;
+import com.deoxys.dev.dstr.persistence.dao.postgres.UserDAO;
 import org.junit.After;
 import org.junit.BeforeClass;
 import org.junit.Rule;
@@ -15,39 +16,39 @@ import static org.junit.Assert.*;
 
 public final class PostgresUserDaoAddTest {
 
-    private static CustomerDAO customerDAO;
+    private static UserDAO userDAO;
     private User mike = new User.UserBuilder("mike@gmail.com")
-            .withPassword("1234").withName("Mike", "Mort").build();
+            .withPassword("1234").build();
 
     @Rule
     public ExpectedException thrown = ExpectedException.none();
 
     @BeforeClass
     public static void setUpClass() {
-        customerDAO = new CustomerDAO(PostgresTestDataSource.getDataSource());
+        userDAO = new UserDAO(PostgresTestDataSource.getDataSource());
     }
 
     @Test
     public void testAdd_thereIsMike_duplicateExceptionThrown() throws SQLException {
-        assertTrue(customerDAO.add(mike));
+        assertTrue(userDAO.add(mike));
         thrown.expect(PSQLException.class);
         thrown.expectMessage(containsString("duplicate key"));
-        assertFalse(customerDAO.add(mike));
+        assertFalse(userDAO.add(mike));
     }
 
     @Test
     public void testAdd_thereAreNoMike_onlyMikeWasInserted() throws SQLException {
-        long nCustomersOld = customerDAO.count();
-        assertTrue(customerDAO.add(mike));
-        assertNotNull(customerDAO.get(mike.getId()));
-        long nCustomersNew = customerDAO.count();
+        long nCustomersOld = userDAO.count();
+        assertTrue(userDAO.add(mike));
+        assertNotNull(userDAO.get(mike.getId()));
+        long nCustomersNew = userDAO.count();
         assertEquals(nCustomersNew, nCustomersOld + 1);
     }
 
     @Test
     public void testAdd_thereAreNoMike_properMikeWasInserted() throws SQLException {
-        assertTrue(customerDAO.add(mike));
-        User shouldBeMike = customerDAO.get(mike.getId());
+        assertTrue(userDAO.add(mike));
+        User shouldBeMike = userDAO.get(mike.getId());
         assertNotNull(shouldBeMike);
 
         /**
@@ -56,14 +57,12 @@ public final class PostgresUserDaoAddTest {
          */
         assertEquals("Wrong email", shouldBeMike.getEmail(), mike.getEmail());
         assertEquals("Wrong password", shouldBeMike.getPassword(), mike.getPassword());
-        assertEquals("Wrong name", shouldBeMike.getName(), mike.getName());
-        assertEquals("Wrong surname", shouldBeMike.getSurname(), mike.getSurname());
-        assertEquals("Wrong role", shouldBeMike.getRole(), "customer");
+        assertEquals("Wrong role", shouldBeMike.getRole(), "CUSTOMER");
         assertEquals("Wrong enabled", shouldBeMike.isEnabled(), true);
     }
 
     @After
     public void tearDown() throws SQLException {
-        assertTrue(customerDAO.delete(mike.getId()));
+        assertTrue(userDAO.delete(mike.getId()));
     }
 }

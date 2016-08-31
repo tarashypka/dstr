@@ -1,6 +1,6 @@
 package com.deoxys.dev.dstr.presentation.filter;
 
-import com.deoxys.dev.dstr.domain.model.User;
+import com.deoxys.dev.dstr.domain.model.user.User;
 import org.apache.log4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;

@@ -1,8 +1,8 @@
 package com.deoxys.dev.dstr.domain.converter;
 
-import com.deoxys.dev.dstr.domain.model.Item;
-import com.deoxys.dev.dstr.domain.model.ItemStatus;
-import com.deoxys.dev.dstr.domain.model.Price;
+import com.deoxys.dev.dstr.domain.model.item.Item;
+import com.deoxys.dev.dstr.domain.model.item.ItemStatus;
+import com.deoxys.dev.dstr.domain.model.item.Price;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;

@@ -1,2 +1,10 @@
-INSERT INTO customers (name, surname, email, password, role)
-VALUES ('admin', 'admin', 'dstrdbadmin', '1234', 'admin');
+
+/**
+ *
+ * admin's password should be encoded with BCrypt
+ *
+ */
+
+
+INSERT INTO users (email, password, role)
+VALUES ('dstrdbadmin', '1234', 'admin');

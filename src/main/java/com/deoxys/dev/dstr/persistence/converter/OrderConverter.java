@@ -1,9 +1,10 @@
 package com.deoxys.dev.dstr.persistence.converter;
 
-import com.deoxys.dev.dstr.domain.model.Item;
-import com.deoxys.dev.dstr.domain.model.Order;
-import com.deoxys.dev.dstr.domain.model.OrderStatus;
-import com.deoxys.dev.dstr.domain.model.User;
+import com.deoxys.dev.dstr.domain.model.item.Item;
+import com.deoxys.dev.dstr.domain.model.order.Order;
+import com.deoxys.dev.dstr.domain.model.order.OrderStatus;
+import com.deoxys.dev.dstr.domain.model.order.Receipt;
+import com.deoxys.dev.dstr.domain.model.user.User;
 import com.mongodb.BasicDBList;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
@@ -44,11 +45,15 @@ public class OrderConverter implements MongoConverter<Order> {
             );
         });
 
-        List<Document> receipt = (ArrayList) doc.get("receipt");
-        receipt.stream().collect(Collectors.toMap(
+        Receipt receipt = new Receipt();
+
+        List<Document> receiptList = (ArrayList) doc.get("receipt");
+        receiptList.stream().collect(Collectors.toMap(
                 k -> convertCurrency(k.getString("currency")),
                 k -> k.getDouble("price")
-        )).forEach(order::addPrice);
+        )).forEach(receipt::setCashFor);
+
+        order.setReceipt(receipt);
 
         order.setStatus(OrderStatus.getStatus(doc.getInteger("status")));
 
@@ -85,10 +90,11 @@ public class OrderConverter implements MongoConverter<Order> {
         doc.put("items", itemsDbl);
 
         List<DBObject> receiptList = new ArrayList<>();
-        order.getReceipt().forEach((currency, price) -> {
+        Receipt receipt = order.getReceipt();
+        receipt.getCurrencies().forEach(currency -> {
             DBObject receiptItemDoc = new BasicDBObject();
             receiptItemDoc.put("currency", currency.toString());
-            receiptItemDoc.put("price", price);
+            receiptItemDoc.put("price", receipt.getCashFor(currency));
             receiptList.add(receiptItemDoc);
         });
         doc.put("receipt", receiptList);

@@ -1,14 +1,13 @@
-package com.deoxys.dev.dstr.domain.model;
+package com.deoxys.dev.dstr.domain.model.item;
 
 import java.io.Serializable;
 
-public class ItemStatus implements Serializable {
+public final class ItemStatus implements Serializable {
 
     /**
      * int vs Integer
      *   MongoDB Java driver takes and produces Integer wrapper type
-     *
-     * Thus, in order to avoid redundant autoboxing, Integer will be better
+     *   thus, Integer will avoid unnecessary autoboxing
      */
     private Integer stocked;
     private Integer reserved;

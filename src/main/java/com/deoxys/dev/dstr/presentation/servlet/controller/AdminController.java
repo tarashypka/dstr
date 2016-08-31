@@ -1,6 +1,7 @@
 package com.deoxys.dev.dstr.presentation.servlet.controller;
 
 import com.deoxys.dev.dstr.domain.service.CustomerService;
+import com.deoxys.dev.dstr.domain.service.UserService;
 import com.deoxys.dev.dstr.domain.service.ItemService;
 import com.deoxys.dev.dstr.domain.service.OrderService;
 
@@ -14,6 +15,7 @@ import java.io.IOException;
 @WebServlet(name = "AdminController", urlPatterns = "/controller/admin")
 public class AdminController extends HttpServlet {
 
+    private static UserService userService;
     private static CustomerService customerService;
     private static OrderService orderService;
     private static ItemService itemService;
@@ -27,7 +29,8 @@ public class AdminController extends HttpServlet {
             ORDERS_JSP;
 
     static {
-        customerService = new CustomerService();
+        userService = new UserService();
+        customerService = userService.createCustomerService();
         orderService = new OrderService();
         itemService = new ItemService();
         CUSTOMER_JSP = "/WEB-INF/jsp/customer/customer.jsp";
@@ -65,9 +68,9 @@ public class AdminController extends HttpServlet {
                 orderService.loadOrders(req);
                 req.getRequestDispatcher(ORDERS_JSP).forward(req, resp);
                 break;
-            case "swapCustomerStatus":
-                customerService.swapCustomerStatus(req);
-                customerService.loadCustomer(req);
+            case "swapUserStatus":
+                userService.swapUserStatus(req);
+                userService.loadUser(req);
                 orderService.loadCustomerActivity(req);
                 req.getRequestDispatcher(CUSTOMER_JSP).forward(req, resp);
                 break;

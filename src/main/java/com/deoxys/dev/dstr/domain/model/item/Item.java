@@ -1,9 +1,11 @@
-package com.deoxys.dev.dstr.domain.model;
+package com.deoxys.dev.dstr.domain.model.item;
+
+import com.deoxys.dev.dstr.domain.model.Builder;
 
 import java.io.Serializable;
 import java.util.*;
 
-public class Item implements Serializable {
+public final class Item implements Serializable {
 
     private String id;
     private String name;

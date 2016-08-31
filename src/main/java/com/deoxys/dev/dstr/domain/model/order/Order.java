@@ -1,23 +1,29 @@
-package com.deoxys.dev.dstr.domain.model;
+package com.deoxys.dev.dstr.domain.model.order;
+
+import com.deoxys.dev.dstr.domain.model.item.Item;
+import com.deoxys.dev.dstr.domain.model.item.Price;
+import com.deoxys.dev.dstr.domain.model.user.User;
 
 import java.io.Serializable;
-import java.util.*;
+import java.util.Currency;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
-public class Order implements Serializable {
+public final class Order implements Serializable {
     private String id;
 
     /**
      * long vs Long
      *   MongoDB Java driver takes and produces Long wrapper type
-     *
-     * Thus, in order to avoid redundant autoboxing, Long will be better
+     *   thus, Long will avoid unnecessary autoboxing
      */
     private Long orderNumber;
 
     private Date date;
     private User customer;
     private Map<Item, Integer> items = new HashMap<>();
-    private Map<Currency, Double> receipt = new HashMap<>();
+    private Receipt receipt;
     private OrderStatus status;
 
     public Order() { }
@@ -79,34 +85,44 @@ public class Order implements Serializable {
     public void removeItem(Item item, Integer amount) {
         int currAmount = items.get(item);
         if (amount == currAmount) items.remove(item);
+        else if (amount > currAmount)
+            throw new IllegalArgumentException("Not enough items in order");
         else items.put(item, currAmount - amount);
     }
 
-    public Map<Currency, Double> getReceipt() {
+    public Receipt getReceipt() {
         return receipt;
     }
 
-    public void setReceipt(Map<Currency, Double> receipt) {
+    public void setReceipt(Receipt receipt) {
         this.receipt = receipt;
     }
 
-    public void addPrice(Currency c, Double d) {
-        receipt.put(c, d);
-    }
-
+    /**
+     *
+     * When new item is added/removed from the order,
+     * #addItem or #removeItem methods should be called
+     * after #updateReceipt method, since it checks
+     * whether that item already was in the order
+     *
+     * @param item      item with price#currency that receipt be updated with
+     * @param amount    amount of items for getting their the total price
+     */
     public void updateReceipt(Item item, Integer amount) {
         Price price = item.getPrice();
         Double cash = price.getCash();
         Currency currency = price.getCurrency();
 
-        Double oldTotal = receipt.get(currency);
-        Double newTotal = amount * cash + (oldTotal == null ? 0 : oldTotal);
+        Double oldCash = receipt.getCashFor(currency);
+        Double newCash = amount * cash + (oldCash == null ? 0 : oldCash);
 
-        // If item was already in receipt
-        if (items.containsKey(item)) newTotal -= cash * items.get(item);
+        // If item was already in receipt, the subtract it's old price
+        if (items.containsKey(item)) newCash -= cash * items.get(item);
 
-        if (newTotal == 0) receipt.remove(currency);
-        else receipt.put(currency, newTotal);
+        if (newCash == 0) receipt.remove(currency);
+        else if (newCash < 0)
+            throw new IllegalArgumentException("Price is negative");
+        else receipt.setCashFor(currency, newCash);
     }
 
     public OrderStatus getStatus() {

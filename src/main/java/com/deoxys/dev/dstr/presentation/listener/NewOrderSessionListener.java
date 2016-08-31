@@ -1,6 +1,6 @@
 package com.deoxys.dev.dstr.presentation.listener;
 
-import com.deoxys.dev.dstr.domain.model.Order;
+import com.deoxys.dev.dstr.domain.model.order.Order;
 import com.deoxys.dev.dstr.domain.service.ItemService;
 import com.hazelcast.core.EntryEvent;
 import com.hazelcast.map.listener.*;

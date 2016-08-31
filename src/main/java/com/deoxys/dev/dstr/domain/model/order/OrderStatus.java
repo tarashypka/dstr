@@ -1,4 +1,4 @@
-package com.deoxys.dev.dstr.domain.model;
+package com.deoxys.dev.dstr.domain.model.order;
 
 public enum OrderStatus {
     REJECTED(-1), IN_PROCESS(0), PROCESSED(+1);
@@ -6,11 +6,9 @@ public enum OrderStatus {
     /**
      * int vs Integer
      *   MongoDB Java driver takes and produces Integer wrapper type
-     *
-     * Thus, in order to avoid redundant autoboxing, Integer will be better
+     *   thus, Integer will avoid unnecessary autoboxing
      */
     private Integer value;
-    private String name;    // for easy referring with EL
 
     OrderStatus(int value) {
         this.value = value;
@@ -33,6 +31,9 @@ public enum OrderStatus {
         return value;
     }
 
+    /**
+     * to easily refer with EL
+     */
     public String getName() {
         return value == -1 ? "Rejected" : (value == 0 ? "In process" : "Processed");
     }

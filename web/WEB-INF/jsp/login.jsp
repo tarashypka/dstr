@@ -3,14 +3,6 @@
 <%@ taglib prefix="t" tagdir="/WEB-INF/tags" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
-<%--
-  Created by IntelliJ IDEA.
-  User: deoxys
-  Date: 29.05.16
-  Time: 7:48
-  To change this template use File | Settings | File Templates.
---%>
-
 <c:set var="resources" value="${pageContext.request.contextPath}/resources"/>
 
 <%-- Bootstrap validation style could be has-warning, has-success, ... --%>

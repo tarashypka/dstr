@@ -1,6 +1,6 @@
 package com.deoxys.dev.dstr.presentation.servlet.controller;
 
-import com.deoxys.dev.dstr.domain.service.CustomerService;
+import com.deoxys.dev.dstr.domain.service.UserService;
 import com.deoxys.dev.dstr.domain.service.ItemService;
 import com.deoxys.dev.dstr.domain.service.OrderService;
 
@@ -14,7 +14,7 @@ import java.io.IOException;
 @WebServlet(name = "MainController", urlPatterns = "/controller")
 public class MainController extends HttpServlet {
 
-    private static CustomerService customerService;
+    private static UserService userService;
     private static OrderService orderService;
     private static ItemService itemService;
 
@@ -25,7 +25,7 @@ public class MainController extends HttpServlet {
             ITEMS_JSP;
 
     static {
-        customerService = new CustomerService();
+        userService = new UserService();
         orderService = new OrderService();
         itemService = new ItemService();
         LOGIN_JSP = "/WEB-INF/jsp/login.jsp";
@@ -68,19 +68,19 @@ public class MainController extends HttpServlet {
 
         switch (action) {
             case "login":
-                customerService.login(req);
+                userService.login(req);
                 if (req.getAttribute("error") == null)
                     resp.sendRedirect(req.getContextPath());    // to home page
                 else req.getRequestDispatcher(LOGIN_JSP).forward(req, resp);
                 break;
             case "register":
-                customerService.register(req);
+                userService.register(req);
                 if (req.getAttribute("error") == null)
                     resp.sendRedirect(req.getContextPath());
                 else req.getRequestDispatcher(REGISTER_JSP).forward(req, resp);
                 break;
             case "logout":
-                customerService.logout(req);
+                userService.logout(req);
                 if (req.getAttribute("error") == null)
                     resp.sendRedirect(req.getContextPath());
                 else resp.sendRedirect(req.getHeader("referer"));

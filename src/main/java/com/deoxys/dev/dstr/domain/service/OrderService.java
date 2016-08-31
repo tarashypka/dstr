@@ -1,12 +1,12 @@
 package com.deoxys.dev.dstr.domain.service;
 
 import com.deoxys.dev.dstr.domain.converter.OrderReader;
-import com.deoxys.dev.dstr.domain.model.Item;
-import com.deoxys.dev.dstr.domain.model.Order;
-import com.deoxys.dev.dstr.domain.model.OrderStatus;
-import com.deoxys.dev.dstr.domain.model.User;
-import com.deoxys.dev.dstr.persistence.dao.ItemDAO;
-import com.deoxys.dev.dstr.persistence.dao.OrderDAO;
+import com.deoxys.dev.dstr.domain.model.item.Item;
+import com.deoxys.dev.dstr.domain.model.order.Order;
+import com.deoxys.dev.dstr.domain.model.order.OrderStatus;
+import com.deoxys.dev.dstr.domain.model.user.User;
+import com.deoxys.dev.dstr.persistence.dao.mongo.ItemDAO;
+import com.deoxys.dev.dstr.persistence.dao.mongo.OrderDAO;
 import org.apache.log4j.Logger;
 
 import javax.servlet.http.HttpServletRequest;
@@ -112,7 +112,7 @@ public class OrderService extends MongoService<Order> {
 
                     /**
                      * receipt should be updated before new item was added,
-                     * since updateReceipt() checks whether such item already exists in order
+                     * since #updateReceipt checks whether item is already in the order
                      */
                     order.updateReceipt(item, quantity);
                     order.addItem(item, quantity);
@@ -140,7 +140,7 @@ public class OrderService extends MongoService<Order> {
 
                 /**
                  * receipt should be updated before new item was removed,
-                 * since updateReceipt() checks whether such item exists in order
+                 * since updateReceipt() checks whether item is already in the order
                  */
                 order.updateReceipt(item, 0);
                 order.removeItem(item, quantity);
