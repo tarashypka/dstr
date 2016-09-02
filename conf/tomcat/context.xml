@@ -14,8 +14,10 @@
 	<Resource name="mongo" auth="Container"
 			  factory="com.deoxys.dev.dstr.persistence.CustomMongoJndiFactory"
 			  type="com.mongodb.MongoClient"
-			  host="localhost" port="27017" dbName="dstr"
-			  username="dstrAdmin" password="1234"/>
+			  host_1="thinkpad" port_1="27017"
+			  host_2="thinkpad" port_2="27018"
+			  host_3="thinkpad" port_3="27019"
+			  username="dstrAdmin" password="1234" dbName="dstr"/>
 
     <WatchedResource>WEB-INF/web.xml</WatchedResource>
     <WatchedResource>${catalina.base}/conf/web.xml</WatchedResource>
