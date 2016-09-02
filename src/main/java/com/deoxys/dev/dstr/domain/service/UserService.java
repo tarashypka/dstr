@@ -42,20 +42,24 @@ public final class UserService extends PostgresService {
         User shouldBe = userDAO.get(user.getEmail());
         if (user.hasValidCredentials(shouldBe))
             req.getSession().setAttribute("user", user.withoutPassword());
-        else req.setAttribute("error", user.getErrType());
+        else {
+            req.setAttribute("error", user.getErrType());
+            req.setAttribute("_user", user.withoutPassword());  // password flows into one direction only
+        }
     }
 
     public void register(HttpServletRequest req) {
         User user = UserReaders.readerForAuthentication().read(req);
+
         // If customer input was already validated with Js
         boolean validated = Boolean.parseBoolean(req.getParameter("validated"));
         if (validated || user.isValidForInput(req.getParameter("psswd2"))) {
             if (! userDAO.exists(user)) {
-                userDAO.add(user);
+                userDAO.add(user.withHashedPassword());
                 // Automatically authenticate after registration
                 req.getSession().setAttribute("user", user);
                 return;
-            } else user.setErrType("email_dup");
+            } else user.setErrType("EMAIL_DUP");
         }
         req.setAttribute("error", user.getErrType());
         req.setAttribute("_user", user);

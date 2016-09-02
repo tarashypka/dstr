@@ -5,7 +5,7 @@
         <host>localhost</host>
         <port>5432</port>
         <dbName>testdstr</dbName>
-        <customer>testdstrdbadmin</customer>
+        <customer>testdstradmin</customer>
         <password>1234</password>
         <maxConn>20</maxConn>
     </schema>

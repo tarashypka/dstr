@@ -149,6 +149,11 @@ public class User implements Serializable {
         this.password = password;
     }
 
+    public User withHashedPassword() {
+        this.password = BCrypt.hashpw(password, BCrypt.gensalt());
+        return this;
+    }
+
     public boolean hasValidPassword(String hashFromDb) {
         return BCrypt.checkpw(password, hashFromDb);
     }
@@ -183,11 +188,6 @@ public class User implements Serializable {
         this.enabled = enabled;
     }
 
-    public User withSwappedStatus() {
-        enabled = ! enabled;
-        return this;
-    }
-
     public String getErrType() {
         return errType;
     }
@@ -204,7 +204,7 @@ public class User implements Serializable {
             errType = "EMAIL_WRONG";
         else if (! hasValidPassword(shouldBe.getPassword()))
             errType = "PSSWD_WRONG";
-        else if ( ! shouldBe.isEnabled())
+        else if (! shouldBe.isEnabled())
             errType = "ACC_CLOSED";
         else return true;   // login succeeded
         return false;
@@ -246,5 +246,14 @@ public class User implements Serializable {
     @Override
     public int hashCode() {
         return email != null ? email.hashCode() : 0;
+    }
+
+    @Override
+    public String toString() {
+        return  "{ id=" + id +
+                ", email='" + email + '\'' +
+                ", password='" + password + '\'' +
+                ", role=" + role + '\'' +
+                ", enabled=" + enabled + '}';
     }
 }

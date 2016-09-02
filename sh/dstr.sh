@@ -30,11 +30,11 @@ TOMCAT_REMOTE_CATALINA_HOME="/opt/tomcat"
 TOMCAT_REMOTE_PORT=8080
 
 MONGO1_LOCAL_PORT=27017
-MONGO1_LOCAL_DB_PATH="/home/$USR_NAME/tmp/mongodb1"
+MONGO1_LOCAL_CONFIG="/home/$USR_NAME/Workspace/mongodb/dstr/mongod_1.conf"
 MONGO2_LOCAL_PORT=27018
-MONGO2_LOCAL_DB_PATH="/home/$USR_NAME/tmp/mongodb2"
+MONGO2_LOCAL_CONFIG="/home/$USR_NAME/Workspace/mongodb/dstr/mongod_2.conf"
 MONGO3_LOCAL_PORT=27019
-MONGO3_LOCAL_DB_PATH="/home/$USR_NAME/tmp/mongodb3"
+MONGO3_LOCAL_CONFIG="/home/$USR_NAME/Workspace/mongodb/dstr/mongod_3.conf"
 
 MONGO1_REMOTE_HOST=192.168.56.111
 MONGO2_REMOTE_HOST=192.168.56.112
@@ -240,22 +240,20 @@ manage_mongo() {
 	if [[ $local == true ]]; then
 		case $i in
 			1)
-				port=$MONGO1_LOCAL_PORT
-				dbpath=$MONGO1_LOCAL_DB_PATH
+                port=$MONGO1_LOCAL_PORT
+                config=$MONGO1_LOCAL_CONFIG
 				;;
 			2)
-				port=$MONGO2_LOCAL_PORT
-				dbpath=$MONGO2_LOCAL_DB_PATH
+                port=$MONGO2_LOCAL_PORT
+                config=$MONGO2_LOCAL_CONFIG
 				;;
 			3)
-				port=$MONGO3_LOCAL_PORT
-				dbpath=$MONGO3_LOCAL_DB_PATH
+                port=$MONGO3_LOCAL_PORT
+                config=$MONGO3_LOCAL_CONFIG
 				;;
 		esac
 		if [[ $start == true ]]; then
-            started="mongod \
-                --port $port \
-                --dbpath $dbpath --replSet \"rs0\" --smallfiles &> /dev/null &"
+            started="mongod --config $config --smallfiles &> /dev/null &"
             export LC_ALL=C
 			if eval $started; then
                 echo "Success: mongod on localhost:$port was started ($1)"
@@ -263,9 +261,7 @@ manage_mongo() {
                 echo "Error: mongod on localhost:$port was not started ($1)"
             fi
 		else
-            stopped="mongod \
-                --port $port \
-                --dbpath $dbpath --replSet \"rs0\" --shutdown &> /dev/null &"
+            stopped="mongod --config $config --shutdown &> /dev/null &"
 			if eval $stopped; then
                 echo "Success: mongod on localhost:$port was stopped ($1)"
             else

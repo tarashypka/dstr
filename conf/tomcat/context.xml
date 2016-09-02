@@ -7,7 +7,7 @@
 			  driverClassName="org.postgresql.Driver"
 			  type="javax.sql.DataSource"
 			  url="jdbc:postgresql://localhost:5432/dstr"
-			  username="dstrdbadmin" password="1234"
+			  username="dstradmin" password="1234"
 			  maxTotal="20" maxIdle="10" maxWaitMillis="-1"/>
 
 	<!-- JNDI configuration for Mongo -->
@@ -15,7 +15,7 @@
 			  factory="com.deoxys.dev.dstr.persistence.CustomMongoJndiFactory"
 			  type="com.mongodb.MongoClient"
 			  host="localhost" port="27017" dbName="dstr"
-			  username="dstrDbAdmin" password="1234"/>
+			  username="dstrAdmin" password="1234"/>
 
     <WatchedResource>WEB-INF/web.xml</WatchedResource>
     <WatchedResource>${catalina.base}/conf/web.xml</WatchedResource>

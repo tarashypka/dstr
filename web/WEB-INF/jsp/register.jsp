@@ -16,27 +16,27 @@ thus server-side validation will be performed if it's disabled
 <%-- Server-side validation results (if Js is disabled) --%>
 <c:if test="${error ne null}">
   <c:choose>
-    <c:when test="${error eq 'email_dup'}">
+    <c:when test="${error eq 'EMAIL_DUP'}">
       <c:set var="emailWarn" value="${validationStyle}"/>
       <c:set var="emailErrMsg" value="Acount with such an email already exists"/>
     </c:when>
-    <c:when test="${error eq 'email_empty'}">
+    <c:when test="${error eq 'EMAIL_EMPTY'}">
       <c:set var="emailWarn" value="${validationStyle}"/>
       <c:set var="emailErrMsg" value="Enter email"/>
     </c:when>
-    <c:when test="${error eq 'email_wrong'}">
+    <c:when test="${error eq 'EMAIL_WRONG'}">
       <c:set var="emailWarn" value="${validationStyle}"/>
       <c:set var="emailErrMsg" value="'${_customer.email}' is not a valid email address"/>
     </c:when>
-    <c:when test="${error eq 'psswd_empty'}">
+    <c:when test="${error eq 'PSSWD_EMPTY'}">
       <c:set var="psswdWarn" value="${validationStyle}"/>
       <c:set var="psswdErrMsg" value="Enter password"/>
     </c:when>
-    <c:when test="${error eq 'psswd_weak'}">
+    <c:when test="${error eq 'PSSWD_WEAK'}">
       <c:set var="psswdWarn" value="${validationStyle}"/>
       <c:set var="psswdErrMsg" value="Password is weak, should be at least 8 characters"/>
     </c:when>
-    <c:when test="${error eq 'psswd2_wrong'}">
+    <c:when test="${error eq 'PSSWD2_WRONG'}">
       <c:set var="psswd2Warn" value="${validationStyle}"/>
       <c:set var="psswd2ErrMsg" value="Passwords do not match"/>
     </c:when>

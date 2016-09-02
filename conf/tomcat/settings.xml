@@ -3,7 +3,7 @@
 	<servers>
 		<server>
 			<id>TomcatServer</id>
-			<username>dstrprjadmin</username>
+			<username>dstradmin</username>
 			<password>1234</password>
 		</server>
 	</servers>

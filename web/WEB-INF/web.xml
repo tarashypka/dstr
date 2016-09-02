@@ -72,7 +72,7 @@
     </context-param>
     <context-param>
         <param-name>MONGO_USER</param-name>
-        <param-value>dstrDbAdmin</param-value>
+        <param-value>dstrAdmin</param-value>
     </context-param>
     <context-param>
         <param-name>MONGO_PASSWORD</param-name>
@@ -94,7 +94,7 @@
     </context-param>
     <context-param>
         <param-name>POSTGRES_USER</param-name>
-        <param-value>dstrdbadmin</param-value>
+        <param-value>dstradmin</param-value>
     </context-param>
     <context-param>
         <param-name>POSTGRES_PASSWORD</param-name>

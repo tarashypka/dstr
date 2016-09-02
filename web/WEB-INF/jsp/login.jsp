@@ -11,15 +11,15 @@
 <%-- Server-side validation results --%>
 <c:if test="${error ne null}">
   <c:choose>
-    <c:when test="${error eq 'email_wrong'}">
+    <c:when test="${error eq 'EMAIL_WRONG'}">
       <c:set var="emailWarn" value="${validationStyle}"/>
       <c:set var="emailErrMsg" value="Account with such email not found"/>
     </c:when>
-    <c:when test="${error eq 'psswd_wrong'}">
+    <c:when test="${error eq 'PSSWD_WRONG'}">
       <c:set var="psswdWarn" value="${validationStyle}"/>
       <c:set var="psswdErrMsg" value="Account with such combination of email and password not found"/>
     </c:when>
-    <c:when test="${error eq 'acc_closed'}">
+    <c:when test="${error eq 'ACC_CLOSED'}">
       <c:set var="closedWarn" value="${validationStyle}"/>
       <c:set var="closedErrMsg" value="Your account was closed"/>
     </c:when>
@@ -29,10 +29,6 @@
 <t:genericpage>
   <jsp:attribute name="title">Login</jsp:attribute>
 
-  <jsp:attribute name="js">
-    <script type="text/javascript" src="${resources}/js/process-login-error.js"></script>
-  </jsp:attribute>
-
   <jsp:body>
     <c:url var="controller" value="/controller"/>
     <form action="${controller}" method="post" class="form-horizontal" role="form">
@@ -40,7 +36,7 @@
       <div id="email" class="form-group col-sm-12 ${emailWarn}">
         <label for="email-inp" class="control-label col-sm-2">Email:</label>
         <div class="col-sm-4">
-          <input id="email-inp" type="text" name="email" placeholder="Email?" class="form-control" aria-describedby="email-help">
+          <input id="email-inp" type="text" name="email" value="${_user.email}" placeholder="Email?" class="form-control" aria-describedby="email-help">
           <span id="email-help" class="help-block">${emailErrMsg}</span>
         </div>
       </div>
@@ -57,6 +53,5 @@
         </div>
       </div>
     </form>
-    <script>embedErrorMessage("${error}");</script>
   </jsp:body>
 </t:genericpage>

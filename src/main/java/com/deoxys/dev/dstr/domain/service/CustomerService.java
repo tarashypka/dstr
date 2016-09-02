@@ -19,7 +19,8 @@ public final class CustomerService extends PostgresService {
     }
 
     public CustomerService(DataSource dataSource) {
-        this.dataSource = dataSource;
+        super(dataSource);
+        customerDao = new CustomerDAO(dataSource);
     }
 
     public void loadCustomer(HttpServletRequest req) {

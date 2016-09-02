@@ -33,7 +33,7 @@ public class CustomerDAO extends PostgresDAO<Customer> {
 
         // Select all customer data
         SELECT_CUSTOMER_BY_ID =
-                "SELECT  cs.name, cs.surname, cs.n_orders, cs.n_items, cs.registered_on" +
+                "SELECT  cs.name, cs.surname, cs.n_orders, cs.n_items, cs.registered_on, " +
                         "us.email, us.password, us.role, us.enabled " +
                 "FROM " + CUSTOMERS_COLLECTION + " cs, " + USERS_COLLECTION + " us " +
                 "WHERE us.id = ? AND us.id = cs.user_id";

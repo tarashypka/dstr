@@ -23,4 +23,8 @@ abstract class PostgresService {
             ex.printStackTrace();
         }
     }
+
+    PostgresService(DataSource dataSource) {
+        this.dataSource = dataSource;
+    }
 }

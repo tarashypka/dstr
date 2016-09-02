@@ -3,28 +3,28 @@
 <!-- Authorization rules for roles -->
 
 <auth-rules>
-    <role rolename="customer"/>
-    <role rolename="admin"/>
+    <role rolename="CUSTOMER"/>
+    <role rolename="ADMIN"/>
 
     <action actionname="login" auth="false"/>
     <action actionname="register" auth="false"/>
     <action actionname="logout" auth="true" allowed="*"/>
 
-    <action actionname="newItem" auth="true" allowed="admin"/>
-    <action actionname="editItem" auth="true" allowed="admin"/>
-    <action actionname="deleteItem" auth="true" allowed="admin"/>
+    <action actionname="newItem" auth="true" allowed="ADMIN"/>
+    <action actionname="editItem" auth="true" allowed="ADMIN"/>
+    <action actionname="deleteItem" auth="true" allowed="ADMIN"/>
     <action actionname="showItem" auth="*"/>
     <action actionname="showItems" auth="*"/>
 
     <action actionname="showOrder" auth="true" allowed="*"/>
     <action actionname="showOrders" auth="true" allowed="*"/>
-    <action actionname="addOrderItems" auth="true" allowed="customer"/>
-    <action actionname="dropOrderItem" auth="true" allowed="customer"/>
-    <action actionname="newOrder" auth="true" allowed="customer"/>
-    <action actionname="declineOrder" auth="true" allowed="customer"/>
+    <action actionname="addOrderItems" auth="true" allowed="CUSTOMER"/>
+    <action actionname="dropOrderItem" auth="true" allowed="CUSTOMER"/>
+    <action actionname="newOrder" auth="true" allowed="CUSTOMER"/>
+    <action actionname="declineOrder" auth="true" allowed="CUSTOMER"/>
     <action actionname="changeOrderStatus" auth="true" allowed="*"/>
 
     <action actionname="showCustomer" auth="true" allowed="*"/>
-    <action actionname="showCustomers" auth="true" allowed="admin"/>
-    <action actionname="swapCustomerStatus" auth="true" allowed="admin"/>
+    <action actionname="showCustomers" auth="true" allowed="ADMIN"/>
+    <action actionname="swapCustomerStatus" auth="true" allowed="ADMIN"/>
 </auth-rules>
