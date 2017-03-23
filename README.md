@@ -172,12 +172,12 @@ $ mongo --host <MONGO_HOST_1>
 
 ```
 $ mongo admin --host <MONGO_HOST_1>
-> db.createUser( { customer: "siteUserAdmin", pwd: "1234", roles: [ { role: "userAdminAnyDatabase", db: "admin" } ] } );
+> db.createUser( { user: "siteUserAdmin", pwd: "1234", roles: [ { role: "userAdminAnyDatabase", db: "admin" } ] } );
 > exit;  
 $ mongo admin --host <MONGO_HOST_1> -u siteUserAdmin -p 1234
 > use dstr;
-> db.createUser( { customer: "dstrAdmin", pwd: "1234", roles: [ { role: "dbOwner", db: "dstr" } ] } );
-> db.createUser( { customer: "testdstrAdmin", pwd: "1234", roles: [ { role: "dbOwner", db: "testdstr" } ] } );
+> db.createUser( { user: "dstrAdmin", pwd: "1234", roles: [ { role: "dbOwner", db: "dstr" } ] } );
+> db.createUser( { user: "testdstrAdmin", pwd: "1234", roles: [ { role: "dbOwner", db: "testdstr" } ] } );
 > exit;
 ```
 
